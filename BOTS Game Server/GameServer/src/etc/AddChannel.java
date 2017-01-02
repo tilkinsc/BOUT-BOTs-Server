@@ -20,9 +20,8 @@ public class AddChannel {
 				+ "(" + CHANNEL_ID + ", \"" + CHANNEL_NAME + "\", " + CHANNEL_MIN_LEVEL + ", " + CHANNEL_MAX_LEVEL + ", "
 				+ PLAYERS + ", " + STATUS + ")";
 
-		final SQLDatabase db = new SQLDatabase("");
-		db.start();
-		db.doupdate(query);
+		SQLDatabase.start();
+		SQLDatabase.doupdate(query);
 
 	}
 

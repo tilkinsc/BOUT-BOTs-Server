@@ -31,9 +31,8 @@ public class AddCharacter {
 				+ LOGIN_BANNED + "," + LOGIN_ALLOG + ",\"" + LOGIN_IP + "\"," + LOGIN_COUNT + ",\"" + LOGIN_IP + "\",'"
 				+ dformat.format(date) + "',\"" + LOGIN_EMAIL + "\");";
 
-		final SQLDatabase db = new SQLDatabase("");
-		db.start();
-		db.doupdate(query);
+		SQLDatabase.start();
+		SQLDatabase.doupdate(query);
 
 	}
 
