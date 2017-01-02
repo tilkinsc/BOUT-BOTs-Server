@@ -12,25 +12,20 @@ import loginserver.Main;
 
 public class SQLDatabase {
 
-	protected String owner;
+	protected static Properties sqldata = new Properties();
+	protected static Connection con;
+	protected static Statement st;
 
-	protected Properties sqldata = new Properties();
-	protected Connection con;
-	protected Statement st;
+	protected static String ip, port, user, pass, database;
 
-	protected String ip, port, user, pass, database;
-
-	public SQLDatabase(String createdby) {
-		this.owner = createdby;
-	}
-
-	private void loadconfigs() {
+	private static void loadconfigs() {
 		try {
 			final FileInputStream fin = new FileInputStream("configs/mysql.conf");
 			sqldata.load(fin);
 			fin.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			System.exit(1);
 		}
 		ip = sqldata.getProperty("MySQL_ip");
 		port = sqldata.getProperty("MySQL_port");
@@ -39,7 +34,7 @@ public class SQLDatabase {
 		database = sqldata.getProperty("MySQL_db");
 	}
 
-	public void start() {
+	public static void start() {
 		loadconfigs();
 		
 		try {
@@ -57,8 +52,16 @@ public class SQLDatabase {
 			Main.logger.log("Exception", e.getMessage());
 		}
 	}
+	
+	public static void close() {
+		try {
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-	public ResultSet doquery(String query) {
+	public static ResultSet doquery(String query) {
 		ResultSet rs = null;
 		try {
 			final Statement st = con.createStatement();
@@ -69,7 +72,7 @@ public class SQLDatabase {
 		return rs;
 	}
 
-	public void doupdate(String query) {
+	public static void doupdate(String query) {
 		try {
 			final Statement st = con.createStatement();
 			st.executeUpdate(query);
