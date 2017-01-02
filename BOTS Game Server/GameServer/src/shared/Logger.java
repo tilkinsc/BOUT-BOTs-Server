@@ -30,12 +30,40 @@ public class Logger {
 		logi(i, key, String.format(format, args));
 	}
 	
+	public void flush(int i) {
+		out[i].flush();
+	}
+	
+	public void flushAll() {
+		for (final PrintStream ps : out)
+			ps.flush();
+	}
+	
 	public void setDateFormat(SimpleDateFormat format) {
 		this.format = format;
 	}
 	
+	public void setStreams(PrintStream[] streams) {
+		this.out = streams;
+	}
+	
+	public void close(int i) {
+		out[i].close();
+		out[i] = null;
+	}
+	
+	public void closeAll() {
+		for (final PrintStream ps : out)
+			ps.close();
+		out = null;
+	}
+	
 	public PrintStream getOutputStream(int i) {
 		return out[i];
+	}
+	
+	public PrintStream[] getStreams() {
+		return out;
 	}
 	
 	public int getStreamCount() {
