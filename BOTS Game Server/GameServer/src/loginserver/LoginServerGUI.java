@@ -1,5 +1,7 @@
 package loginserver;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Timer;
 
 import javax.swing.JFrame;
@@ -36,8 +38,17 @@ public class LoginServerGUI extends JFrame {
 		jScrollPane1 = new javax.swing.JScrollPane();
 		debugTextArea = new javax.swing.JTextArea();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
+		setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(WindowEvent we) {
+				timer.cancel();
+				Main.invokeShutdown();
+				dispose();
+			}
+		});
+		
+		
 		clientCountLabel.setText("0 clients");
 
 		debugTextArea.setColumns(20);

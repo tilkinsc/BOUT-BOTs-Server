@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,14 +20,9 @@ public class Main {
 	
 	public static LoginServer loginServer;
 	public static LoginServerGUI gui;
-
-	public static SQLDatabase sql = new SQLDatabase("LoginServer");
-
-	public static String getip(Socket sock) {
-		final String s = sock.getInetAddress().toString();
-		return s.substring(0, 0) + s.substring(1);
-	}
 	
+	public static RoomUDPServer roomserver;
+
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
 			@Override
@@ -65,20 +59,18 @@ public class Main {
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
-			System.setOut(null);
-			System.setIn(null);
 			
 			gui.setTitle("Bots Login Server");
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 
-			sql.start();
+			SQLDatabase.start();
 
 			loginServer.start();
 
 			gui.startUpdateTimer();
 
-			final RoomUDPServer roomserver = new RoomUDPServer();
+			roomserver = new RoomUDPServer();
 			roomserver.start();
 
 			ChannelServer.main();
@@ -87,6 +79,19 @@ public class Main {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public static void invokeShutdown() {
+		loginServer.stopThread();
+		System.out.println("login closed");
+		roomserver.stopThread();
+		System.out.println("room closed");
+		ChannelServer.stopThread();
+		System.out.println("channel closed");
+		SQLDatabase.close();
+		System.out.println("SQL closed");
+		logger.flushAll();
+		logger.closeAll();
 	}
 	
 }

@@ -3,19 +3,30 @@ package loginserver;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
+
+import shared.SQLDatabase;
 
 public class RoomUDPServer extends Thread {
 
+	
+	private boolean stop = false;
+	
 	@Override
 	public void run() {
 		try {
 			final DatagramSocket socket = new DatagramSocket(11011);
-			boolean stop = false;
+			socket.setSoTimeout(5000);
 			while (!stop) {
 
 				final DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-				socket.receive(packet);
-
+				
+				try {
+					socket.receive(packet);
+				} catch (SocketTimeoutException e) {
+					continue;
+				}
+					
 				final InetAddress address = packet.getAddress();
 				final int port = packet.getPort();
 				final byte[] data = packet.getData();
@@ -23,7 +34,7 @@ public class RoomUDPServer extends Thread {
 				final String datan = new String(data, "ISO8859-1");
 				if (datan.startsWith("\u00C9\u0000")) {
 					Main.logger.log("RoomUDPServer", "Save port " + port + " of IP " + address.toString().substring(1));
-					Main.sql.doupdate("UPDATE `rooms` SET `port`=" + port + " WHERE `ip`='"
+					SQLDatabase.doupdate("UPDATE `rooms` SET `port`=" + port + " WHERE `ip`='"
 							+ address.toString().substring(1) + "' AND `port`=0");
 				}
 
@@ -32,6 +43,15 @@ public class RoomUDPServer extends Thread {
 			socket.close();
 		} catch (Exception e) {
 
+		}
+	}
+	
+	public void stopThread() {
+		this.stop = true;
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	

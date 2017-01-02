@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 //import java.util.*;
 import java.sql.ResultSet;
 
+import shared.SQLDatabase;
+
 public class LoginServerConnection extends Thread {
 
 	protected Socket socket;
@@ -43,7 +45,7 @@ public class LoginServerConnection extends Thread {
 	public void CheckUser(String user, String pass) {
 		System.out.println("Checking user....");
 		try {
-			final ResultSet rs = Main.sql.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
+			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
 			while (rs.next()) {
 				this.LOGIN_ID = rs.getInt("id");
 				this.LOGIN_USERNAME = rs.getString("username");
@@ -126,7 +128,7 @@ public class LoginServerConnection extends Thread {
 	private void updateaccount(String user) {
 		try {
 			int logincount = 0;
-			final ResultSet rs = Main.sql.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
+			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
 			while (rs.next())
 				logincount = rs.getInt("logincount");
 			logincount++;
@@ -135,11 +137,11 @@ public class LoginServerConnection extends Thread {
 			final java.util.Date dt = new java.util.Date();
 			// set date format
 			final java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			final String ip = Main.getip(socket);
+			final String ip = socket.getInetAddress().getHostAddress();
 
 			// add later
 			// online=1
-			Main.sql.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + logincount + ", last_ip='"
+			SQLDatabase.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + logincount + ", last_ip='"
 					+ ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + user + "'");
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());

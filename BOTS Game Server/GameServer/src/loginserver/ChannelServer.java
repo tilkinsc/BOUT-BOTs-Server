@@ -3,7 +3,10 @@ package loginserver;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.sql.ResultSet;
+
+import shared.SQLDatabase;
 
 class ChannelServer {
 
@@ -30,11 +33,12 @@ class ChannelServer {
 	// SQL Querys
 	protected static final String GET_CHANNEL_QUERY = "SELECT * FROM bout_channels WHERE status=1 LIMIT 12";
 
+	private static boolean stop = false;
 	
 	protected static void getChannels() {
 
 		try {
-			final ResultSet rs = Main.sql.doquery(GET_CHANNEL_QUERY);
+			final ResultSet rs = SQLDatabase.doquery(GET_CHANNEL_QUERY);
 			if (channel_i != 0)
 				channel_i = 0;
 			final String nullbyte = new String(NULLBYTE, "ISO8859-1");
@@ -75,13 +79,17 @@ class ChannelServer {
 		InetAddress IPAddress;
 		
 		final DatagramSocket serverSocket = new DatagramSocket(11010);
+		serverSocket.setSoTimeout(5000);
 		DatagramPacket sendPacket;
 		Main.logger.log("ChannelList", "Channel List is walking on " + 11010);
 		
-		boolean stop = false;
 		while (!stop) {
 			final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-			serverSocket.receive(receivePacket);
+			try {
+				serverSocket.receive(receivePacket);
+			} catch (SocketTimeoutException e) {
+				continue;
+			}
 			reqString = new String(receivePacket.getData(), "ISO8859-1");
 			if (reqString.startsWith("\u00FA\u002A\u0002")) {
 				Main.logger.log("ChannelList", "Channel List Requested.");
@@ -112,6 +120,11 @@ class ChannelServer {
 			}
 		}
 		serverSocket.close();
+		System.out.println("Ended");
 	}
-
+	
+	public static void stopThread() {
+		stop = true;
+	}
+	
 }

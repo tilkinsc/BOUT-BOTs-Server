@@ -3,6 +3,7 @@ package loginserver;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.Vector;
 
 
@@ -63,7 +64,7 @@ public class LoginServer extends Thread {
 	protected int port;
 	protected ServerSocket socketServer;
 	protected Vector<LoginServerConnection> clientConnections;
-	protected boolean listening;
+	protected volatile boolean listening;
 	
 	public LoginServer(int serverPort) {
 		this.port = serverPort;
@@ -89,33 +90,51 @@ public class LoginServer extends Thread {
 		return false;
 	}
 	
-	@Override
-	public void run() {
+	public void removeAllClients() {
 		try {
-			Main.logger.log("LoginServer", "Has Hopped on " + this.port + "!");
-			this.socketServer = new ServerSocket(this.port);
-			this.listening = true;
-
-			while (listening) {
-				final Socket socket = this.socketServer.accept();
-				Main.logger.log("LoginServer", "Client connection from " + Main.getip(socket));
-				final LoginServerConnection socketConnection = new LoginServerConnection(socket);
-				socketConnection.start();
-				this.clientConnections.add(socketConnection);
-			}
+			for (int i=0; i<this.clientConnections.size(); i++)
+				this.clientConnections.get(i).finalize();
+			this.clientConnections.clear();
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 	
 	@Override
-	protected void finalize() {
+	public void run() {
 		try {
+			Main.logger.log("LoginServer", "Has Hopped on " + this.port + "!");
+			this.socketServer = new ServerSocket(this.port);
+			this.socketServer.setSoTimeout(5000);
+			this.listening = true;
+
+			while (listening) {
+				try {
+					final Socket socket = this.socketServer.accept();
+					Main.logger.log("LoginServer", "Client connection from " + socket.getInetAddress().getHostAddress());
+					final LoginServerConnection socketConnection = new LoginServerConnection(socket);
+					socketConnection.start();
+					this.clientConnections.add(socketConnection);
+				} catch (SocketTimeoutException e) {
+					continue;
+				}
+			}
+			
+			
+			removeAllClients();
 			this.socketServer.close();
-			this.listening = false;
-			Main.logger.log("LoginServer", "Stopped server.");
+			Main.logger.log("LoginServer", "Stopped login server.");
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
+		}
+	}
+	
+	public void stopThread() {
+		this.listening = false;
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	
