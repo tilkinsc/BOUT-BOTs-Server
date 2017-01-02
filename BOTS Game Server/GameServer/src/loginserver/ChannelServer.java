@@ -30,6 +30,7 @@ class ChannelServer {
 	// SQL Querys
 	protected static final String GET_CHANNEL_QUERY = "SELECT * FROM bout_channels WHERE status=1 LIMIT 12";
 
+	
 	protected static void getChannels() {
 
 		try {

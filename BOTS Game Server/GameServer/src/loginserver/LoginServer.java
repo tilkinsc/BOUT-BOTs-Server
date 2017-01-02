@@ -1,7 +1,3 @@
-/*
- * LoginServer.java
- */
-
 package loginserver;
 
 import java.net.ServerSocket;
@@ -9,9 +5,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Vector;
 
-/**
- * A LoginServer for communication between the connected clients.
- */
+
 public class LoginServer extends Thread {
 
 	public static final byte[] LOGIN_SUCCESSBYTE = { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -70,21 +64,14 @@ public class LoginServer extends Thread {
 	protected ServerSocket socketServer;
 	protected Vector<LoginServerConnection> clientConnections;
 	protected boolean listening;
-
-	/**
-	 * Creates a new instance of LoginServer.
-	 */
+	
 	public LoginServer(int serverPort) {
 		this.port = serverPort;
 		this.clientConnections = new Vector<LoginServerConnection>();
 		this.listening = false;
 	}
-
-	/**
-	 * Removes a client from the server (it's expected that the client closes
-	 * its own connection).
-	 */
-	public boolean remove(SocketAddress remoteAddress) {
+	
+	public boolean removeClient(SocketAddress remoteAddress) {
 		try {
 			for (int i = 0; i < this.clientConnections.size(); i++) {
 				final LoginServerConnection client = this.clientConnections.get(i);
@@ -101,10 +88,7 @@ public class LoginServer extends Thread {
 
 		return false;
 	}
-
-	/**
-	 * Listens for client conections and handles them to ChatServerConnections.
-	 */
+	
 	@Override
 	public void run() {
 		try {
@@ -114,23 +98,16 @@ public class LoginServer extends Thread {
 
 			while (listening) {
 				final Socket socket = this.socketServer.accept();
-				// if(!Main.getip(socket).equals("127.0.0.1")){ // seems to deny
-				// localhost access :( perhaps for a good reason..?
 				Main.logger.log("LoginServer", "Client connection from " + Main.getip(socket));
 				final LoginServerConnection socketConnection = new LoginServerConnection(socket);
 				socketConnection.start();
 				this.clientConnections.add(socketConnection);
-				// }
 			}
-			;
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
 	}
-
-	/**
-	 * Closes the server's socket.
-	 */
+	
 	@Override
 	protected void finalize() {
 		try {
@@ -142,17 +119,12 @@ public class LoginServer extends Thread {
 		}
 	}
 	
-	/**
-	 * Gets the server's port.
-	 */
 	public int getPort() {
 		return this.port;
 	}
-
-	/**
-	 * Gets the number of clients.
-	 */
+	
 	public int getClientCount() {
 		return this.clientConnections.size();
 	}
+	
 }

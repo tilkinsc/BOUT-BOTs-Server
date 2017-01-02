@@ -1,8 +1,3 @@
-/*
- * LoginServerConnection.java
- * This file handles the connections.
- */
-
 package loginserver;
 
 import java.io.BufferedReader;
@@ -16,10 +11,6 @@ import java.security.NoSuchAlgorithmException;
 //import java.util.*;
 import java.sql.ResultSet;
 
-/**
- * The LoginServerConnection handles individual client connections to the chat
- * server.
- */
 public class LoginServerConnection extends Thread {
 
 	protected Socket socket;
@@ -41,16 +32,10 @@ public class LoginServerConnection extends Thread {
 	//private String pass1;
 	//private String oldline;
 
-	/**
-	 * Creates a new instance of LoginServerConnection.
-	 */
 	public LoginServerConnection(Socket socket) {
 		this.socket = socket;
 	}
 
-	/**
-	 * Gets the remote address of the client.
-	 */
 	public SocketAddress getRemoteAddress() {
 		return this.socket.getRemoteSocketAddress();
 	}
@@ -87,9 +72,6 @@ public class LoginServerConnection extends Thread {
 		}
 	}
 
-	/**
-	 * Writes the login packet.
-	 */
 	protected void doLogin() {
 		System.out.println("Doing login");
 		try {
@@ -141,9 +123,6 @@ public class LoginServerConnection extends Thread {
 		}
 	}
 
-	/**
-	 * update account information
-	 */
 	private void updateaccount(String user) {
 		try {
 			int logincount = 0;
@@ -167,10 +146,6 @@ public class LoginServerConnection extends Thread {
 		}
 	}
 
-	/**
-	 * Sends a message to the connected party.
-	 *
-	 */
 	public void write(String msg) {
 		try {
 			this.socketOut.write(msg + "\u0000");
@@ -179,10 +154,6 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}
-
-	/**
-	 * md5hash fuction for checkuser (database password hashing)
-	 */
 
 	private String md5hash(String text) {
 		try {
@@ -219,10 +190,6 @@ public class LoginServerConnection extends Thread {
 		return null;
 	}
 
-	/**
-	 * Reads the buffer.
-	 *
-	 */
 	protected String read() {
 		final StringBuffer buffer = new StringBuffer();
 		int codePoint;
@@ -244,9 +211,6 @@ public class LoginServerConnection extends Thread {
 		return buffer.toString();
 	}
 
-	/**
-	 * Waits from messages from the client...
-	 */
 	@Override
 	public void run() {
 		try {
@@ -277,13 +241,10 @@ public class LoginServerConnection extends Thread {
 
 	}
 
-	/**
-	 * Closes the reader, the writer and the socket.
-	 */
 	@Override
 	protected void finalize() {
 		try {
-			Main.loginServer.remove(this.getRemoteAddress());
+			Main.loginServer.removeClient(this.getRemoteAddress());
 			this.socketIn.close();
 			this.socketOut.close();
 			this.socket.close();

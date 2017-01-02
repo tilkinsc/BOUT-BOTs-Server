@@ -1,8 +1,3 @@
-/*
- * Main.java
- * This file executes the main server events.
- */
-
 package loginserver;
 
 import java.io.File;
@@ -16,9 +11,6 @@ import java.util.Date;
 import shared.Logger;
 import shared.SQLDatabase;
 
-/**
- * Start the server.
- */
 public class Main {
 
 	public static final boolean DEBUG = true;
@@ -65,9 +57,6 @@ public class Main {
 		return f;
 	}
 	
-	/**
-	 * Starts server and the GUI for messages.
-	 */
 	public static void main(String[] args) {
 		try {
 			gui = new LoginServerGUI();
@@ -99,4 +88,5 @@ public class Main {
 			System.exit(1);
 		}
 	}
+	
 }
