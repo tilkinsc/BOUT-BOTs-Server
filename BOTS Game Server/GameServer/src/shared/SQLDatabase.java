@@ -1,4 +1,3 @@
-
 package shared;
 
 import java.io.FileInputStream;
@@ -11,10 +10,6 @@ import java.util.Properties;
 
 import loginserver.Main;
 
-/**
- *
- * @author Marius
- */
 public class SQLDatabase {
 
 	protected String owner;
@@ -29,9 +24,6 @@ public class SQLDatabase {
 		this.owner = createdby;
 	}
 
-	/**
-	 * Loads the configs out of "configs/mysql.conf"
-	 */
 	private void loadconfigs() {
 		try {
 			final FileInputStream fin = new FileInputStream("configs/mysql.conf");
@@ -49,10 +41,7 @@ public class SQLDatabase {
 
 	public void start() {
 		loadconfigs();
-
-		/**
-		 * setup the basic connection
-		 */
+		
 		try {
 			// Load the JDBC driver
 			final String driverName = "org.gjt.mm.mysql.Driver";
