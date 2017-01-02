@@ -1,0 +1,5 @@
+[Exception: 2017-01-02 12:25:49] Communications link failure
+
+!CommunicationsException.ServerPacketTimingInfoNoRecv!
+[ChannelList: 2017-01-02 12:25:49] Channel List is walking on 11010
+[LoginServer: 2017-01-02 12:25:49] Has Hopped on 11000!
