@@ -114,13 +114,13 @@ public class ChannelServer extends Thread {
             this.serverSocket = new ServerSocket(this.port);
             this.listening = true;
             debug("listening");
-            Lobby lobby = new Lobby(this, Main.sql);
+            Lobby lobby = new Lobby(this);
 
             while (this.listening) {
                 Socket socket = this.serverSocket.accept();
                 //if(!Main.getip(socket).equals("127.0.0.1")){ // seems to remove the ability to login from locahost
 	                debug("client connection from " + socket.getRemoteSocketAddress());
-	                ChannelServerConnection socketConnection = new ChannelServerConnection(socket,this,lobby, Main.sql);
+	                ChannelServerConnection socketConnection = new ChannelServerConnection(socket,this,lobby);
 	                clientConnections.add(socketConnection);
 	                socketConnection.start();
                 //}

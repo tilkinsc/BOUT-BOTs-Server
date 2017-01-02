@@ -47,19 +47,14 @@ public class Room
     private int[] items;
     private String owner;
     
-    // static objects
-    
-    private SQLDatabase sql; // connection to the sql database
-    
     protected void debug(String msg) {
         Main.debug("["+owner+"]", msg);
     }
     
-    public Room(int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock, BotClass _bot, SQLDatabase _sql)
+    public Room(int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock, BotClass _bot)
     {
         try
         {
-            this.sql = _sql;
             this.roomnum = rnum;
             this.roomname = rname;
             this.roompass = rpass;
@@ -97,7 +92,7 @@ public class Room
                     break;
             }
 
-            sql.doupdate("INSERT INTO `rooms` (`ip`) VALUES ('" + this.roomip + "')");
+            SQLDatabase.doupdate("INSERT INTO `rooms` (`ip`) VALUES ('" + this.roomip + "')");
 
             Packet pack = new Packet();
             pack.addHeader((byte) 0xEE, (byte) 0x2E);
@@ -130,12 +125,12 @@ public class Room
             ResultSet rs;
             while (this.roomport[0] == 0)
             {
-                rs = sql.doquery("SELECT `port` FROM `rooms` WHERE `ip`='" + this.roomip + "'");
+                rs = SQLDatabase.doquery("SELECT `port` FROM `rooms` WHERE `ip`='" + this.roomip + "'");
                 if (rs.next())
                     this.roomport[0] = rs.getInt("port");
             }
 
-            sql.doupdate("DELETE FROM `rooms` WHERE `ip` = '"+this.roomip+"' and `port` = '"+this.roomport[0]+"'");
+            SQLDatabase.doupdate("DELETE FROM `rooms` WHERE `ip` = '"+this.roomip+"' and `port` = '"+this.roomport[0]+"'");
             debug("[this.roomip]" + this.roomip);
             debug("[this.roomport]" + this.roomport);
             debug("[this.roompass]" + this.roompass);
@@ -398,7 +393,7 @@ public class Room
         {
             if (this.roomsocks[i] == null)
             {
-                sql.doupdate("INSERT INTO `rooms` (`ip`) VALUES ('" + rip + "')");
+                SQLDatabase.doupdate("INSERT INTO `rooms` (`ip`) VALUES ('" + rip + "')");
                 this.roomplayer[i] = player;
                 this.bot[i] = botc;
                 this.roomposi[i] = 0x50;

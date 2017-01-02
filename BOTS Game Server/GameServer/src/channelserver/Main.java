@@ -19,11 +19,6 @@ public class Main {
 	public static ChannelGameServerGUI gui;
 	public static String str = new String();
 	
-	 /**
-	  * Create SQLDatabase Object
-	  */
-	public static SQLDatabase sql = new SQLDatabase("ChannelServer");
-	
 	/**
 	 *  Write the message to the GUI.
 	 */
@@ -63,7 +58,7 @@ public class Main {
 			for (int i = 0; i < 1372; i++)
 			    ChannelServer.longnullbyte += nullbyte;
 			
-			sql.start();
+			SQLDatabase.start();
 			debug("[ChannelServer]", "Server Starting...!");
 			debug("[ChannelServer]", "ChannelServer has jumped on port " + ChannelPort + "");
 			debug("[ChannelServer]", "Server Started!");

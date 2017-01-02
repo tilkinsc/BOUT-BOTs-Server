@@ -55,10 +55,7 @@ public class BotClass {
     private int gigas = 0;
     private int coins = 0;
 
-    private SQLDatabase sql;
-
-    public BotClass(String accountn, String ipadd, ItemClass itemn, SQLDatabase _sql) {
-        this.sql = _sql;
+    public BotClass(String accountn, String ipadd, ItemClass itemn) {
         this.account = accountn;
         this.ip = ipadd;
         this.item = itemn;
@@ -71,7 +68,7 @@ public class BotClass {
     public void loadchar()
     {
         try {
-            ResultSet rs = sql.doquery("SELECT * FROM bout_characters WHERE username='"+ this.account +"' LIMIT 1");
+            ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_characters WHERE username='"+ this.account +"' LIMIT 1");
             if(rs.next())
             {
                 this.id = rs.getInt("id");
@@ -117,7 +114,7 @@ public class BotClass {
                 this.equipitemscoin[0] = rs.getInt("equipheadcoin");
                 this.equipitemscoin[1] = rs.getInt("equipminibotcoin");
             }
-            rs = sql.doquery("SELECT * FROM bout_inventory WHERE name='"+ this.botname +"' LIMIT 1");
+            rs = SQLDatabase.doquery("SELECT * FROM bout_inventory WHERE name='"+ this.botname +"' LIMIT 1");
             if(rs.next())
             {
                 for(int i=2; i<12; i++)
@@ -127,7 +124,7 @@ public class BotClass {
                 }
             }
 
-            rs = sql.doquery("SELECT coins FROM bout_users WHERE username='"+ this.account +"' LIMIT 1");
+            rs = SQLDatabase.doquery("SELECT coins FROM bout_users WHERE username='"+ this.account +"' LIMIT 1");
             if(rs.next())
             {
                 this.coins = rs.getInt("coins");
@@ -471,14 +468,14 @@ public class BotClass {
 
     protected int createbot(String username, String name, int bottype)
     {
-        sql.doupdate("INSERT INTO `bout_characters` (`username`, `name`, `bot`)"
+    	SQLDatabase.doupdate("INSERT INTO `bout_characters` (`username`, `name`, `bot`)"
         +"VALUES ('"+username+"', '"+name+"', "+bottype+")");
-        sql.doupdate("INSERT INTO `bout_inventory` (`name`) VALUES ('"+name+"')");
+    	SQLDatabase.doupdate("INSERT INTO `bout_inventory` (`name`) VALUES ('"+name+"')");
         return 2;
     }
 
     public int deleteBot(String charname, String username){
-        sql.doupdate("DELETE FROM `bout_characters` WHERE `username` = '"+username+"' and `name` = '"+charname+"'");
+    	SQLDatabase.doupdate("DELETE FROM `bout_characters` WHERE `username` = '"+username+"' and `name` = '"+charname+"'");
         return 2;
     }
     
@@ -486,7 +483,7 @@ public class BotClass {
     protected boolean checkbot()
     {
         try {
-        ResultSet rs = sql.doquery("SELECT * FROM bout_characters WHERE username='"+ this.account +"' LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_characters WHERE username='"+ this.account +"' LIMIT 1");
         if (rs.next())
         {
             return true;
@@ -577,7 +574,7 @@ public class BotClass {
 
     public void updateBot()
     {
-        sql.doupdate("UPDATE `bout_characters` SET " +
+    	SQLDatabase.doupdate("UPDATE `bout_characters` SET " +
                 "`bot` = "+this.bottype+"," +
                 "`exp` = "+this.exp+"," +
                 "`level` = "+this.level+"," +
@@ -595,7 +592,7 @@ public class BotClass {
 
     public void updateInvent()
     {
-        sql.doupdate("UPDATE `bout_inventory` SET " +
+    	SQLDatabase.doupdate("UPDATE `bout_inventory` SET " +
                 "`item1` = "+this.inventitems[0]+"," +
                 "`item2` = "+this.inventitems[1]+"," +
                 "`item3` = "+this.inventitems[2]+"," +
@@ -611,7 +608,7 @@ public class BotClass {
 
     public void updateCoins()
     {
-        sql.doupdate("UPDATE `bout_users` SET `coins` = "+this.coins+" WHERE username='"+ this.account +"'");
+    	SQLDatabase.doupdate("UPDATE `bout_users` SET `coins` = "+this.coins+" WHERE username='"+ this.account +"'");
     }
 
     public int getEquip(int epart, int part)
@@ -660,7 +657,7 @@ public class BotClass {
 
     public void updateEquip()
     {
-        sql.doupdate("UPDATE `bout_characters` SET " +
+    	SQLDatabase.doupdate("UPDATE `bout_characters` SET " +
                 "`equiphead` = "+this.equipitemspart[0]+"," +
                 "`equipbody` = "+this.equipitemspart[1]+"," +
                 "`equiparm` = "+this.equipitemspart[2]+"," +
@@ -856,7 +853,7 @@ public class BotClass {
             Packet packet = new Packet();
             packet.addHeader((byte)0x27, (byte)0x2F);
             packet.addInt(1, 4, false);
-            ResultSet rs = sql.doquery("SELECT * FROM bout_characters WHERE name='" + func.removenullbyte(charname) + "' LIMIT 1");
+            ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_characters WHERE name='" + func.removenullbyte(charname) + "' LIMIT 1");
             rs.next();
             int clevel = rs.getInt("level");
             int cbot = rs.getInt("bot");

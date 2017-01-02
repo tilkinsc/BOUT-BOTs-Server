@@ -43,11 +43,9 @@ public class Lobby
     private PrintWriter[][][] roomsocks = new PrintWriter[MODES][MAXROOMS][8];
     private byte[][][][] roomips = new byte[MODES][MAXROOMS][8][4];*/
     private Room[][] rooms = new Room[MODES][MAXROOMS];
-    SQLDatabase sql;
 
-    public Lobby(ChannelServer server, SQLDatabase _sql)
+    public Lobby(ChannelServer server)
     {
-        this.sql = _sql;
         this.server = server;
         /*for (int i = 0; i < MODES; i++)
         {
@@ -409,7 +407,7 @@ public class Lobby
                 {
                     mode, i
                 };
-                this.rooms[mode][i] = new Room(room, cname, cpass, masterlvl, owner, ip, socks, bot, sql);
+                this.rooms[mode][i] = new Room(room, cname, cpass, masterlvl, owner, ip, socks, bot);
 
                 //writelobbyall(owner, getaddpacketroom(room));
                 return i;

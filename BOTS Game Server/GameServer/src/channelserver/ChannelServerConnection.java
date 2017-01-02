@@ -33,17 +33,15 @@ public class ChannelServerConnection extends Thread
     protected BotClass bot;
     protected ItemClass item;
     protected Shop shop;
-    protected SQLDatabase sql;
 
     /**
      * Creates a new instance of RelayServerConnection.
      */
-    public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby, SQLDatabase _sql)
+    public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby)
     {
         this.socket = socket;
         this.server = server;
-        this.sql = _sql;
-        item = new ItemClass(sql);
+        item = new ItemClass();
         this.ip = Main.getip(socket);
         this.lobby = _lobby;
         debug("" + socket.getLocalSocketAddress());
@@ -53,7 +51,7 @@ public class ChannelServerConnection extends Thread
     {
         try
         {
-            ResultSet rs = Main.sql.doquery("SELECT username FROM bout_users WHERE current_ip='" + Main.getip(socket) + "' LIMIT 1");
+            ResultSet rs = SQLDatabase.doquery("SELECT username FROM bout_users WHERE current_ip='" + Main.getip(socket) + "' LIMIT 1");
             if (rs.next())
             {
                 this.account = rs.getString("username");
@@ -90,7 +88,7 @@ public class ChannelServerConnection extends Thread
         try
         {
 
-            ResultSet rs = Main.sql.doquery("SELECT banned FROM bout_users WHERE username='" + account + "' LIMIT 1");
+            ResultSet rs = SQLDatabase.doquery("SELECT banned FROM bout_users WHERE username='" + account + "' LIMIT 1");
             if (rs.next())
             {
                 return rs.getInt("banned");
@@ -525,12 +523,12 @@ public class ChannelServerConnection extends Thread
                         int port = 0;
                         while (port == 0)
                         {
-                            rs = sql.doquery("SELECT `port` FROM `rooms` WHERE `ip`='" + ip + "'");
+                            rs = SQLDatabase.doquery("SELECT `port` FROM `rooms` WHERE `ip`='" + ip + "'");
                             rs.next();
                             port = rs.getInt("port");
                         }
 
-                        sql.doupdate("DELETE FROM `rooms` WHERE `ip` = '" + ip + "' and `port` = '" + port + "'");
+                        SQLDatabase.doupdate("DELETE FROM `rooms` WHERE `ip` = '" + ip + "' and `port` = '" + port + "'");
                         lobby.isConnected(room, bot.getName(), port);
                     }
                     else
@@ -927,21 +925,21 @@ public class ChannelServerConnection extends Thread
         try
         {
 
-            ResultSet rs = Main.sql.doquery("SELECT username FROM bout_characters WHERE name='" + charname + "' LIMIT 1");
+            ResultSet rs = SQLDatabase.doquery("SELECT username FROM bout_characters WHERE name='" + charname + "' LIMIT 1");
             if (rs.next())
             {
                 String username = rs.getString("username");
                 debug(username);
                 return true;
             }
-            rs = Main.sql.doquery("SELECT name FROM bout_characters WHERE username='" + account + "' LIMIT 1");
+            rs = SQLDatabase.doquery("SELECT name FROM bout_characters WHERE username='" + account + "' LIMIT 1");
             if (rs.next())
             {
                 String name = rs.getString("name");
                 debug(name);
                 return true;
             }
-            rs = Main.sql.doquery("SELECT * FROM bout_users WHERE username='" + account + "' LIMIT 1");
+            rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + account + "' LIMIT 1");
             if (rs.next())
             {
                 return false;
@@ -1023,7 +1021,7 @@ public class ChannelServerConnection extends Thread
             this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), "ISO8859-1"));
             this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
             checkAccount();
-            bot = new BotClass(this.account, this.ip, this.item, sql);
+            bot = new BotClass(this.account, this.ip, this.item);
             shop = new Shop(bot, item);
             String packet;
             while ((packet = read()) != null)

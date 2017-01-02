@@ -15,17 +15,11 @@ import shared.SQLDatabase;
 public class ItemClass {
     private String ip;
     private String botname;
-    private SQLDatabase sql;
-
-
-    public ItemClass(SQLDatabase _sql) {
-        this.sql = _sql;
-    }
-
+    
     public String getItemName(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT name FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT name FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
             return rs.getString("name");
@@ -40,7 +34,7 @@ public class ItemClass {
     public int getItemId(String name)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT id FROM bout_items WHERE name='"+ name +"' LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT id FROM bout_items WHERE name='"+ name +"' LIMIT 1");
         if (rs.next())
         {
             return rs.getInt("id");
@@ -57,7 +51,7 @@ public String[] getItemIdLike(String name)
         try {
             int i = 0;
             String[] ret = new String[6];
-            ResultSet rs = sql.doquery("SELECT id,name FROM bout_items WHERE name LIKE '" + name + "%'");
+            ResultSet rs = SQLDatabase.doquery("SELECT id,name FROM bout_items WHERE name LIKE '" + name + "%'");
             while (rs.next())
             {
                 if (i < 5) {
@@ -80,7 +74,7 @@ public String[] getItemIdLike(String name)
     {
         try {
         String ret = new String();
-        ResultSet rs = sql.doquery("SELECT * FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
             return rs;
@@ -95,7 +89,7 @@ public String[] getItemIdLike(String name)
     public int getSell(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT sell FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT sell FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
                 return rs.getInt("sell");
@@ -110,7 +104,7 @@ public String[] getItemIdLike(String name)
     public int getBuy(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT buy, buyable FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT buy, buyable FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
             if(rs.getInt("buyable") == 1)
@@ -126,7 +120,7 @@ public String[] getItemIdLike(String name)
     public int getBuyCoins(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT coins, buyable FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT coins, buyable FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
             if(rs.getInt("buyable") == 1)
@@ -142,7 +136,7 @@ public String[] getItemIdLike(String name)
     public int getCoinDays(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT day FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT day FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
                 return rs.getInt("day");
@@ -157,7 +151,7 @@ public String[] getItemIdLike(String name)
     public String getItemScript(int id)
     {
         try {
-        ResultSet rs = sql.doquery("SELECT script FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT script FROM bout_items WHERE id="+ id +" LIMIT 1");
         if (rs.next())
         {
             return rs.getString("script");
@@ -171,7 +165,7 @@ public String[] getItemIdLike(String name)
 
     public ResultSet getItemInfo(int id)
     {
-        ResultSet rs = sql.doquery("SELECT reqlevel, bot, part FROM bout_items WHERE id="+ id +" LIMIT 1");
+        ResultSet rs = SQLDatabase.doquery("SELECT reqlevel, bot, part FROM bout_items WHERE id="+ id +" LIMIT 1");
         return rs;
     }
 
