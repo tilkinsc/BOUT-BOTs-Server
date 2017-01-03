@@ -97,7 +97,6 @@ class ChannelServer {
 
 				// make packet
 				String channel_packet = new String(CHANNEL_HEADERBYTE, "ISO8859-1");
-				;
 				for (int i = 0; i < channel_i; i++)
 					channel_packet += channel_detail[i];
 
