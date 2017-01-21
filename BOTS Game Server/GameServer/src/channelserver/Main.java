@@ -1,11 +1,15 @@
 package channelserver;
 
+import java.io.PrintStream;
 import java.net.Socket;
 
+import shared.Logger;
 import shared.SQLDatabase;
 
 public class Main {
 
+	public static Logger logger;
+	
 	public static final boolean DEBUG = true;
 	public static ChannelServer channelServer;
 	public static ChannelGameServerGUI gui;
@@ -25,6 +29,11 @@ public class Main {
 		try {
 			final int ChannelPort = 11002;
 
+			final PrintStream[] ps = new PrintStream[] {
+					System.out
+			};
+			logger = new Logger(ps);
+			
 			channelServer = new ChannelServer(ChannelPort);
 			channelServer.start();
 
@@ -45,6 +54,7 @@ public class Main {
 			debug("[ChannelServer]", "Server Started!");
 		} catch (Exception e) {
 			debug("Main", "Exception (main)" + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
