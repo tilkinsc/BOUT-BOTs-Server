@@ -20,6 +20,7 @@ public class Main {
 	
 	public static LoginServer loginServer;
 	public static LoginServerGUI gui;
+	public static ChannelServer channelserver;
 	
 	public static RoomUDPServer roomserver;
 
@@ -72,8 +73,10 @@ public class Main {
 
 			roomserver = new RoomUDPServer();
 			roomserver.start();
+			
+			channelserver = new ChannelServer();
+			channelserver.start();
 
-			ChannelServer.main();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,7 +89,7 @@ public class Main {
 		System.out.println("login closed");
 		roomserver.stopThread();
 		System.out.println("room closed");
-		ChannelServer.stopThread();
+		channelserver.stopThread();
 		System.out.println("channel closed");
 		SQLDatabase.close();
 		System.out.println("SQL closed");
