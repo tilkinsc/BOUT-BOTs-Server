@@ -680,7 +680,7 @@ public class ChannelServerConnection extends Thread {
 	}
 
 	protected boolean isGM() {
-		if (this.account.equals("auron") || this.account.equals("auron3") || this.account.equals("kevinwagner"))
+		if (this.account.equals("auron") || this.account.equals("auron3") || this.account.equals("kevinwagner") || this.account.equals("ydroque"))
 			return true;
 		return false;
 	}

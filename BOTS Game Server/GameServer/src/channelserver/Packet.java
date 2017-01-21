@@ -1,5 +1,7 @@
 package channelserver;
 
+import shared.Util;
+
 public class Packet {
 
 	private String packet = "";
@@ -35,7 +37,7 @@ public class Packet {
 			this.calcHeader();
 		try {
 			final byte[] packb = this.header.getBytes("ISO8859-1");
-			return new String(packb, "ISO8859-1");
+			return Util.isoString(packb);
 		} catch (Exception e) {
 		}
 		return null;
@@ -44,7 +46,7 @@ public class Packet {
 	public void addPacketHead(byte b1, byte b2) {
 		try {
 			final byte[] head = { b1, b2 };
-			this.packet += new String(head, "ISO8859-1");
+			this.packet += Util.isoString(head);
 		} catch (Exception e) {
 		}
 	}
@@ -83,7 +85,7 @@ public class Packet {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2 };
-				return new String(varbyte, "ISO8859-1");
+				return Util.isoString(varbyte);
 
 			} else if (num == 4) {
 				final int b1 = var & 0xff;
@@ -91,7 +93,7 @@ public class Packet {
 				final int b3 = (var >> 16) & 0xff;
 				final int b4 = (var >> 24) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2, (byte) b3, (byte) b4 };
-				return new String(varbyte, "ISO8859-1");
+				return Util.isoString(varbyte);
 			}
 		} catch (Exception e) {
 		}
@@ -107,10 +109,10 @@ public class Packet {
 
 				if (!reverse) {
 					final byte[] varbyte = { (byte) b1, (byte) b2 };
-					this.packet += new String(varbyte, "ISO8859-1");
+					this.packet += Util.isoString(varbyte);
 				} else {
 					final byte[] varbyte = { (byte) b2, (byte) b1 };
-					this.packet += new String(varbyte, "ISO8859-1");
+					this.packet += Util.isoString(varbyte);
 				}
 
 			} else if (num == 4) {
@@ -119,7 +121,7 @@ public class Packet {
 				final int b3 = (var >> 16) & 0xff;
 				final int b4 = (var >> 24) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2, (byte) b3, (byte) b4 };
-				this.packet += new String(varbyte, "ISO8859-1");
+				this.packet += Util.isoString(varbyte);
 			}
 		} catch (Exception e) {
 		}
@@ -143,7 +145,7 @@ public class Packet {
 			}
 			this.packet = this.packet.substring(bytec);
 			return Integer.parseInt(hex_data_s, 16);
-
+			
 		} catch (Exception e) {
 
 		}
@@ -153,7 +155,7 @@ public class Packet {
 	public void addByte(byte b1) {
 		try {
 			final byte[] packbyte = { b1 };
-			this.packet += new String(packbyte, "ISO8859-1");
+			this.packet += Util.isoString(packbyte);
 		} catch (Exception e) {
 		}
 	}
@@ -161,7 +163,7 @@ public class Packet {
 	public void addByte2(byte b1, byte b2) {
 		try {
 			final byte[] packbyte = { b1, b2 };
-			this.packet += new String(packbyte, "ISO8859-1");
+			this.packet += Util.isoString(packbyte);
 		} catch (Exception e) {
 		}
 	}
@@ -169,14 +171,14 @@ public class Packet {
 	public void addByte4(byte b1, byte b2, byte b3, byte b4) {
 		try {
 			final byte[] packbyte = { b1, b2, b3, b4 };
-			this.packet += new String(packbyte, "ISO8859-1");
+			this.packet += Util.isoString(packbyte);
 		} catch (Exception e) {
 		}
 	}
 
 	public void addByteArray(byte[] bytearr) {
 		try {
-			this.packet += new String(bytearr, "ISO8859-1");
+			this.packet += Util.isoString(bytearr);
 		} catch (Exception e) {
 		}
 	}
@@ -184,7 +186,7 @@ public class Packet {
 	public String getPacket() {
 		try {
 			final byte[] packb = this.packet.getBytes("ISO8859-1");
-			return new String(packb, "ISO8859-1");
+			return Util.isoString(packb);
 		} catch (Exception e) {
 		}
 		return null;

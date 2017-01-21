@@ -3,6 +3,7 @@ package channelserver;
 import java.sql.ResultSet;
 
 import shared.SQLDatabase;
+import shared.Util;
 
 public class BotClass {
 
@@ -223,14 +224,14 @@ public class BotClass {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2 };
-				return new String(varbyte, "ISO8859-1");
+				return Util.isoString(varbyte);
 			} else if (num == 4) {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
 				final int b3 = (var >> 16) & 0xff;
 				final int b4 = (var >> 24) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2, (byte) b3, (byte) b4 };
-				return new String(varbyte, "ISO8859-1");
+				return Util.isoString(varbyte);
 			}
 		} catch (Exception e) {
 
