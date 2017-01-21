@@ -11,7 +11,7 @@ import shared.SQLDatabase;
 
 public class Main {
 
-	public static final String SESSION_LOG_DIR = "log";
+	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
 	public static LoginServer loginServer;
@@ -40,7 +40,7 @@ public class Main {
 	public static File createSessionLog() throws IOException {
 		final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		final File f = new File(SESSION_LOG_DIR + "\\" + format.format(new Date()) + ".log");
-		boolean created = f.createNewFile();
+		final boolean created = f.createNewFile();
 		if(!created) {
 			System.out.println("Session log already exists! Check your time!");
 			System.exit(1);
