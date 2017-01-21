@@ -10,7 +10,13 @@ import shared.SQLDatabase;
 public class RoomUDPServer extends Thread {
 
 	
-	private boolean stop = false;
+	private boolean stop;
+	
+	@Override
+	public void start() {
+		stop = false;
+		super.start();
+	}
 	
 	@Override
 	public void run() {

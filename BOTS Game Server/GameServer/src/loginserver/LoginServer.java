@@ -64,12 +64,10 @@ public class LoginServer extends Thread {
 	protected int port;
 	protected ServerSocket socketServer;
 	protected Vector<LoginServerConnection> clientConnections;
-	protected volatile boolean listening;
 	
 	public LoginServer(int serverPort) {
 		this.port = serverPort;
 		this.clientConnections = new Vector<LoginServerConnection>();
-		this.listening = false;
 	}
 	
 	public boolean removeClient(SocketAddress remoteAddress) {
@@ -100,15 +98,22 @@ public class LoginServer extends Thread {
 		}
 	}
 	
+	private boolean stop;
+	
+	@Override
+	public void start() {
+		stop = false;
+		super.start();
+	}
+	
 	@Override
 	public void run() {
 		try {
 			Main.logger.log("LoginServer", "Has Hopped on " + this.port + "!");
 			this.socketServer = new ServerSocket(this.port);
 			this.socketServer.setSoTimeout(5000);
-			this.listening = true;
 
-			while (listening) {
+			while (!stop) {
 				try {
 					final Socket socket = this.socketServer.accept();
 					Main.logger.log("LoginServer", "Client connection from " + socket.getInetAddress().getHostAddress());
@@ -130,7 +135,7 @@ public class LoginServer extends Thread {
 	}
 	
 	public void stopThread() {
-		this.listening = false;
+		this.stop = true;
 		try {
 			this.join();
 		} catch (InterruptedException e) {

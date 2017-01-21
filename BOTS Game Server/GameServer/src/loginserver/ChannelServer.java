@@ -32,8 +32,6 @@ class ChannelServer extends Thread {
 
 	// SQL Querys
 	protected static final String GET_CHANNEL_QUERY = "SELECT * FROM bout_channels WHERE status=1 LIMIT 12";
-
-	private boolean stop = false;
 	
 	protected void getChannels() {
 
@@ -70,7 +68,16 @@ class ChannelServer extends Thread {
 			System.out.println("Exception: " + e.getMessage());
 		}
 	}
+	
+	private boolean stop;
+	
+	@Override
+	public void start() {
+		stop = false;
+		super.start();
+	}
 
+	@Override
 	public void run() {
 		final byte[] receiveData = new byte[12];
 		byte[] sendData = new byte[340];
@@ -121,13 +128,18 @@ class ChannelServer extends Thread {
 			}
 			serverSocket.close();
 		} catch(Exception e) {
-			
+			Main.logger.log("Exception", e.getMessage());
 		}
 		System.out.println("Ended");
 	}
 	
 	public void stopThread() {
 		stop = true;
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
