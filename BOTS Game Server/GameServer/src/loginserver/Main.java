@@ -51,7 +51,6 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			gui = new LoginServerGUI();
-			loginServer = new LoginServer(11000, 5000);
 			
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
@@ -61,11 +60,10 @@ public class Main {
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 
-			SQLDatabase.start();
-
-			loginServer.start();
-
+			loginServer = new LoginServer(11000, 5000);
 			gui.startUpdateTimer();
+			SQLDatabase.start();
+			loginServer.start();
 
 			roomserver = new RoomUDPServer(11011, 5000);
 			roomserver.start();
