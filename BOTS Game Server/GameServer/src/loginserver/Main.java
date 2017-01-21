@@ -70,8 +70,8 @@ public class Main {
 			
 			channelserver = new ChannelServer(11010, 5000);
 			channelserver.start();
-
-
+			
+			logger.log("Main", "Login server started!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
