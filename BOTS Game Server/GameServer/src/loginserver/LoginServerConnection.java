@@ -9,8 +9,8 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import etc.Util;
 import shared.SQLDatabase;
+import shared.Util;
 
 public class LoginServerConnection extends Thread {
 

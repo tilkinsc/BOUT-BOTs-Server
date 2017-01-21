@@ -6,8 +6,8 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.sql.ResultSet;
 
-import etc.Util;
 import shared.SQLDatabase;
+import shared.Util;
 
 class ChannelServer extends Thread {
 
