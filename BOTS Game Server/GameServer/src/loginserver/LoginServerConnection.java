@@ -201,7 +201,7 @@ public class LoginServerConnection extends Thread {
 	}
 
 	@Override
-	protected void finalize() {
+	public void finalize() {
 		try {
 			Main.loginServer.removeClient(this.getRemoteAddress());
 			this.socketIn.close();
