@@ -70,6 +70,7 @@ public class LoginServerConnection extends Thread {
 				return 3;
 			else if (allog == 1)
 				return 4;
+			return 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			Main.logger.log("Exception", e.getMessage());
@@ -89,10 +90,10 @@ public class LoginServerConnection extends Thread {
 				updateaccount(user);
 				status = Util.isoString(LoginServer.LOGIN_SUCCESSBYTE);
 				result = "Success";
-				this.socket.close();
 				break;
-			case 1:
 			default: // attempt to find out if there is a correct way to give unspecified error
+				Main.logger.log("LoginServerConnection", "Unspecified login return");
+			case 1:
 				status = Util.isoString(LoginServer.LOGIN_INCUSERBYTE);
 				result = "Incorrect Username";
 				break;
@@ -113,6 +114,7 @@ public class LoginServerConnection extends Thread {
 			this.socketOut.flush();
 			this.socketOut.write(status);
 			this.socketOut.flush();
+			this.socketOut.close();
 			Main.logger.log("LoginServerConnection", "Login Sent " + result);
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
