@@ -9,9 +9,9 @@ import shared.SQLDatabase;
 
 public class AddCharacter {
 
+	
 	// Adds a user to the database...
 	public static void main(String[] args) throws UnknownHostException {
-
 		final int LOGIN_ID = 0;
 		final int COINS = 1000;
 		final String LOGIN_USERNAME = "ydroque";
@@ -22,20 +22,19 @@ public class AddCharacter {
 		final String local_ip = InetAddress.getLocalHost().toString();
 		final String LOGIN_IP = local_ip.substring(0, 0) + local_ip.substring(1);
 		final String LOGIN_EMAIL = "name@site.com";
-
+		
 		final java.util.Date date = new java.util.Date();
 		final java.text.SimpleDateFormat dformat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+		
 		final String query = "INSERT INTO `bout_users` (id, username, password, coins, banned, online, current_ip, logincount, last_ip, lastlogin, email)"
 				+ "VALUES (" + LOGIN_ID + ",\"" + LOGIN_USERNAME + "\",\"" + LOGIN_PASSWORD + "\"," + COINS + ","
 				+ LOGIN_BANNED + "," + LOGIN_ALLOG + ",\"" + LOGIN_IP + "\"," + LOGIN_COUNT + ",\"" + LOGIN_IP + "\",'"
 				+ dformat.format(date) + "',\"" + LOGIN_EMAIL + "\");";
-
+		
 		SQLDatabase.start();
 		SQLDatabase.doupdate(query);
-
 	}
-
+	
 	private static String md5hash(String text) {
 		try {
 			byte[] encryptMsg = null;
@@ -69,5 +68,5 @@ public class AddCharacter {
 		}
 		return null;
 	}
-
+	
 }

@@ -26,7 +26,7 @@ public class ChannelServerConnection extends Thread {
 	protected BotClass bot;
 	protected ItemClass item;
 	protected Shop shop;
-
+	
 	public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby) {
 		this.socket = socket;
 		this.server = server;
@@ -35,7 +35,7 @@ public class ChannelServerConnection extends Thread {
 		this.lobby = _lobby;
 		Main.logger.log("ChannelServerConnection", "" + socket.getLocalSocketAddress());
 	}
-
+	
 	public void checkAccount() {
 		try {
 			final String ip = socket.getInetAddress().getHostAddress();
@@ -52,14 +52,13 @@ public class ChannelServerConnection extends Thread {
 			Main.logger.log("Exception", e.getMessage());
 		}
 	}
-
+	
 	public SocketAddress getRemoteAddress() {
 		return this.socket.getRemoteSocketAddress();
 	}
-
+	
 	protected int isbanned(String account) {
 		try {
-
 			final ResultSet rs = SQLDatabase
 					.doquery("SELECT banned FROM bout_users WHERE username='" + account + "' LIMIT 1");
 			if (rs.next())
@@ -68,11 +67,11 @@ public class ChannelServerConnection extends Thread {
 		}
 		return 0;
 	}
-
+	
 	protected String removeheader(String packet) {
 		return packet.substring(4);
 	}
-
+	
 	protected String removenullbyte(String thestring) {
 		final byte[] stringbyte = thestring.getBytes();
 		int a = 0;
@@ -80,7 +79,7 @@ public class ChannelServerConnection extends Thread {
 			a++;
 		return thestring.substring(0, a);
 	}
-
+	
 	protected void prasecmd(int cmd, String packet) {
 		try {
 			final Packet pack = new Packet();
@@ -96,7 +95,6 @@ public class ChannelServerConnection extends Thread {
 				socketOut.flush();
 				// debug("send cnumberpacket");
 				break;
-
 			case 0xF92A:
 				Main.logger.log("ChannelServerConnection", "parsing bots");
 				pack.addHeader((byte) 0x28, (byte) 0x27);
@@ -130,7 +128,6 @@ public class ChannelServerConnection extends Thread {
 					pack.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 					send(pack);
 					pack.clean();
-
 				} else {
 					socketOut.write(new String(ChannelServer.CHARACTER_INFORMATION_HEADER));
 					socketOut.flush();
@@ -143,7 +140,6 @@ public class ChannelServerConnection extends Thread {
 				}
 				// debug("send cinfopack");
 				break;
-
 			case 0xFA2A: {
 				// debug("parse fa");
 				// Packet pack = new Packet();
@@ -155,7 +151,7 @@ public class ChannelServerConnection extends Thread {
 				final String accountname = pack.getString(1, 23, false);
 				final String charname = pack.getString(0, 15, false);
 				pack.clean();
-
+				
 				if (this.account.equals("a")) {
 					final byte[] loginhack = { (byte) 0x00, (byte) 0x32 };
 					this.socket.getOutputStream().write(ChannelServer.BOT_CREATION_HEADER);
@@ -186,7 +182,6 @@ public class ChannelServerConnection extends Thread {
 				}
 				break;
 			}
-
 			case 0x742B: {
 				// Packet packs = new Packet();
 				if (firstlog) {
@@ -199,14 +194,13 @@ public class ChannelServerConnection extends Thread {
 				send(lobby.getroompacket(1, 0));
 				sendChatMsg("Welcome Secured's Test Server!", 4);
 				sendChatMsg("Have fun :)", 4);
-
+				
 				this.socketOut.write(new String(ChannelServer.OK_HEADER));
 				this.socketOut.flush();
 				this.socketOut.write(new String(ChannelServer.OK_PACKET));
 				this.socketOut.flush();
 				break;
 			}
-
 			case 0x1A27:
 				pack.setPacket(packet);
 				pack.removeHeader();
@@ -227,21 +221,17 @@ public class ChannelServerConnection extends Thread {
 				}
 				pack.clean();
 				break;
-
 			case 0x442B:
 				lobby.whisper(packet, this.charname);
 				break;
-
 			case 0x222B:
 				sendBye(1);
 				this.finalize();
 				break;
-
 			case 0xFB2A:
 				final int anwser = bot.deleteBot(this.charname, this.account);
 				sendBye(anwser);
 				break;
-
 			case 0x512B:
 				pack.addHeader((byte) 0x37, (byte) 0x2F);
 				pack.addPacketHead((byte) 0x01, (byte) 0x00);
@@ -249,7 +239,6 @@ public class ChannelServerConnection extends Thread {
 				send(pack);
 				send(bot.getInventPacket(0xEB));
 				break;
-
 			case 0x022B: {
 				pack.setPacket(packet);
 				pack.getString(0, 42, true);
@@ -259,7 +248,6 @@ public class ChannelServerConnection extends Thread {
 				// WHERE id="+itemid);
 				break;
 			}
-
 			case 0x032B: {
 				pack.setPacket(packet);
 				pack.getString(0, 42, true);
@@ -269,19 +257,17 @@ public class ChannelServerConnection extends Thread {
 				send(shop.sell(itemid, slotnum));
 				break;
 			}
-
 			case 0x042B: {
 				pack.setPacket(packet);
 				pack.getString(0, 42, true);
 				pack.getInt(2);
 				final int itemid = pack.getInt(4);
-
+				
 				send(shop.buycoin(itemid));
 				// Main.sql.doupdate("UPDATE `bout_items` SET `buyable` = 1
 				// WHERE id="+itemid);
 				break;
 			}
-
 			case 0xFC2A: {
 				pack.setPacket(packet);
 				pack.getString(0, 29, false);
@@ -290,7 +276,6 @@ public class ChannelServerConnection extends Thread {
 				send(bot.equip(slot, 1));
 				break;
 			}
-
 			case 0xFD2A: {
 				pack.setPacket(packet);
 				pack.getString(0, 29, false);
@@ -299,7 +284,6 @@ public class ChannelServerConnection extends Thread {
 				send(bot.deequip(slot, 1));
 				break;
 			}
-
 			case 0x322B: {
 				pack.setPacket(packet);
 				pack.getString(0, 6, false);
@@ -308,7 +292,6 @@ public class ChannelServerConnection extends Thread {
 				send(bot.equip(slot, 2));
 				break;
 			}
-
 			case 0x332B: {
 				pack.setPacket(packet);
 				pack.getString(0, 6, false);
@@ -317,7 +300,6 @@ public class ChannelServerConnection extends Thread {
 				send(bot.deequip(slot, 2));
 				break;
 			}
-
 			case 0x342B: {
 				pack.setPacket(packet);
 				pack.getString(0, 6, false);
@@ -326,7 +308,6 @@ public class ChannelServerConnection extends Thread {
 				send(bot.equip(slot, 3));
 				break;
 			}
-
 			case 0x352B: {
 				pack.setPacket(packet);
 				pack.getString(0, 6, false);
@@ -335,14 +316,12 @@ public class ChannelServerConnection extends Thread {
 				send(bot.deequip(slot, 3));
 				break;
 			}
-
 			case 0x412B: {
 				pack.setPacket(packet);
 				pack.removeHeader();
 				send(bot.getEquipByName(pack.getPacket()));
 				break;
 			}
-
 			case 0x0A2B: {
 				pack.setPacket(packet);
 				pack.removeHeader();
@@ -353,7 +332,6 @@ public class ChannelServerConnection extends Thread {
 				pack.clean();
 				break;
 			}
-
 			case 0x092B: {
 				pack.setPacket(packet);
 				pack.removeHeader();
@@ -365,11 +343,9 @@ public class ChannelServerConnection extends Thread {
 				case 2:
 					roommode = 0;
 					break;
-
 				case 0:
 					roommode = 1;
 					break;
-
 				case 3:
 					roommode = 2;
 					break;
@@ -381,7 +357,6 @@ public class ChannelServerConnection extends Thread {
 				bot.setRoom(room);
 				break;
 			}
-
 			case 0x652B: {
 				final int[] room = lobby.haveRoom(bot.getName());
 				if (room[0] == -1)
@@ -396,7 +371,6 @@ public class ChannelServerConnection extends Thread {
 				}
 				break;
 			}
-
 			case 0x062B: {
 				pack.setPacket(packet);
 				pack.removeHeader();
@@ -406,11 +380,9 @@ public class ChannelServerConnection extends Thread {
 				case 2:
 					roommode = 0;
 					break;
-
 				case 0:
 					roommode = 1;
 					break;
-
 				case 3:
 					roommode = 2;
 					break;
@@ -430,14 +402,12 @@ public class ChannelServerConnection extends Thread {
 						rs.next();
 						port = rs.getInt("port");
 					}
-
 					SQLDatabase.doupdate("DELETE FROM `rooms` WHERE `ip` = '" + ip + "' and `port` = '" + port + "'");
 					lobby.isConnected(room, bot.getName(), port);
 				} else
 					send(npacket);
 				break;
 			}
-
 			case 0x422B: {
 				final int[] room = bot.getRoom();
 				if (room[0] == -1) {
@@ -448,7 +418,6 @@ public class ChannelServerConnection extends Thread {
 				lobby.removeRoomPlayer(room, bot.getName());
 				break;
 			}
-
 			case 0x0B2B: {
 				final int[] room = lobby.haveRoom(bot.getName());
 				if (room[0] == -1)
@@ -463,13 +432,11 @@ public class ChannelServerConnection extends Thread {
 				pack.clean();
 				break;
 			}
-
 			case 0x3E2B: {
 				if (bot.getRoom()[0] != -1)
 					lobby.readyToPlay(bot.getRoom(), bot.getName());
 				break;
 			}
-
 			case 0x392B: // set ready in room
 			{
 				final int slot = lobby.getSlot(bot.getRoom(), bot.getName());
@@ -479,7 +446,6 @@ public class ChannelServerConnection extends Thread {
 				lobby.setRoomStatus(bot.getRoom(), slot);
 				break;
 			}
-
 			case 0x6F2B: // respawn thing
 			{
 				pack.addHeader((byte) 0x54, (byte) 0x2F);
@@ -487,7 +453,6 @@ public class ChannelServerConnection extends Thread {
 				send(pack);
 				break;
 			}
-
 			case 0x3A2B: // handle death of character
 			{
 				System.out.println("Entered 0x3A2B");
@@ -500,14 +465,12 @@ public class ChannelServerConnection extends Thread {
 				pack.removeHeader();
 				System.out.println("0: " + pack.getInt(0) + ", 1: " + pack.getInt(1) + ", 2: " + pack.getInt(2)
 						+ ", 3: " + pack.getInt(3) + ", 4: " + pack.getInt(4));
-				final int who = pack.getInt(0); // I wanna try with TWO
-												// computers
-				final int monsternum = pack.getInt(1);
+				final int who = pack.getInt(2); // I wanna try with TWO computers
+				final int monsternum = pack.getInt(2);
 				final int monstertyp = 2;
 				lobby.roomMonsterDead(room, monstertyp, monsternum, who);
 				break;
 			}
-
 			case 0x3C2B: // Use revive?
 			{
 				if (bot.getRoom()[0] == -1)
@@ -520,18 +483,14 @@ public class ChannelServerConnection extends Thread {
 				lobby.useItem(bot.getRoom(), bot.getName(), typ, num);
 				break;
 			}
-
 			case 0x3f2b: // Heartbeat?
 			{
-
 				System.out.println("Entered special packet");
 				pack.setPacket(packet);
 				System.out.println("0: " + pack.getInt(0) + ", 1: " + pack.getInt(1) + ", 2: " + pack.getInt(2)
 						+ ", 3: " + pack.getInt(3) + ", 4: " + pack.getInt(4));
-
 				break;
 			}
-
 			default:
 				Main.logger.log("ChannelServerConnection", "parse unknown packet (" + cmd + ", " + Integer.toHexString(cmd) + ")");
 			}
@@ -539,7 +498,7 @@ public class ChannelServerConnection extends Thread {
 			Main.logger.log("ChannelServerConnection", e.getMessage());
 		}
 	}
-
+	
 	protected void parsechatcmd(String cmd) {
 		Main.logger.log("ChannelServerConnection", cmd);
 		String rcmd;
@@ -548,13 +507,13 @@ public class ChannelServerConnection extends Thread {
 		int i = 0;
 		while (bytecmd[i] != 0x20 && i < cmd.length() - 1)
 			i++;
-
+		
 		if (i == cmd.length() - 1)
 			rcmd = cmd.substring(0, cmd.length());
 		else
 			rcmd = cmd.substring(0, i);
 		Main.logger.log("ChannelServerConnection", "rcmd : -" + rcmd + "-");
-
+		
 		if (rcmd.equals("kick") && isGM()) {
 			final String chaname = cmd.substring(i + 1);
 			if (lobby.kickPlayer(chaname, "Player " + chaname + " has been kicked by " + this.charname) == 0)
@@ -584,7 +543,6 @@ public class ChannelServerConnection extends Thread {
 				bot.setInvent(0, part - 1);
 				sendChatMsg("Inventory-item " + old + " deleted.", 2);
 			}
-
 		} else if (rcmd.equals("item") && isGM()) {
 			int id = 0;
 			if (cmd.substring(i + 1).matches("\\d*"))
@@ -640,7 +598,7 @@ public class ChannelServerConnection extends Thread {
 			sendChatMsg("Userlist refreshed", 2);
 		}
 	}
-
+	
 	protected void send(Packet pack) {
 		final String[] packet = new String[2];
 		packet[0] = pack.getHeader();
@@ -650,7 +608,7 @@ public class ChannelServerConnection extends Thread {
 		this.socketOut.write(packet[1]);
 		this.socketOut.flush();
 	}
-
+	
 	protected void sendBye(int whatpack) {
 		final Packet pack = new Packet();
 		final String[] packandhead = new String[2];
@@ -665,7 +623,6 @@ public class ChannelServerConnection extends Thread {
 			this.socketOut.write(packandhead[1]);
 			this.socketOut.flush();
 			break;
-
 		case 2:
 			pack.addHeader((byte) 0xE3, (byte) 0x2E);
 			pack.addInt(1, 2, false);
@@ -678,38 +635,34 @@ public class ChannelServerConnection extends Thread {
 			break;
 		}
 	}
-
+	
 	protected boolean isGM() {
-		if (this.account.equals("auron") || this.account.equals("auron3") || this.account.equals("kevinwagner") || this.account.equals("ydroque"))
-			return true;
-		return false;
+		return (this.account.equals("auron") || this.account.equals("auron3") || this.account.equals("kevinwagner") || this.account.equals("ydroque"));
 	}
-
+	
 	protected void sendChatMsg(String msg, int color) {
 		final Packet pack = new Packet();
-
+		
 		pack.addHeader((byte) 0x1A, (byte) 0x27);
-
+		
 		pack.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		pack.addInt(color, 2, false);
 		pack.addString(msg);
 		pack.addByte((byte) 0x00);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = pack.getHeader();
 		packandhead[1] = pack.getPacket();
-
+		
 		this.socketOut.write(packandhead[0]);
 		this.socketOut.flush();
 		this.socketOut.write(packandhead[1]);
 		this.socketOut.flush();
-
 	}
-
+	
 	protected boolean checkexist(String charname, String account) {
 		try {
-
 			ResultSet rs = SQLDatabase
 					.doquery("SELECT username FROM bout_characters WHERE name='" + charname + "' LIMIT 1");
 			if (rs.next()) {
@@ -732,11 +685,10 @@ public class ChannelServerConnection extends Thread {
 		}
 		return false;
 	}
-
+	
 	protected String read() {
 		final StringBuffer buffer = new StringBuffer();
 		int codePoint;
-
 		try {
 			// debug("start read");
 			for (int i = 0; i < 4; i++) {
@@ -747,8 +699,8 @@ public class ChannelServerConnection extends Thread {
 				} else if (Character.isValidCodePoint(codePoint))
 					buffer.appendCodePoint(codePoint);
 			}
+			
 			final int plen = func.bytetoint(buffer.toString().substring(2), 2);
-
 			if (plen > 1)
 				for (int i = 0; i < plen; i++) {
 					codePoint = this.socketIn.read();
@@ -764,10 +716,9 @@ public class ChannelServerConnection extends Thread {
 			this.server.removeClient(this.getRemoteAddress());
 			return null;
 		}
-
 		return buffer.toString();
 	}
-
+	
 	@Override
 	public void run() {
 		try {
@@ -786,7 +737,7 @@ public class ChannelServerConnection extends Thread {
 		// debug("bye");
 		this.finalize();
 	}
-
+	
 	@Override
 	protected void finalize() {
 		try {
@@ -806,4 +757,5 @@ public class ChannelServerConnection extends Thread {
 			Main.logger.log("Exception", e.getMessage());
 		}
 	}
+	
 }

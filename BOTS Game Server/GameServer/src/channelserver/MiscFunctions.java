@@ -2,11 +2,11 @@ package channelserver;
 
 public class MiscFunctions {
 
+	
 	public int bytetoint(String thestring, int bytec) {
 		try {
 			String hex_data_s = "";
 			for (int i = bytec - 1; i >= 0; i--) {
-
 				int data = thestring.getBytes("ISO8859-1")[i];
 				if (data < 0)
 					data += 256;
@@ -21,7 +21,7 @@ public class MiscFunctions {
 		}
 		return 0;
 	}
-
+	
 	public static String getbyte(int var, int num) {
 		final StringBuffer tstring = new StringBuffer();
 		if (num == 2) {
@@ -30,7 +30,6 @@ public class MiscFunctions {
 			tstring.appendCodePoint(b1);
 			tstring.appendCodePoint(b2);
 			return tstring.toString();
-
 		} else if (num == 4) {
 			final int b1 = var & 0xff;
 			final int b2 = (var >> 8) & 0xff;
@@ -44,7 +43,7 @@ public class MiscFunctions {
 		}
 		return null;
 	}
-
+	
 	public int getcmd(String packet) {
 		try {
 			String hex_data_s = "";
@@ -63,7 +62,7 @@ public class MiscFunctions {
 		}
 		return 0;
 	}
-
+	
 	public int compareChat(String chatpack, String rlcharname, boolean whisper, boolean isgm) {
 		try {
 			final byte[] stringbyte = chatpack.getBytes("ISO8859-1");
@@ -73,7 +72,7 @@ public class MiscFunctions {
 			int a = 0;
 			while (stringbyte[a] != 0x5B)
 				a++;
-
+			
 			int b = a;
 			final int chstart = b + 1;
 			int c = 0;
@@ -83,7 +82,7 @@ public class MiscFunctions {
 				b++;
 				c++;
 			}
-
+			
 			final int chende = b;
 			final String chname = chatpack.substring(chstart, chende);
 			Main.logger.log("MiscFunctions", chname + "-  -" + rlcharname);
@@ -95,18 +94,18 @@ public class MiscFunctions {
 		}
 		return 0;
 	}
-
+	
 	protected String removenullbyte(String thestring) {
 		try {
 			final byte[] stringbyte = thestring.getBytes("ISO8859-1");
 			int a = 0;
 			while (stringbyte[a] != 0x00)
 				a++;
-
 			return thestring.substring(0, a);
 		} catch (Exception e) {
 
 		}
 		return null;
 	}
+	
 }

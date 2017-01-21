@@ -19,7 +19,7 @@ public class Main {
 	public static ChannelServer channelserver;
 	
 	public static RoomUDPServer roomserver;
-
+	
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
 			@Override
@@ -36,7 +36,7 @@ public class Main {
 			}
 		};
 	}
-
+	
 	public static File createSessionLog() throws IOException {
 		final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		final File f = new File(SESSION_LOG_DIR + "\\" + format.format(new Date()) + ".log");

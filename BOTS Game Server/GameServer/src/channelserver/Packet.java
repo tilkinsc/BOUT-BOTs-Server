@@ -7,31 +7,31 @@ public class Packet {
 	private String packet = "";
 	private String header = "";
 	private boolean calced = false;
-
+	
 	public int getLen() {
 		return this.packet.length();
 	}
-
+	
 	public void setPacket(String pack) {
 		this.packet = pack;
 	}
-
+	
 	public void addHeader(byte b1, byte b2) {
 		calced = false;
 		final byte[] headbyte = { b1, b2 };
 		final String head = new String(headbyte);
 		this.header = head;
 	}
-
+	
 	public void removeHeader() {
 		this.packet = this.packet.substring(4);
 	}
-
+	
 	protected void calcHeader() {
 		this.header += getasByte(this.packet.length(), 2);
 		calced = true;
 	}
-
+	
 	public String getHeader() {
 		if (!calced)
 			this.calcHeader();
@@ -42,7 +42,7 @@ public class Packet {
 		}
 		return null;
 	}
-
+	
 	public void addPacketHead(byte b1, byte b2) {
 		try {
 			final byte[] head = { b1, b2 };
@@ -50,11 +50,11 @@ public class Packet {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public void addString(String string) {
 		this.packet += string;
 	}
-
+	
 	public String getString(int start, int end, boolean nulled) {
 		final String thestring = this.packet.substring(start, end);
 		this.packet = this.packet.substring(end);
@@ -62,23 +62,21 @@ public class Packet {
 			return thestring;
 		else
 			return removenullbyte(thestring);
-
 	}
-
+	
 	protected String removenullbyte(String thestring) {
 		try {
 			final byte[] stringbyte = thestring.getBytes("ISO8859-1");
 			int a = 0;
 			while (stringbyte[a] != 0x00)
 				a++;
-
 			return thestring.substring(0, a);
 		} catch (Exception e) {
-
+			
 		}
 		return null;
 	}
-
+	
 	public String getasByte(int var, int num) {
 		try {
 			if (num == 2) {
@@ -86,7 +84,6 @@ public class Packet {
 				final int b2 = (var >> 8) & 0xff;
 				final byte[] varbyte = { (byte) b1, (byte) b2 };
 				return Util.isoString(varbyte);
-
 			} else if (num == 4) {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
@@ -98,15 +95,14 @@ public class Packet {
 		} catch (Exception e) {
 		}
 		return null;
-
 	}
-
+	
 	public void addInt(int var, int num, boolean reverse) {
 		try {
 			if (num == 2) {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
-
+				
 				if (!reverse) {
 					final byte[] varbyte = { (byte) b1, (byte) b2 };
 					this.packet += Util.isoString(varbyte);
@@ -114,7 +110,6 @@ public class Packet {
 					final byte[] varbyte = { (byte) b2, (byte) b1 };
 					this.packet += Util.isoString(varbyte);
 				}
-
 			} else if (num == 4) {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
@@ -126,14 +121,12 @@ public class Packet {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public int getInt(int bytec) {
 		try {
-
 			final String thestring = this.packet.substring(0, bytec);
 			String hex_data_s = "";
 			for (int i = bytec - 1; i >= 0; i--) {
-
 				int data = thestring.getBytes("ISO8859-1")[i];
 				if (data < 0)
 					data += 256;
@@ -145,13 +138,12 @@ public class Packet {
 			}
 			this.packet = this.packet.substring(bytec);
 			return Integer.parseInt(hex_data_s, 16);
-			
 		} catch (Exception e) {
-
+			
 		}
 		return 0;
 	}
-
+	
 	public void addByte(byte b1) {
 		try {
 			final byte[] packbyte = { b1 };
@@ -159,7 +151,7 @@ public class Packet {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public void addByte2(byte b1, byte b2) {
 		try {
 			final byte[] packbyte = { b1, b2 };
@@ -167,7 +159,7 @@ public class Packet {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public void addByte4(byte b1, byte b2, byte b3, byte b4) {
 		try {
 			final byte[] packbyte = { b1, b2, b3, b4 };
@@ -175,14 +167,14 @@ public class Packet {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public void addByteArray(byte[] bytearr) {
 		try {
 			this.packet += Util.isoString(bytearr);
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public String getPacket() {
 		try {
 			final byte[] packb = this.packet.getBytes("ISO8859-1");
@@ -191,10 +183,10 @@ public class Packet {
 		}
 		return null;
 	}
-
+	
 	public void clean() {
 		this.header = "";
 		this.packet = "";
 	}
-
+	
 }

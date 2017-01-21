@@ -62,7 +62,7 @@ public class ChannelServer extends Thread {
 			this.serverSocket.setSoTimeout(this.timeout);
 			Main.logger.log("ChannelServer", "listening");
 			final Lobby lobby = new Lobby(this);
-
+			
 			while (!stop) {
 				try {
 					final Socket socket = this.serverSocket.accept();

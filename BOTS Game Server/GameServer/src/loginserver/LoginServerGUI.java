@@ -16,7 +16,7 @@ public class LoginServerGUI extends JFrame {
 	public LoginServerGUI() {
 		initComponents();
 	}
-
+	
 	public void startUpdateTimer() {
 		this.timer = new Timer();
 		this.timer.schedule(new UpdateClientCountTask(0), 1000, 1000);
@@ -25,7 +25,7 @@ public class LoginServerGUI extends JFrame {
 	public void write(String msg) throws BadLocationException {
 		this.debugTextArea.getDocument().insertString(0, msg + "\n", null);
 	}
-
+	
 	public void setClientCount(String msg) {
 		this.clientCountLabel.setText(msg);
 	}
@@ -33,11 +33,10 @@ public class LoginServerGUI extends JFrame {
 	// <editor-fold defaultstate="collapsed" desc="Generated
 	// Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
-
 		clientCountLabel = new javax.swing.JLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		debugTextArea = new javax.swing.JTextArea();
-
+		
 		setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter(){
 			@Override
@@ -48,16 +47,15 @@ public class LoginServerGUI extends JFrame {
 			}
 		});
 		
-		
 		clientCountLabel.setText("0 clients");
-
+		
 		debugTextArea.setColumns(20);
 		debugTextArea.setEditable(false);
 		debugTextArea.setLineWrap(true);
 		debugTextArea.setRows(5);
 		debugTextArea.setPreferredSize(new java.awt.Dimension(200, 100));
 		jScrollPane1.setViewportView(debugTextArea);
-
+		
 		final javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(
@@ -74,14 +72,14 @@ public class LoginServerGUI extends JFrame {
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
 						.addContainerGap()));
-
+		
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
-
+	
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JLabel clientCountLabel;
 	private javax.swing.JTextArea debugTextArea;
 	private javax.swing.JScrollPane jScrollPane1;
 	// End of variables declaration//GEN-END:variables
-
+	
 }

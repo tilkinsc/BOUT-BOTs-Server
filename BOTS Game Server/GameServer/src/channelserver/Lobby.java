@@ -20,7 +20,7 @@ public class Lobby {
 	private final int BASE = 3;
 	private final int MODES = 3;
 	private final int MAXROOMS = 300;
-
+	
 	/*
 	 * private String[][] roomname = new String[MODES][MAXROOMS]; private
 	 * String[][] roompass = new String[MODES][MAXROOMS]; private String[][]
@@ -33,7 +33,7 @@ public class Lobby {
 	 * private byte[][][][] roomips = new byte[MODES][MAXROOMS][8][4];
 	 */
 	private final Room[][] rooms = new Room[MODES][MAXROOMS];
-
+	
 	public Lobby(ChannelServer server) {
 		this.server = server;
 		/*
@@ -45,7 +45,7 @@ public class Lobby {
 		 */
 		Main.logger.log("Lobby", "done");
 	}
-
+	
 	public void adduser(String username, int bot, PrintWriter sockout, Socket socket) {
 		Main.logger.log("Lobby", "add user " + username);
 		int i = 0;
@@ -65,7 +65,7 @@ public class Lobby {
 		Main.logger.log("Lobby", "current users(add) " + this.users);
 		writelobbyall(username, getaddpacket(username));
 	}
-
+	
 	public void createdummy(int anz) {
 		this.users += anz;
 		for (int i = anz; i > 0; i--) {
@@ -74,7 +74,7 @@ public class Lobby {
 		}
 		writelobbyall("a", getaddpacket("a"));
 	}
-
+	
 	public void removeuser(String username) {
 		final int clientnum = getNum(username);
 		if (clientnum != -1) {
@@ -87,12 +87,12 @@ public class Lobby {
 			Main.logger.log("Lobby", "current users(remove) " + this.users);
 		}
 	}
-
+	
 	public Packet getlobbypacket() {
 		final Packet packet = new Packet();
-
+		
 		packet.addHeader((byte) 0xF2, (byte) 0x2E);
-
+		
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addInt(this.users, 2, false);
 		for (int i = 0; i < this.users; i++) {
@@ -102,13 +102,11 @@ public class Lobby {
 			packet.addString(user);
 			packet.addByte2((byte) (bots[i] & 0xff), (byte) this.status[i]);
 		}
-
 		return packet;
 	}
-
+	
 	public void writeMessage(String msg, String charna, boolean isgm) {
 		try {
-
 			final Packet packet = new Packet();
 			packet.addHeader((byte) 0x1A, (byte) 0x27);
 			if (isgm) {
@@ -118,10 +116,10 @@ public class Lobby {
 			} else
 				packet.addString(msg);
 			final String[] packandhead = new String[2];
-
+			
 			packandhead[0] = packet.getHeader();
 			packandhead[1] = packet.getPacket();
-
+			
 			int i = 0;
 			do {
 				if (usersocks[i] == null)
@@ -138,57 +136,55 @@ public class Lobby {
 		} catch (Exception e) {
 		}
 	}
-
+	
 	public String[] getaddpacket(String chname) {
 		final int num = getNum(chname);
 		final Packet packet = new Packet();
-
+		
 		packet.addHeader((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
 		while (packet.getLen() != 17)
 			packet.addByte((byte) 0xCC);
-
+		
 		packet.addByte2((byte) (bots[num] & 0xff), (byte) this.status[num]);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = packet.getHeader();
 		packandhead[1] = packet.getPacket();
-
+		
 		packet.clean();
-
 		return packandhead;
 	}
-
+	
 	public String[] getdelpacket(String chname) {
 		final int num = getNum(chname);
 		final Packet packet = new Packet();
-
+		
 		packet.addHeader((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
 		while (packet.getLen() != 17)
 			packet.addByte((byte) 0xCC);
-
+		
 		packet.addByte2((byte) (bots[num] & 0xff), (byte) 0xFF);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = packet.getHeader();
 		packandhead[1] = packet.getPacket();
-
+		
 		packet.clean();
-
 		return packandhead;
 	}
-
+	
 	public void writelobbyall(String chname, String[] spacket) {
 		String[] packet = new String[2];
 		packet = spacket;
-
+		
 		int i = 0;
 		do {
 			if (usersocks[i] != null && !charnames[i].equals(chname)) {
@@ -201,22 +197,21 @@ public class Lobby {
 			i++;
 		} while (i < this.users + 1);
 	}
-
+	
 	public void LobbyMsg(String msg, int color) {
-
 		final Packet packet = new Packet();
 		packet.addHeader((byte) 0x1A, (byte) 0x27);
-
+		
 		packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		packet.addInt(color, 2, false);
 		packet.addString("[Server] " + msg);
 		packet.addByte((byte) 0x00);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = packet.getHeader();
 		packandhead[1] = packet.getPacket();
-
+		
 		for (int i = 0; i < this.users; i++)
 			if (usersocks[i] == null)
 				Main.logger.log("Lobby", "client nr:" + i + " is empty");
@@ -227,14 +222,14 @@ public class Lobby {
 				usersocks[i].flush();
 			}
 	}
-
+	
 	public int getNum(String player) {
 		for (int i = 0; i < this.users; i++)
 			if (this.charnames[i].equals(player))
 				return i;
 		return -1;
 	}
-
+	
 	public int kickPlayer(String player, String reson) {
 		final int num = getNum(player);
 		if (num != -1) {
@@ -262,7 +257,7 @@ public class Lobby {
 		} else
 			return 0;
 	}
-
+	
 	public void whisper(String packet, String sender) {
 		final Packet pack = new Packet();
 		final String[] packs = new String[2];
@@ -306,36 +301,35 @@ public class Lobby {
 			}
 		}
 	}
-
+	
 	public int addroom(int mode, String cname, String cpass, String owner, int masterlvl, String ip, PrintWriter socks,
 			BotClass bot) {
 		for (int i = 0; i <= MAXROOMS; i++)
 			if (this.rooms[mode][i] == null || this.rooms[mode][i].isEmpty()) {
 				final int[] room = { mode, i };
 				this.rooms[mode][i] = new Room(room, cname, cpass, masterlvl, owner, ip, socks, bot);
-
 				// writelobbyall(owner, getaddpacketroom(room));
 				return i;
 			}
 		return -1;
 	}
-
+	
 	public Packet addRoomPlayer(int[] room, String pass, String ip, PrintWriter socks, BotClass bot) {
 		return this.rooms[room[0]][room[1]].addPlayer(bot.getName(), pass, ip, socks, bot);
 	}
-
+	
 	public void removeroom(int[] room) {
 		this.rooms[room[0]][room[1]] = null;
 		// writelobbyall("", getdelpacketroom(room));
 	}
-
+	
 	public void removeRoomPlayer(int[] room, String player) {
 		if (this.rooms[room[0]][room[1]].removePlayer(player))
 			this.rooms[room[0]][room[1]] = null;
 		// writelobbyall("", getdelpacketroom(room));
 
 	}
-
+	
 	public Packet getroompacket(int mode, int page) {
 		int cmode = 0;
 		int firstnr = 0;
@@ -345,43 +339,40 @@ public class Lobby {
 			mode = SECTOR;
 			firstnr = 89;
 			break;
-
 		case 0:
 			cmode = 1;
 			mode = PVP;
 			firstnr = 89;
 			break;
-
 		case 2:
 			cmode = 2;
 			mode = BASE;
 			firstnr = 89;
 			break;
-
 		default:
 			cmode = 0;
 			firstnr = 89;
 			break;
 		}
-
+		
 		final Packet packet = new Packet();
 		packet.addHeader((byte) 0xEF, (byte) 0x2E);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-
+		
 		for (int i = 0; i < 6; i++)
 			if (this.rooms[cmode][i + (6 * page)] != null) {
 				packet.addByte((byte) ((i + (6 * page)) + firstnr));
 				packet.addByte((byte) mode);
 				String cname, cpass;
-
+				
 				cname = this.rooms[cmode][i + (6 * page)].getName();
 				while (cname.length() != 27)
 					cname += nullbyte;
-
+				
 				cpass = this.rooms[cmode][i + (6 * page)].getPass();
 				while (cpass.length() != 11)
 					cpass += nullbyte;
-
+				
 				packet.addString(cname);
 				packet.addString(cpass);
 				packet.addByte((byte) 0x02);
@@ -392,42 +383,39 @@ public class Lobby {
 			} else
 				for (int z = 0; z < 48; z++)
 					packet.addByte((byte) 0x00);
-
 		return packet;
 	}
-
+	
 	public String[] getaddpacketroom(int[] room) {
 		final Packet packet = new Packet();
-
+		
 		packet.addHeader((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = packet.getHeader();
 		packandhead[1] = packet.getPacket();
-
+		
 		packet.clean();
-
 		return packandhead;
 	}
-
+	
 	public String[] getdelpacketroom(int[] room) {
 		final Packet packet = new Packet();
-
+		
 		packet.addHeader((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-
+		
 		final String[] packandhead = new String[2];
-
+		
 		packandhead[0] = packet.getHeader();
 		packandhead[1] = packet.getPacket();
-
+		
 		packet.clean();
-
 		return packandhead;
 	}
-
+	
 	public int[] haveRoom(String user) {
 		final int ret[] = new int[2];
 		ret[0] = -1;
@@ -441,62 +429,63 @@ public class Lobby {
 				}
 		return ret;
 	}
-
+	
 	public int getRoomMap(int[] room) {
 		return this.rooms[room[0]][room[1]].getMap();
 	}
-
+	
 	public void setRoomMap(int[] room, int map) {
 		this.rooms[room[0]][room[1]].setMap(map);
 	}
-
+	
 	public void startRoom(int[] room, int map) {
 		this.rooms[room[0]][room[1]].startRoom();
 	}
-
+	
 	public void setStatus(String user, int what) {
 		final int num = this.getNum(user);
 		this.status[num] = what;
 		writelobbyall(user, getaddpacket(user));
 	}
-
+	
 	public int getSlot(int[] room, String user) {
 		return this.rooms[room[0]][room[1]].getSlot(user);
 	}
-
+	
 	public Packet getConnectPacket(int[] room) {
 		return this.rooms[room[0]][room[1]].getConnectedPacket();
 	}
-
+	
 	public int getOwnerPort(int[] room) {
 		return this.rooms[room[0]][room[1]].getOwnerPort();
 	}
-
+	
 	public void setRoomStatus(int[] room, int slot) {
 		this.rooms[room[0]][room[1]].changeStatus(slot);
 	}
-
+	
 	public void readyToPlay(int[] room, String name) {
 		this.rooms[room[0]][room[1]].readyToPlay(name);
 	}
-
+	
 	public void isConnected(int[] room, String name, int port) {
 		this.rooms[room[0]][room[1]].isConnected(name, port);
 	}
-
+	
 	public void roomDied(int[] room, String name) {
 		this.rooms[room[0]][room[1]].died(name);
 	}
-
+	
 	public void roomMonsterDead(int[] room, int typ, int num, int killedby) {
 		this.rooms[room[0]][room[1]].monsterKilled(typ, num, killedby);
 	}
-
+	
 	public void useItem(int[] room, String who, int typ, int num) {
 		this.rooms[room[0]][room[1]].useItem(who, typ, num);
 	}
-
+	
 	public void killRoom(int[] room) {
 		this.rooms[room[0]][room[1]] = null;
 	}
+	
 }

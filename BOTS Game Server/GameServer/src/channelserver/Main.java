@@ -17,7 +17,7 @@ public class Main {
 	
 	public static ChannelServer channelserver;
 	public static ChannelGameServerGUI gui;
-
+	
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
 			@Override
@@ -45,7 +45,7 @@ public class Main {
 		}
 		return f;
 	}
-
+	
 	public static void main(String[] args) {
 		try {
 			gui = new ChannelGameServerGUI();
@@ -62,19 +62,19 @@ public class Main {
 			gui.startUpdateTimer();
 			SQLDatabase.start();
 			channelserver.start();
-
+			
 			// wtf is this ?!?! :o oh init of longbyte in ChannelServer.. doesn't belong here
 			final String nullbyte = new String(ChannelServer.NULLBYTE, "ISO8859-1");
 			for (int i = 0; i < 1372; i++)
 				ChannelServer.longnullbyte += nullbyte;
-
+			
 			logger.log("Main", "Login server started!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
-
+	
 	public static void invokeShutdown() {
 		channelserver.stopThread();
 		System.out.println("channel server closed");
@@ -83,5 +83,5 @@ public class Main {
 		logger.flushAll();
 		logger.closeAll();
 	}
-
+	
 }

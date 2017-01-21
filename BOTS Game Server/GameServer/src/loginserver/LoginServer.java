@@ -87,7 +87,7 @@ public class LoginServer extends Thread {
 			Main.logger.log("LoginServer", "Has Hopped on " + this.port + "!");
 			this.socketServer = new ServerSocket(port);
 			this.socketServer.setSoTimeout(timeout);
-
+			
 			while (!stop) {
 				try {
 					final Socket socket = this.socketServer.accept();

@@ -33,15 +33,15 @@ public class LoginServerConnection extends Thread {
 	// unused
 	//private String pass1;
 	//private String oldline;
-
+	
 	public LoginServerConnection(Socket socket) {
 		this.socket = socket;
 	}
-
+	
 	public SocketAddress getRemoteAddress() {
 		return this.socket.getRemoteSocketAddress();
 	}
-
+	
 	public int checkUser(String user, String pass) {
 		System.out.println("Checking user....");
 		try {
@@ -77,7 +77,7 @@ public class LoginServerConnection extends Thread {
 		}
 		return 1; // would love to put in unspecified error
 	}
-
+	
 	protected void doLogin() {
 		System.out.println("Doing login");
 		try {
@@ -120,7 +120,7 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}
-
+	
 	private void updateaccount(String user) {
 		try {
 			int logincount = 0;
@@ -140,7 +140,7 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}
-
+	
 	public void write(String msg) {
 		try {
 			this.socketOut.write(msg + "\u0000");
@@ -149,16 +149,16 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}
-
+	
 	protected String read() {
 		final StringBuffer buffer = new StringBuffer();
-
+		
 		try {
 			boolean zeroByteRead = false;
 			int codePoint;
 			while (!zeroByteRead && buffer.length() < 300) {
 				codePoint = this.socketIn.read();
-
+				
 				if (codePoint == 0)
 					zeroByteRead = true;
 				else if (Character.isValidCodePoint(codePoint))
@@ -167,25 +167,23 @@ public class LoginServerConnection extends Thread {
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}
-
 		return buffer.toString();
 	}
-
+	
 	@Override
 	public void run() {
 		try {
 			this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			this.socketOut = new PrintWriter(this.socket.getOutputStream(), true);
-
+			
 			String line = read();
-
 			while (line != null) {
 				if (!line.isEmpty()) {
 					if (line.startsWith("H")) {
 						final String newLine = line.replace("H", "");
 						this.user = newLine;
 					}
-
+					
 					if (line.length() >= 4 && !this.user.equals(line.replace("H", ""))) {
 						this.pass = line;
 						doLogin();
@@ -199,7 +197,7 @@ public class LoginServerConnection extends Thread {
 		}
 		this.finalize();
 	}
-
+	
 	@Override
 	public void finalize() {
 		try {
@@ -212,5 +210,5 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}
-
+	
 }

@@ -1,8 +1,9 @@
 package channelserver;
 
 public class Sector {
-    public int Mapmon;
 
+    public int Mapmon;
+    
     public int[] getMapMonster(int map)
     {
         switch (map)
@@ -11,7 +12,7 @@ public class Sector {
             {
                 int[] ret = new int[38];
                 int i = 0;
-
+                
                 ret[0] = 2;
                 ret[1] = 2;
                 ret[2] = 2;
@@ -53,8 +54,8 @@ public class Sector {
                 this.Mapmon = 38;
                 return ret;
             }
-
         }
         return new int[0];
     }
+    
 }

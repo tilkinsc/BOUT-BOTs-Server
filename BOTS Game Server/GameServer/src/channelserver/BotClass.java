@@ -9,7 +9,7 @@ public class BotClass {
 
 	private final ItemClass item;
 	private final MiscFunctions func = new MiscFunctions();
-
+	
 	private int id;
 	private final String account;
 	private String botname = "";
@@ -32,24 +32,24 @@ public class BotClass {
 	private int rangeatt = 0, rangeattb = 0;
 	private int luk = 0, lukb = 0;
 	private int botstract = 0;
-
+	
 	private final int[] equipitemspart = new int[3];
 	private final int[] equipitemsgear = new int[8];
 	private final int[] equipitemspack = new int[6];
 	private final int[] equipitemscoin = new int[2];
-
+	
 	private int[] inventitems = new int[10];
-
+	
 	private int[] room = { -1, -1 };
-
+	
 	private int gigas = 0;
 	private int coins = 0;
-
+	
 	public BotClass(String accountn, ItemClass itemn) {
 		this.account = accountn;
 		this.item = itemn;
 	}
-
+	
 	public void loadchar() {
 		try {
 			ResultSet rs = SQLDatabase
@@ -77,7 +77,7 @@ public class BotClass {
 				this.rangeatt = rs.getInt("rangeatt");
 				this.luk = rs.getInt("luk");
 				this.botstract = rs.getInt("botstract");
-
+				
 				this.equipitemspart[0] = rs.getInt("equiphead");
 				this.equipitemspart[1] = rs.getInt("equipbody");
 				this.equipitemspart[2] = rs.getInt("equiparm");
@@ -103,19 +103,19 @@ public class BotClass {
 				for (int i = 2; i < 12; i++)
 					this.inventitems[i - 2] = rs.getInt(i);
 			// debug(""+inventitems[i-2]);
-
+			
 			rs = SQLDatabase.doquery("SELECT coins FROM bout_users WHERE username='" + this.account + "' LIMIT 1");
 			if (rs.next())
 				this.coins = rs.getInt("coins");
-
+			
 			// debug("Gigas : "+this.gigas+" Botname: "+this.botname+" Bottype
 			// :"+this.bottype+" level : "+this.level+" hp : "+this.hp);
 			// debug("attmin : "+this.attmin+" attmax : "+this.attmax);
 		} catch (Exception e) {
-
+			
 		}
 	}
-
+	
 	protected void loadEquipBonus() {
 		hpb = 0;
 		attminb = 0;
@@ -157,7 +157,7 @@ public class BotClass {
 					parseScript(script);
 			}
 	}
-
+	
 	protected void parseScript(String script) {
 		try {
 			while (true) {
@@ -177,11 +177,10 @@ public class BotClass {
 				Main.logger.log("BotClass", stat + "  " + value);
 				parseStat(stat, value);
 			}
-
 		} catch (Exception e) {
 		}
 	}
-
+	
 	protected void parseStat(String stat, int value) {
 		if (stat.equals("hpp"))
 			this.hpb += value;
@@ -214,7 +213,7 @@ public class BotClass {
 		else if (stat.equals("rangeatt"))
 			this.rangeattb += value;
 	}
-
+	
 	protected String getbyte(int var, int num) {
 		try {
 			if (num == 2) {
@@ -231,23 +230,23 @@ public class BotClass {
 				return Util.isoString(varbyte);
 			}
 		} catch (Exception e) {
-
+			
 		}
 		return null;
 	}
-
+	
 	public String getpacketcinfo() {
 		try {
 			loadEquipBonus();
 			String packet = "";
-
+			
 			final String packetshead = new String(ChannelServer.PACKETS_HEADER);
 			final String nullbyte = new String(ChannelServer.NULLBYTE);
 
 			String charname = this.botname;
 			while (charname.length() != 15)
 				charname += nullbyte;
-
+			
 			final String bottyp = getbyte(this.bottype, 2);
 			final String cexp = getbyte(this.exp, 4);
 			final String lvl = getbyte(this.level, 2);
@@ -269,19 +268,19 @@ public class BotClass {
 			final String bluk = getbyte(this.luk + this.lukb, 2);
 			final String bstract = getbyte(this.botstract, 4);
 			final String v8 = getbyte(800, 2);
-
+			
 			final byte[] emptyitem = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 					(byte) 0x00, (byte) 0x00 };
 			final byte[] aaa = { (byte) 0x01 };
 			final byte[] aaa2 = { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
-
+			
 			packet = packetshead + charname + bottyp + cexp + lvl + chp + attamin + attamax + attamintrans
 					+ attamaxtrans + v8 + stransgauge + scrit + sevade + specialtrans + sspeed + stransdef
 					+ stransbotatt + stransspeed + rangeatta + bluk + bstract;
-
+			
 			for (int i = 0; i < 16; i++)
 				packet += nullbyte;
-
+			
 			for (int i = 0; i < 3; i++) {
 				if (this.equipitemspart[i] == 0)
 					packet += new String(emptyitem);
@@ -291,9 +290,9 @@ public class BotClass {
 				}
 				packet += nullbyte;
 			}
-
+			
 			packet += new String(aaa);
-
+			
 			for (int i = 0; i < 10; i++) {
 				// debug("Invent "+i+" "+this.inventitems[i]);
 				if (this.inventitems[i] == 0)
@@ -304,22 +303,22 @@ public class BotClass {
 				}
 				packet += nullbyte;
 			}
-
+			
 			packet += giga;
 			for (int i = 0; i < 12; i++)
 				packet += nullbyte;
-
+			
 			String friend = "Lukas";
 			while (friend.length() != 15)
 				friend += nullbyte;
-
+			
 			// packet += friend;
 			// packet += friend;
 			// packet += friend;
-
+			
 			for (int i = 0; i < 230; i++)
 				packet += nullbyte;
-
+			
 			for (int i = 0; i < 8; i++) {
 				if (this.equipitemsgear[i] == 0)
 					packet += new String(emptyitem);
@@ -329,7 +328,7 @@ public class BotClass {
 				}
 				packet += nullbyte;
 			}
-
+			
 			for (int i = 0; i < 6; i++) {
 				if (this.equipitemspack[i] == 0)
 					packet += new String(emptyitem);
@@ -339,10 +338,10 @@ public class BotClass {
 				}
 				packet += nullbyte;
 			}
-
+			
 			for (int i = 0; i < 200; i++)
 				packet += nullbyte;
-
+			
 			for (int i = 0; i < 2; i++) {
 				if (this.equipitemscoin[i] == 0)
 					packet += new String(emptyitem);
@@ -352,38 +351,38 @@ public class BotClass {
 				}
 				packet += nullbyte;
 			}
-
+			
 			while (packet.length() != 1374) // 1374
 				packet += nullbyte;
-
+			
 			return packet;
 		} catch (Exception e) {
-
+			
 		}
 		return null;
 	}
-
+	
 	public String getName() {
 		return this.botname;
 	}
-
+	
 	public int getBot() {
 		return this.bottype;
 	}
-
+	
 	protected int createbot(String username, String name, int bottype) {
 		SQLDatabase.doupdate("INSERT INTO `bout_characters` (`username`, `name`, `bot`)" + "VALUES ('" + username
 				+ "', '" + name + "', " + bottype + ")");
 		SQLDatabase.doupdate("INSERT INTO `bout_inventory` (`name`) VALUES ('" + name + "')");
 		return 2;
 	}
-
+	
 	public int deleteBot(String charname, String username) {
 		SQLDatabase.doupdate(
 				"DELETE FROM `bout_characters` WHERE `username` = '" + username + "' and `name` = '" + charname + "'");
 		return 2;
 	}
-
+	
 	protected boolean checkbot() {
 		try {
 			final ResultSet rs = SQLDatabase
@@ -392,58 +391,58 @@ public class BotClass {
 				return true;
 			return false;
 		} catch (Exception e) {
-
+			
 		}
 		return false;
 	}
-
+	
 	public int getLevel() {
 		return this.level;
 	}
-
+	
 	public void setLevel(int nlevel) {
 		this.level = nlevel;
 		updateBot();
 	}
-
+	
 	public int getGigas() {
 		return this.gigas;
 	}
-
+	
 	public void setGigas(int giga) {
 		this.gigas = giga;
 		updateBot();
 	}
-
+	
 	public int getCoins() {
 		Main.logger.log("BotClass", "getcoins : " + this.coins);
 		return this.coins;
 	}
-
+	
 	public void setCoins(int coins) {
 		this.coins = coins;
 		Main.logger.log("BotClass", "Setcoins : " + this.coins);
 		updateCoins();
 	}
-
+	
 	public int getInvent(int slot) {
 		return this.inventitems[slot];
 	}
-
+	
 	public void setInvent(int item, int slot) {
 		this.inventitems[slot] = item;
 		updateInvent();
 	}
-
+	
 	public int[] getInventAll() {
 		return this.inventitems;
 	}
-
+	
 	public void setInventAll(int[] items) {
 		this.inventitems = items;
 		updateInvent();
 	}
-
+	
 	public Packet getInventPacket(int head) {
 		final Packet packet = new Packet();
 		packet.addHeader((byte) head, (byte) 0x2E);
@@ -461,7 +460,7 @@ public class BotClass {
 		packet.addInt(this.gigas, 4, false);
 		return packet;
 	}
-
+	
 	public void updateBot() {
 		SQLDatabase.doupdate("UPDATE `bout_characters` SET " + "`bot` = " + this.bottype + "," + "`exp` = " + this.exp
 				+ "," + "`level` = " + this.level + "," + "`hp` = " + this.hp + "," + "`gigas` = " + this.gigas + ","
@@ -470,7 +469,7 @@ public class BotClass {
 				+ this.spectrans + "," + "`rangeatt` = " + this.rangeatt + "," + "`botstract` = " + this.botstract
 				+ " WHERE name = '" + this.botname + "'");
 	}
-
+	
 	public void updateInvent() {
 		SQLDatabase.doupdate("UPDATE `bout_inventory` SET " + "`item1` = " + this.inventitems[0] + "," + "`item2` = "
 				+ this.inventitems[1] + "," + "`item3` = " + this.inventitems[2] + "," + "`item4` = "
@@ -479,52 +478,45 @@ public class BotClass {
 				+ this.inventitems[7] + "," + "`item9` = " + this.inventitems[8] + "," + "`item10` = "
 				+ this.inventitems[9] + " WHERE name = '" + this.botname + "'");
 	}
-
+	
 	public void updateCoins() {
 		SQLDatabase
 				.doupdate("UPDATE `bout_users` SET `coins` = " + this.coins + " WHERE username='" + this.account + "'");
 	}
-
+	
 	public int getEquip(int epart, int part) {
 		switch (epart) {
 		case 1:
 			return this.equipitemspart[part];
-
 		case 2:
 			return this.equipitemsgear[part - 3];
-
 		case 3:
 			return this.equipitemspack[part - 11];
-
 		case 4:
 			return this.equipitemscoin[part];
-
 		default:
 			return -1;
 		}
 	}
-
+	
 	public void setEquip(int id, int epart, int part) {
 		switch (epart) {
 		case 1:
 			this.equipitemspart[part] = id;
 			break;
-
 		case 2:
 			this.equipitemsgear[part - 3] = id;
 			break;
-
 		case 3:
 			this.equipitemspack[part - 11] = id;
 			break;
-
 		case 4:
 			this.equipitemscoin[part] = id;
 			break;
 		}
 		updateEquip();
 	}
-
+	
 	public void updateEquip() {
 		SQLDatabase.doupdate("UPDATE `bout_characters` SET " + "`equiphead` = " + this.equipitemspart[0] + ","
 				+ "`equipbody` = " + this.equipitemspart[1] + "," + "`equiparm` = " + this.equipitemspart[2] + ","
@@ -538,7 +530,7 @@ public class BotClass {
 				+ this.equipitemspack[5] + "," + "`equipheadcoin` = " + this.equipitemscoin[0] + ","
 				+ "`equipminibotcoin` = " + this.equipitemscoin[1] + " WHERE name = '" + this.botname + "'");
 	}
-
+	
 	public Packet equip(int slot, int epart) {
 		final Packet packet = new Packet();
 		// packet.addHeader((byte)0xE4, (byte)0x2E);
@@ -546,15 +538,12 @@ public class BotClass {
 		case 1:
 			packet.addHeader((byte) 0xE4, (byte) 0x2E);
 			break;
-
 		case 2:
 			packet.addHeader((byte) 0x19, (byte) 0x2F);
 			break;
-
 		case 3:
 			packet.addHeader((byte) 0x1B, (byte) 0x2F);
 			break;
-
 		}
 		try {
 			final int aid = this.getInvent(slot);
@@ -562,7 +551,7 @@ public class BotClass {
 				packet.addPacketHead((byte) 0x00, (byte) 0x60);
 				return packet;
 			}
-
+			
 			final ResultSet rs = item.getItemInfo(aid);
 			rs.next();
 			if (rs.getInt("reqlevel") > this.level) {
@@ -575,7 +564,7 @@ public class BotClass {
 				return packet;
 			}
 			int part = rs.getInt("part") - 1;
-
+			
 			if (part == 17) {
 				epart = 4;
 				part = 0;
@@ -583,9 +572,9 @@ public class BotClass {
 				epart = 4;
 				part = 1;
 			}
-
+			
 			int old = this.getEquip(epart, part);
-
+			
 			if (part == 15)
 				if (old != 0) {
 					final int old2 = this.getEquip(epart, part + 1);
@@ -594,7 +583,7 @@ public class BotClass {
 						part++;
 					}
 				}
-
+			
 			if (old != -1) {
 				if (old == 0) {
 					this.setInvent(0, slot);
@@ -617,7 +606,7 @@ public class BotClass {
 		packet.addPacketHead((byte) 0x00, (byte) 0x60);
 		return packet;
 	}
-
+	
 	public Packet deequip(int slot, int epart) {
 		final Packet packet = new Packet();
 		switch (epart) {
@@ -627,9 +616,7 @@ public class BotClass {
 				epart = 4;
 				slot = 0;
 			}
-
 			break;
-
 		case 2:
 			packet.addHeader((byte) 0x1A, (byte) 0x2F);
 			if (slot == 0 && this.equipitemscoin[1] != 0) {
@@ -638,12 +625,10 @@ public class BotClass {
 			} else
 				slot += 3;
 			break;
-
 		case 3:
 			packet.addHeader((byte) 0x1C, (byte) 0x2F);
 			slot += 11;
 			break;
-
 		}
 		try {
 			final int aid = this.getEquip(epart, slot);
@@ -651,9 +636,8 @@ public class BotClass {
 				packet.addPacketHead((byte) 0x00, (byte) 0x60);
 				return packet;
 			}
-
+			
 			final int islot = this.slotAvaible();
-
 			if (islot != -1) {
 				this.setInvent(aid, islot);
 				this.setEquip(0, epart, slot);
@@ -661,7 +645,7 @@ public class BotClass {
 				packet.setPacket(this.getpacketcinfo());
 				return packet;
 			}
-
+			
 			packet.addPacketHead((byte) 0x00, (byte) 0x61);
 			return packet;
 		} catch (Exception e) {
@@ -670,14 +654,14 @@ public class BotClass {
 		packet.addPacketHead((byte) 0x00, (byte) 0x60);
 		return packet;
 	}
-
+	
 	protected int slotAvaible() {
 		for (int i = 0; i < 10; i++)
 			if (this.inventitems[i] == 0)
 				return i;
 		return -1;
 	}
-
+	
 	public Packet getEquipByName(String charname) {
 		try {
 			final Packet packet = new Packet();
@@ -704,7 +688,7 @@ public class BotClass {
 		}
 		return null;
 	}
-
+	
 	public int[] getEquipAll() {
 		final int[] ret = new int[19];
 		for (int i = 0; i < 3; i++)
@@ -715,211 +699,210 @@ public class BotClass {
 			ret[i + 11] = this.equipitemspack[i];
 		for (int i = 0; i < 2; i++)
 			ret[i + 17] = this.equipitemscoin[i];
-
 		return ret;
 	}
-
+	
 	public int getAttMin() {
 		return this.attmin;
 	}
-
+	
 	public void setAttMin(int _attmin) {
 		this.attmin = _attmin;
 		updateBot();
 	}
-
+	
 	public int getAttMax() {
 		return this.attmax;
 	}
-
+	
 	public void setAttMax(int _attmax) {
 		this.attmax = _attmax;
 		updateBot();
 	}
-
+	
 	public int getAttMinTrans() {
 		return this.attmintrans;
 	}
-
+	
 	public void setAttMinTrans(int _attmintrans) {
 		this.attmintrans = _attmintrans;
 		updateBot();
 	}
-
+	
 	public int getAttMaxTrans() {
 		return this.attmaxtrans;
 	}
-
+	
 	public void setAttMaxTrans(int _attmaxtrans) {
 		this.attmaxtrans = _attmaxtrans;
 		updateBot();
 	}
-
+	
 	public int getHp() {
 		return this.hp;
 	}
-
+	
 	public void setHp(int _hp) {
 		this.hp = _hp;
 		updateBot();
 	}
-
+	
 	public int getTransGauge() {
 		return this.transgauge;
 	}
-
+	
 	public void setTransGauge(int _transgauge) {
 		this.transgauge = _transgauge;
 		updateBot();
 	}
-
+	
 	public int getCrit() {
 		return this.crit;
 	}
-
+	
 	public void setCrit(int _crit) {
 		this.crit = _crit;
 		updateBot();
 	}
-
+	
 	public int getEvade() {
 		return this.evade;
 	}
-
+	
 	public void setEvade(int _evade) {
 		this.evade = _evade;
 		updateBot();
 	}
-
+	
 	public int getSpecialTrans() {
 		return this.spectrans;
 	}
-
+	
 	public void setSpecialTans(int _spectrans) {
 		this.spectrans = _spectrans;
 		updateBot();
 	}
-
+	
 	public int getSpeed() {
 		return this.speed;
 	}
-
+	
 	public void setSpeed(int _speed) {
 		this.speed = _speed;
 		updateBot();
 	}
-
+	
 	public int getTransDef() {
 		return this.transdef;
 	}
-
+	
 	public void setTransDef(int _transdef) {
 		this.transdef = _transdef;
 		updateBot();
 	}
-
+	
 	public int getTransBotAtt() {
 		return this.transbotatt;
 	}
-
+	
 	public void setTransBotAtt(int _transbotatt) {
 		this.transbotatt = _transbotatt;
 		updateBot();
 	}
-
+	
 	public int getTransSpeed() {
 		return this.transspeed;
 	}
-
+	
 	public void setTransSpeed(int _transspeed) {
 		this.transspeed = _transspeed;
 		updateBot();
 	}
-
+	
 	public int getRangeAtt() {
 		return this.rangeatt;
 	}
-
+	
 	public void setRangeAtt(int _rangeatt) {
 		this.rangeatt = _rangeatt;
 		updateBot();
 	}
-
+	
 	public int getLuk() {
 		return this.luk;
 	}
-
+	
 	public void setLuk(int _luk) {
 		this.luk = _luk;
 		updateBot();
 	}
-
+	
 	public int getAttMinB() {
 		return this.attminb;
 	}
-
+	
 	public int getAttMaxB() {
 		return this.attmaxb;
 	}
-
+	
 	public int getAttMinTransB() {
 		return this.attmintransb;
 	}
-
+	
 	public int getAttMaxTransB() {
 		return this.attmaxtransb;
 	}
-
+	
 	public int getHpB() {
 		return this.hpb;
 	}
-
+	
 	public int getTransGaugeB() {
 		return this.transgaugeb;
 	}
-
+	
 	public int getCritB() {
 		return this.critb;
 	}
-
+	
 	public int getEvadeB() {
 		return this.evadeb;
 	}
-
+	
 	public int getSpecialTransB() {
 		return this.spectransb;
 	}
-
+	
 	public int getSpeedB() {
 		return this.speedb;
 	}
-
+	
 	public int getTransDefB() {
 		return this.transdefb;
 	}
-
+	
 	public int getTransBotAttB() {
 		return this.transbotattb;
 	}
-
+	
 	public int getTransSpeedB() {
 		return this.transspeedb;
 	}
-
+	
 	public int getRangeAttB() {
 		return this.rangeattb;
 	}
-
+	
 	public int getLukB() {
 		return this.lukb;
 	}
-
+	
 	public void setRoom(int[] _room) {
 		this.room = _room;
 	}
-
+	
 	public int[] getRoom() {
 		return this.room;
 	}
-
+	
 }
