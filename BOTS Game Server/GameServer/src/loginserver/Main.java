@@ -13,7 +13,6 @@ import shared.SQLDatabase;
 public class Main {
 
 	public static final boolean DEBUG = true;
-	private static final int loginPort = 11000;
 
 	public static final String SESSION_LOG_DIR = "log";
 	public static Logger logger;
@@ -55,7 +54,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			gui = new LoginServerGUI();
-			loginServer = new LoginServer(loginPort);
+			loginServer = new LoginServer(11000, 5000);
 			
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
@@ -71,10 +70,10 @@ public class Main {
 
 			gui.startUpdateTimer();
 
-			roomserver = new RoomUDPServer();
+			roomserver = new RoomUDPServer(11011, 5000);
 			roomserver.start();
 			
-			channelserver = new ChannelServer();
+			channelserver = new ChannelServer(11010, 5000);
 			channelserver.start();
 
 
