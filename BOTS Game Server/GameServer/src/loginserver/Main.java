@@ -11,8 +11,6 @@ import shared.SQLDatabase;
 
 public class Main {
 
-	public static final boolean DEBUG = true;
-
 	public static final String SESSION_LOG_DIR = "log";
 	public static Logger logger;
 	
