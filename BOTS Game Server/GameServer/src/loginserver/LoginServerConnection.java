@@ -5,12 +5,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
-//import java.math.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-//import java.util.*;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import etc.Util;
 import shared.SQLDatabase;
 
 public class LoginServerConnection extends Thread {
@@ -22,13 +21,14 @@ public class LoginServerConnection extends Thread {
 	public String user;
 	public String pass;
 	
-	public int LOGIN_ID;
-	public String LOGIN_USERNAME;
-	public String LOGIN_PASSWORD;
-	public int LOGIN_BANNED;
-	public int LOGIN_ALLOG;
-	public int LOGIN_RESULT;
-	public String LOGIN_RESULTSTR;
+	// unused
+	// public int LOGIN_ID;
+	// public String LOGIN_USERNAME;
+	// public String LOGIN_PASSWORD;
+	// public int LOGIN_BANNED;
+	// public int LOGIN_ALLOG;
+	// public int LOGIN_RESULT;
+	// public String LOGIN_RESULTSTR;
 	
 	// unused
 	//private String pass1;
@@ -42,84 +42,78 @@ public class LoginServerConnection extends Thread {
 		return this.socket.getRemoteSocketAddress();
 	}
 
-	public void CheckUser(String user, String pass) {
+	public int checkUser(String user, String pass) {
 		System.out.println("Checking user....");
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
+			String puser = "", ppass = "";
+			int id = 0, banned = 0, allog = 0;
 			while (rs.next()) {
-				this.LOGIN_ID = rs.getInt("id");
-				this.LOGIN_USERNAME = rs.getString("username");
-				this.LOGIN_PASSWORD = rs.getString("password");
-				this.LOGIN_BANNED = rs.getInt("banned");
-				this.LOGIN_ALLOG = rs.getInt("online");
-				this.LOGIN_RESULT = 0;
-
+				id = rs.getInt("id");
+				puser = rs.getString("username");
+				ppass = rs.getString("password");
+				banned = rs.getInt("banned");
+				allog = rs.getInt("online");
 			}
-			if (this.LOGIN_ID == 0)
-				this.LOGIN_RESULT = 1;
-			else if (!md5hash(this.pass).equals(this.LOGIN_PASSWORD))
-				this.LOGIN_RESULT = 2;
-			else if (this.LOGIN_BANNED == 1)
-				this.LOGIN_RESULT = 3;
-			else if (this.LOGIN_ALLOG == 1)
-				this.LOGIN_RESULT = 4;
+			
 			Main.logger.log("LoginServerConnection",
-				"(" + this.socket.getRemoteSocketAddress() + ")"
-					+ LOGIN_ID + " " + LOGIN_USERNAME + " "
-					+ LOGIN_PASSWORD + " " + LOGIN_BANNED + " "
-					+ LOGIN_ALLOG + " " + LOGIN_RESULT);
+					"(" + this.socket.getRemoteSocketAddress() + ")"
+						+ id + " " + user + " " + puser + " "
+						+ pass + " " + ppass + " " + banned + " "
+						+ allog);
+			
+			if (id == 0)
+				return 1;
+			else if (!Util.md5hash(this.pass).equals(ppass))
+				return 2;
+			else if (banned == 1)
+				return 3;
+			else if (allog == 1)
+				return 4;
 		} catch (Exception e) {
 			e.printStackTrace();
 			Main.logger.log("Exception", e.getMessage());
 		}
+		return 1; // would love to put in unspecified error
 	}
 
 	protected void doLogin() {
 		System.out.println("Doing login");
 		try {
-			CheckUser(this.user, this.pass);
-			switch (this.LOGIN_RESULT) {
-
+			final int login_result = checkUser(this.user, this.pass);
+			
+			String status;
+			String result;
+			switch (login_result) {
 			case 0:
 				updateaccount(user);
-				this.socketOut.write(new String(LoginServer.LOGINHEADER, "ISO8859-1"));
-				this.socketOut.flush();
-				this.socketOut.write(new String(LoginServer.LOGIN_SUCCESSBYTE, "ISO8859-1"));
-				this.socketOut.flush();
-				this.LOGIN_RESULTSTR = "Success";
+				status = Util.isoString(LoginServer.LOGIN_SUCCESSBYTE);
+				result = "Success";
 				this.socket.close();
 				break;
 			case 1:
-			default:
-				this.socketOut.write(new String(LoginServer.LOGINHEADER, "ISO8859-1"));
-				this.socketOut.flush();
-				this.socketOut.write(new String(LoginServer.LOGIN_INCUSERBYTE, "ISO8859-1"));
-				this.socketOut.flush();
-				this.LOGIN_RESULTSTR = "Incorrect Username";
+			default: // attempt to find out if there is a correct way to give unspecified error
+				status = Util.isoString(LoginServer.LOGIN_INCUSERBYTE);
+				result = "Incorrect Username";
 				break;
 			case 2:
-				this.socketOut.write(new String(LoginServer.LOGINHEADER, "ISO8859-1"));
-				this.socketOut.flush();
-				this.socketOut.write(new String(LoginServer.LOGIN_INCPASSBYTE, "ISO8859-1"));
-				this.socketOut.flush();
-				this.LOGIN_RESULTSTR = "Incorrect Password";
+				status = Util.isoString(LoginServer.LOGIN_INCPASSBYTE);
+				result = "Incorrect Password";
 				break;
 			case 3:
-				this.socketOut.write(new String(LoginServer.LOGINHEADER, "ISO8859-1"));
-				this.socketOut.flush();
-				this.socketOut.write(new String(LoginServer.LOGIN_BANUSERBYTE, "ISO8859-1"));
-				this.socketOut.flush();
-				this.LOGIN_RESULTSTR = "Banned Username";
+				status = Util.isoString(LoginServer.LOGIN_BANUSERBYTE);
+				result = "Banned Username";
 				break;
 			case 4:
-				this.socketOut.write(new String(LoginServer.LOGINHEADER, "ISO8859-1"));
-				this.socketOut.flush();
-				this.socketOut.write(new String(LoginServer.LOGIN_ALREADYLOGGEDIN, "ISO8859-1"));
-				this.socketOut.flush();
-				this.LOGIN_RESULTSTR = "User is already Logged in";
+				status = Util.isoString(LoginServer.LOGIN_ALREADYLOGGEDIN);
+				result = "User is already Logged in";
 				break;
 			}
-			Main.logger.log("LoginServerConnection", "Login Sent " + this.LOGIN_RESULTSTR);
+			this.socketOut.write(Util.isoString(LoginServer.LOGINHEADER));
+			this.socketOut.flush();
+			this.socketOut.write(status);
+			this.socketOut.flush();
+			Main.logger.log("LoginServerConnection", "Login Sent " + result);
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}
@@ -132,15 +126,12 @@ public class LoginServerConnection extends Thread {
 			while (rs.next())
 				logincount = rs.getInt("logincount");
 			logincount++;
-
-			// get date
-			final java.util.Date dt = new java.util.Date();
-			// set date format
-			final java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			final Date dt = new Date();
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			final String ip = socket.getInetAddress().getHostAddress();
-
-			// add later
-			// online=1
+			
+			// add later online=1
 			SQLDatabase.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + logincount + ", last_ip='"
 					+ ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + user + "'");
 		} catch (Exception e) {
@@ -157,47 +148,12 @@ public class LoginServerConnection extends Thread {
 		}
 	}
 
-	private String md5hash(String text) {
-		try {
-			MessageDigest md = null;
-			byte[] encryptMsg = null;
-			try {
-				md = MessageDigest.getInstance("MD5");
-				encryptMsg = md.digest(text.getBytes("ISO8859-1"));
-			} catch (NoSuchAlgorithmException e) {
-			}
-			String swap = "";
-			String byteStr = "";
-			final StringBuffer strBuf = new StringBuffer();
-			for (int i = 0; i <= encryptMsg.length - 1; i++) {
-				byteStr = Integer.toHexString(encryptMsg[i]);
-				switch (byteStr.length()) {
-				case 1:
-					swap = "0" + Integer.toHexString(encryptMsg[i]);
-					break;
-				case 2:
-					swap = Integer.toHexString(encryptMsg[i]);
-					break;
-				case 8:
-					swap = (Integer.toHexString(encryptMsg[i])).substring(6, 8);
-					break;
-				}
-				strBuf.append(swap);
-			}
-			final String hash = strBuf.toString();
-			return hash;
-		} catch (Exception e) {
-
-		}
-		return null;
-	}
-
 	protected String read() {
 		final StringBuffer buffer = new StringBuffer();
-		int codePoint;
-		boolean zeroByteRead = false;
 
 		try {
+			boolean zeroByteRead = false;
+			int codePoint;
 			while (!zeroByteRead && buffer.length() < 300) {
 				codePoint = this.socketIn.read();
 
@@ -240,7 +196,6 @@ public class LoginServerConnection extends Thread {
 			Main.logger.log("Error", e.getMessage());
 		}
 		this.finalize();
-
 	}
 
 	@Override
