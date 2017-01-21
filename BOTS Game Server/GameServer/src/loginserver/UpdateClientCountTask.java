@@ -6,6 +6,10 @@ public class UpdateClientCountTask extends TimerTask {
 
 	protected int count;
 	
+	public UpdateClientCountTask(int count) {
+		this.count = 0;
+	}
+	
 	@Override
 	public void run() {
 		count = Main.loginServer.getClientCount();

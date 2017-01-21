@@ -19,7 +19,7 @@ public class LoginServerGUI extends JFrame {
 
 	public void startUpdateTimer() {
 		this.timer = new Timer();
-		this.timer.schedule(new UpdateClientCountTask(), 1000, 1000);
+		this.timer.schedule(new UpdateClientCountTask(0), 1000, 1000);
 	}
 	
 	public void write(String msg) throws BadLocationException {

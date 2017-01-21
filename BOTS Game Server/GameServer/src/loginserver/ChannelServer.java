@@ -6,19 +6,16 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.sql.ResultSet;
 
+import etc.Util;
 import shared.SQLDatabase;
 
 class ChannelServer extends Thread {
 
 	// Packets
-	public static final byte[] CHANNEL_HEADERBYTE = { (byte) 0xEE, (byte) 0x2C, (byte) 0x50, (byte) 0x01 };
-	public static final byte[] CHANNEL_FOOTER = { (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00 };
-	public static final byte[] CHANNEL_EMPTY = { (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] NULLBYTE = { (byte) 0x00 };
+	public static final byte[] CHANNEL_HEADERBYTE = {(byte) 0xEE, (byte) 0x2C, (byte) 0x50, (byte) 0x01};
+	public static final byte[] CHANNEL_FOOTER = {(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] CHANNEL_EMPTY = {(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] NULLBYTE = {(byte) 0x00};
 
 	// Channel vars
 	public String[] channel_detail = new String[12];
@@ -40,42 +37,6 @@ class ChannelServer extends Thread {
 	public ChannelServer(int port, int timeout) {
 		this.port = port;
 		this.timeout = timeout;
-	}
-	
-	protected void getChannels() {
-
-		try {
-			final ResultSet rs = SQLDatabase.doquery(GET_CHANNEL_QUERY);
-			if (channel_i != 0)
-				channel_i = 0;
-			final String nullbyte = new String(NULLBYTE, "ISO8859-1");
-
-			while (rs.next()) {
-				channel_id[channel_i] = rs.getInt("id");
-				channel_name[channel_i] = rs.getString("name");
-				channel_namelength[channel_i] = channel_name[channel_i].length();
-
-				channel_min[channel_i] = rs.getInt("minlevel");
-				final byte[] MINBYTE = { (byte) channel_min[channel_i] };
-
-				channel_max[channel_i] = rs.getInt("maxlevel");
-				final byte[] MAXBYTE = { (byte) channel_max[channel_i] };
-
-				channel_players[channel_i] = rs.getInt("players");
-				final int b1 = channel_players[channel_i] & 0xff;
-				final int b2 = (channel_players[channel_i] >> 8) & 0xff;
-				final byte[] PLAYERSBYTE = { (byte) b1, (byte) b2 };
-				channel_detail[channel_i] = new String(PLAYERSBYTE, "ISO8859-1") + new String(MINBYTE, "ISO8859-1")
-						+ new String(MAXBYTE, "ISO8859-1") + channel_name[channel_i];
-
-				for (int i = 0; i < 22 - channel_namelength[channel_i]; i++)
-					channel_detail[channel_i] += nullbyte;
-
-				channel_i++;
-			}
-		} catch (Exception e) {
-			System.out.println("Exception: " + e.getMessage());
-		}
 	}
 	
 	private boolean stop;
@@ -107,31 +68,28 @@ class ChannelServer extends Thread {
 				} catch (SocketTimeoutException e) {
 					continue;
 				}
-				reqString = new String(receivePacket.getData(), "ISO8859-1");
+				
+				reqString = Util.isoString(receivePacket.getData());
 				if (reqString.startsWith("\u00FA\u002A\u0002")) {
 					Main.logger.log("ChannelList", "Channel List Requested.");
-					getChannels();
-		
-					// make packet
-					String channel_packet = new String(CHANNEL_HEADERBYTE, "ISO8859-1");
+					getChannels(); // probably could add a 'channel list updated' to avoid getting over and over and over again
+					
+					String channel_packet = Util.isoString(CHANNEL_HEADERBYTE);
 					for (int i = 0; i < channel_i; i++)
 						channel_packet += channel_detail[i];
-		
+					
 					for (int i = 0; i < 12 - channel_i; i++)
-						channel_packet += new String(CHANNEL_EMPTY, "ISO8859-1");
-		
+						channel_packet += Util.isoString(CHANNEL_EMPTY);
+					
 					for (int i = 0; i < 4; i++)
-						channel_packet += new String(CHANNEL_FOOTER, "ISO8859-1");
-		
+						channel_packet += Util.isoString(CHANNEL_FOOTER);
+					
 					sendData = channel_packet.getBytes("ISO8859-1");
-		
 					IPAddress = receivePacket.getAddress();
-		
 					client_port = receivePacket.getPort();
-		
 					sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, client_port);
-		
 					serverSocket.send(sendPacket);
+					
 					Main.logger.log("ChannelList", "Sent Channels");
 				}
 			}
@@ -148,6 +106,40 @@ class ChannelServer extends Thread {
 			this.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	// probably could add a 'channel list updated' to avoid getting over and over and over again
+	protected void getChannels() {
+		try {
+			final ResultSet rs = SQLDatabase.doquery(GET_CHANNEL_QUERY);
+			if (channel_i != 0)
+				channel_i = 0;
+			
+			final String nullbyte = Util.isoString(NULLBYTE);
+			while (rs.next()) {
+				channel_id[channel_i] = rs.getInt("id");
+				channel_name[channel_i] = rs.getString("name");
+				channel_namelength[channel_i] = channel_name[channel_i].length();
+
+				channel_min[channel_i] = rs.getInt("minlevel");
+				final byte[] MINBYTE = {(byte) channel_min[channel_i] };
+
+				channel_max[channel_i] = rs.getInt("maxlevel");
+				final byte[] MAXBYTE = {(byte) channel_max[channel_i] };
+
+				channel_players[channel_i] = rs.getInt("players");
+				final byte[] PLAYERSBYTE = {(byte) (channel_players[channel_i] & 0xff), (byte) ((channel_players[channel_i] >> 8) & 0xff) };
+				
+				channel_detail[channel_i] = Util.isoString(PLAYERSBYTE) + Util.isoString(MINBYTE) + Util.isoString(MAXBYTE) + channel_name[channel_i];
+
+				for (int i = 0; i < 22 - channel_namelength[channel_i]; i++)
+					channel_detail[channel_i] += nullbyte;
+
+				channel_i++;
+			}
+		} catch (Exception e) {
+			System.out.println("Exception: " + e.getMessage());
 		}
 	}
 	

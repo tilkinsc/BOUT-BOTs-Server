@@ -9,7 +9,7 @@ import java.util.Vector;
 
 public class LoginServer extends Thread {
 
-	public static final byte[] LOGIN_SUCCESSBYTE = { (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+	public static final byte[] LOGIN_SUCCESSBYTE = {(byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x01, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -18,8 +18,8 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] LOGIN_INCUSERBYTE = { (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x00,
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] LOGIN_INCUSERBYTE = {(byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -28,8 +28,8 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] LOGIN_INCPASSBYTE = { (byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00,
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] LOGIN_INCPASSBYTE = {(byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -38,8 +38,8 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] LOGIN_BANUSERBYTE = { (byte) 0x01, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x00,
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] LOGIN_BANUSERBYTE = {(byte) 0x01, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -48,8 +48,8 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] LOGIN_ALREADYLOGGEDIN = { (byte) 0x01, (byte) 0x00, (byte) 0x06, (byte) 0x00,
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] LOGIN_ALREADYLOGGEDIN = {(byte) 0x01, (byte) 0x00, (byte) 0x06, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -58,8 +58,8 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] LOGINHEADER = { (byte) 0xEC, (byte) 0x2C, (byte) 0x4A, (byte) 0x00 };
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+	public static final byte[] LOGINHEADER = {(byte) 0xEC, (byte) 0x2C, (byte) 0x4A, (byte) 0x00};
 	
 	protected ServerSocket socketServer;
 	protected Vector<LoginServerConnection> clientConnections;
@@ -71,34 +71,6 @@ public class LoginServer extends Thread {
 		this.port = port;
 		this.timeout = timeout;
 		this.clientConnections = new Vector<LoginServerConnection>();
-	}
-	
-	public boolean removeClient(SocketAddress remoteAddress) {
-		try {
-			for (int i = 0; i < this.clientConnections.size(); i++) {
-				final LoginServerConnection client = this.clientConnections.get(i);
-
-				if (client.getRemoteAddress().equals(remoteAddress)) {
-					this.clientConnections.remove(i);
-					Main.logger.log("LoginServer", remoteAddress + " removed");
-					return true;
-				}
-			}
-		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
-		}
-
-		return false;
-	}
-	
-	public void removeAllClients() {
-		try {
-			for (int i=0; i<this.clientConnections.size(); i++)
-				this.clientConnections.get(i).finalize();
-			this.clientConnections.clear();
-		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
-		}
 	}
 	
 	private boolean stop;
@@ -119,6 +91,7 @@ public class LoginServer extends Thread {
 			while (!stop) {
 				try {
 					final Socket socket = this.socketServer.accept();
+					
 					Main.logger.log("LoginServer", "Client connection from " + socket.getInetAddress().getHostAddress());
 					final LoginServerConnection socketConnection = new LoginServerConnection(socket);
 					socketConnection.start();
@@ -127,7 +100,6 @@ public class LoginServer extends Thread {
 					continue;
 				}
 			}
-			
 			
 			removeAllClients();
 			this.socketServer.close();
@@ -143,6 +115,33 @@ public class LoginServer extends Thread {
 			this.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public boolean removeClient(SocketAddress remoteAddress) {
+		try {
+			for (int i = 0; i < this.clientConnections.size(); i++) {
+				final LoginServerConnection con = this.clientConnections.get(i);
+				if (con.getRemoteAddress().equals(remoteAddress)) {
+					this.clientConnections.remove(i);
+					con.finalize();
+					Main.logger.log("LoginServer", remoteAddress + " removed");
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			Main.logger.log("Exception", e.getMessage());
+		}
+		return false;
+	}
+	
+	public void removeAllClients() {
+		try {
+			for (int i=0; i<this.clientConnections.size(); i++)
+				this.clientConnections.get(i).finalize();
+			this.clientConnections.clear();
+		} catch (Exception e) {
+			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 	

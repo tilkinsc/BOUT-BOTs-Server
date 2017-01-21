@@ -9,7 +9,6 @@ import shared.SQLDatabase;
 
 public class RoomUDPServer extends Thread {
 
-	
 	private boolean stop;
 	
 	public final int port;
@@ -31,8 +30,8 @@ public class RoomUDPServer extends Thread {
 		try {
 			final DatagramSocket socket = new DatagramSocket(port);
 			socket.setSoTimeout(timeout);
+			
 			while (!stop) {
-
 				final DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
 				
 				try {
@@ -56,7 +55,7 @@ public class RoomUDPServer extends Thread {
 
 			socket.close();
 		} catch (Exception e) {
-
+			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 	
