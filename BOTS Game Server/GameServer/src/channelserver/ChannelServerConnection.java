@@ -31,15 +31,16 @@ public class ChannelServerConnection extends Thread {
 		this.socket = socket;
 		this.server = server;
 		item = new ItemClass();
-		this.ip = Main.getip(socket);
+		this.ip = socket.getInetAddress().getHostAddress();
 		this.lobby = _lobby;
-		debug("" + socket.getLocalSocketAddress());
+		Main.logger.log("ChannelServerConnection", "" + socket.getLocalSocketAddress());
 	}
 
 	public void checkAccount() {
 		try {
+			final String ip = socket.getInetAddress().getHostAddress();
 			final ResultSet rs = SQLDatabase
-					.doquery("SELECT username FROM bout_users WHERE current_ip='" + Main.getip(socket) + "' LIMIT 1");
+					.doquery("SELECT username FROM bout_users WHERE current_ip='" + ip + "' LIMIT 1");
 			if (rs.next())
 				this.account = rs.getString("username");
 			if (this.account != null && isbanned(this.account) == 0) {
@@ -48,12 +49,8 @@ public class ChannelServerConnection extends Thread {
 			} else
 				account = "a";
 		} catch (Exception e) {
-			debug("Error :" + e);
+			Main.logger.log("Exception", e.getMessage());
 		}
-	}
-
-	protected void debug(String msg) {
-		Main.debug("ChannelServer (" + this.socket.getRemoteSocketAddress() + ")", msg);
 	}
 
 	public SocketAddress getRemoteAddress() {
@@ -101,7 +98,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 
 			case 0xF92A:
-				debug("parsing bots");
+				Main.logger.log("ChannelServerConnection", "parsing bots");
 				pack.addHeader((byte) 0x28, (byte) 0x27);
 				pack.addInt(1, 2, false);
 				send(pack);
@@ -221,7 +218,7 @@ public class ChannelServerConnection extends Thread {
 				else {
 					chatpack = chatpack.substring((a + this.charname.length() + 3));
 					chatpack = chatpack.substring(0, (chatpack.length() - 1));
-					debug(chatpack);
+					Main.logger.log("ChannelServerConnection", chatpack);
 					if (chatpack.startsWith("@")) {
 						final String command = chatpack.substring(1, chatpack.length());
 						parsechatcmd(command);
@@ -378,7 +375,7 @@ public class ChannelServerConnection extends Thread {
 					break;
 				}
 				final int num = lobby.addroom(roommode, cname, cpass, bot.getName(), bot.getLevel(),
-						Main.getip(this.socket), this.socketOut, bot);
+						socket.getInetAddress().getHostAddress(), this.socketOut, bot);
 				// lobby.setStatus(bot.getName(),0);
 				final int[] room = { roommode, num };
 				bot.setRoom(room);
@@ -536,15 +533,15 @@ public class ChannelServerConnection extends Thread {
 			}
 
 			default:
-				debug("parse unknown packet (" + cmd + ", " + Integer.toHexString(cmd) + ")");
+				Main.logger.log("ChannelServerConnection", "parse unknown packet (" + cmd + ", " + Integer.toHexString(cmd) + ")");
 			}
 		} catch (Exception e) {
-			debug("Error aa" + e);
+			Main.logger.log("ChannelServerConnection", e.getMessage());
 		}
 	}
 
 	protected void parsechatcmd(String cmd) {
-		debug(cmd);
+		Main.logger.log("ChannelServerConnection", cmd);
 		String rcmd;
 		final Packet packet = new Packet();
 		final byte[] bytecmd = cmd.getBytes();
@@ -556,7 +553,7 @@ public class ChannelServerConnection extends Thread {
 			rcmd = cmd.substring(0, cmd.length());
 		else
 			rcmd = cmd.substring(0, i);
-		debug("rcmd : -" + rcmd + "-");
+		Main.logger.log("ChannelServerConnection", "rcmd : -" + rcmd + "-");
 
 		if (rcmd.equals("kick") && isGM()) {
 			final String chaname = cmd.substring(i + 1);
@@ -717,13 +714,13 @@ public class ChannelServerConnection extends Thread {
 					.doquery("SELECT username FROM bout_characters WHERE name='" + charname + "' LIMIT 1");
 			if (rs.next()) {
 				final String username = rs.getString("username");
-				debug(username);
+				Main.logger.log("ChannelServerConnection", username);
 				return true;
 			}
 			rs = SQLDatabase.doquery("SELECT name FROM bout_characters WHERE username='" + account + "' LIMIT 1");
 			if (rs.next()) {
 				final String name = rs.getString("name");
-				debug(name);
+				Main.logger.log("ChannelServerConnection", name);
 				return true;
 			}
 			rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + account + "' LIMIT 1");
@@ -763,8 +760,8 @@ public class ChannelServerConnection extends Thread {
 				}
 			// debug("end read");
 		} catch (Exception e) {
-			debug("Error (read): " + e.getMessage());
-			this.server.remove(this.getRemoteAddress());
+			Main.logger.log("Exception", e.getMessage());
+			this.server.removeClient(this.getRemoteAddress());
 			return null;
 		}
 
@@ -784,7 +781,7 @@ public class ChannelServerConnection extends Thread {
 				// debug("main");
 				prasecmd(func.getcmd(packet), packet);
 		} catch (Exception e) {
-			debug("Exception (runhzhz): " + e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 		// debug("bye");
 		this.finalize();
@@ -798,15 +795,15 @@ public class ChannelServerConnection extends Thread {
 				if (room[0] != -1)
 					lobby.removeRoomPlayer(room, bot.getName());
 				lobby.removeuser(charname);
-				debug("remove charname " + charname);
+				Main.logger.log("ChannelServerConnection", "remove charname " + charname);
 				this.charname = "";
 			}
-			this.server.remove(this.getRemoteAddress());
+			this.server.removeClient(this.getRemoteAddress());
 			this.socketIn.close();
 			this.socketOut.close();
 			this.socket.close();
 		} catch (Exception e) {
-			debug("Exception (finalize): " + e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 }

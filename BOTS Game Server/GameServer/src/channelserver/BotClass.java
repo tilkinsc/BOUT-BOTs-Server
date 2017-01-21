@@ -52,10 +52,6 @@ public class BotClass {
 		this.item = itemn;
 	}
 
-	protected void debug(String msg) {
-		Main.debug("Botclass (" + this.ip + ")", msg);
-	}
-
 	public void loadchar() {
 		try {
 			ResultSet rs = SQLDatabase
@@ -173,14 +169,14 @@ public class BotClass {
 				if (i < 5)
 					break;
 				final String onescript = script.substring(0, i);
-				debug(onescript);
+				Main.logger.log("BotClass", onescript);
 				script = script.substring(i + 2);
 				int i2 = 0;
 				while (onescript.charAt(i2) != ',')
 					i2++;
 				final String stat = onescript.substring(0, i2);
 				final int value = Integer.parseInt(onescript.substring(i2 + 1));
-				debug(stat + "  " + value);
+				Main.logger.log("BotClass", stat + "  " + value);
 				parseStat(stat, value);
 			}
 
@@ -422,13 +418,13 @@ public class BotClass {
 	}
 
 	public int getCoins() {
-		debug("getcoins : " + this.coins);
+		Main.logger.log("BotClass", "getcoins : " + this.coins);
 		return this.coins;
 	}
 
 	public void setCoins(int coins) {
 		this.coins = coins;
-		debug("Setcoins : " + this.coins);
+		Main.logger.log("BotClass", "Setcoins : " + this.coins);
 		updateCoins();
 	}
 
@@ -618,7 +614,7 @@ public class BotClass {
 			packet.addPacketHead((byte) 0x00, (byte) 0x60);
 			return packet;
 		} catch (Exception e) {
-			debug(e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 		packet.addPacketHead((byte) 0x00, (byte) 0x60);
 		return packet;
@@ -671,7 +667,7 @@ public class BotClass {
 			packet.addPacketHead((byte) 0x00, (byte) 0x61);
 			return packet;
 		} catch (Exception e) {
-			debug(e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 		packet.addPacketHead((byte) 0x00, (byte) 0x60);
 		return packet;

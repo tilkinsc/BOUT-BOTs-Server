@@ -44,10 +44,6 @@ public class Room {
 	private int[] items;
 	private String owner;
 
-	protected void debug(String msg) {
-		Main.debug("[" + owner + "]", msg);
-	}
-
 	public Room(int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock,
 			BotClass _bot) {
 		try {
@@ -121,9 +117,9 @@ public class Room {
 
 			SQLDatabase.doupdate(
 					"DELETE FROM `rooms` WHERE `ip` = '" + this.roomip + "' and `port` = '" + this.roomport[0] + "'");
-			debug("[this.roomip]" + this.roomip);
-			debug("[this.roomport]" + this.roomport);
-			debug("[this.roompass]" + this.roompass);
+			Main.logger.log("Room", "[this.roomip]" + this.roomip);
+			Main.logger.log("Room", "[this.roomport]" + this.roomport);
+			Main.logger.log("Room", "[this.roompass]" + this.roompass);
 
 			pack.addHeader((byte) 0x4A, (byte) 0x2F);
 			pack.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);

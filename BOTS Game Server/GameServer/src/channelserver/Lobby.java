@@ -43,15 +43,11 @@ public class Lobby {
 		 * roomip[i][i2] = ""; for (int i3 = 0; i3 < 8; ++i3)
 		 * this.roomplayer[i][i2][i3] = ""; } }
 		 */
-		debug("done");
-	}
-
-	protected void debug(String msg) {
-		Main.debug("[Lobby]", msg);
+		Main.logger.log("Lobby", "done");
 	}
 
 	public void adduser(String username, int bot, PrintWriter sockout, Socket socket) {
-		debug("add user " + username);
+		Main.logger.log("Lobby", "add user " + username);
 		int i = 0;
 		for (; i <= this.users; i++)
 			if (charnames[i] == null || charnames[i].equals("")) {
@@ -60,13 +56,13 @@ public class Lobby {
 				this.usersocks[i] = sockout;
 				this.socks[i] = socket;
 				this.status[i] = 1;
-				debug("user " + username + " added at " + i);
+				Main.logger.log("Lobby", "user " + username + " added at " + i);
 				break;
 			}
-		debug(Integer.toString(i));
+		Main.logger.log("Lobby", Integer.toString(i));
 		if (i == this.users)
 			this.users++;
-		debug("current users(add) " + this.users);
+		Main.logger.log("Lobby", "current users(add) " + this.users);
 		writelobbyall(username, getaddpacket(username));
 	}
 
@@ -88,7 +84,7 @@ public class Lobby {
 			bots[clientnum] = 0;
 			if ((clientnum + 1) == this.users)
 				this.users--;
-			debug("current users(remove) " + this.users);
+			Main.logger.log("Lobby", "current users(remove) " + this.users);
 		}
 	}
 
@@ -129,13 +125,13 @@ public class Lobby {
 			int i = 0;
 			do {
 				if (usersocks[i] == null)
-					debug("client nr:" + i + " is empty");
+					Main.logger.log("Lobby", "client nr:" + i + " is empty");
 				else {
 					usersocks[i].write(packandhead[0]);
 					usersocks[i].flush();
 					usersocks[i].write(packandhead[1]);
 					usersocks[i].flush();
-					debug("send");
+					Main.logger.log("Lobby", "send");
 				}
 				i++;
 			} while (i < this.users);
@@ -200,7 +196,7 @@ public class Lobby {
 				usersocks[i].flush();
 				usersocks[i].write(packet[1]);
 				usersocks[i].flush();
-				debug("send to " + charnames[i]);
+				Main.logger.log("Lobby", "send to " + charnames[i]);
 			}
 			i++;
 		} while (i < this.users + 1);
@@ -223,7 +219,7 @@ public class Lobby {
 
 		for (int i = 0; i < this.users; i++)
 			if (usersocks[i] == null)
-				debug("client nr:" + i + " is empty");
+				Main.logger.log("Lobby", "client nr:" + i + " is empty");
 			else {
 				usersocks[i].write(packandhead[0]);
 				usersocks[i].flush();
@@ -254,7 +250,7 @@ public class Lobby {
 				usersocks[num].write(packandhead[1]);
 				usersocks[num].flush();
 				usersocks[num].close();
-				this.server.remove(socks[num].getRemoteSocketAddress());
+				this.server.removeClient(socks[num].getRemoteSocketAddress());
 				this.LobbyMsg(reson, 2);
 				this.removeuser(player);
 				return 1;
@@ -297,7 +293,7 @@ public class Lobby {
 				pack.addByte((byte) 0x00);
 				packs[0] = pack.getHeader();
 				packs[1] = pack.getPacket();
-				debug("test " + packs[1]);
+				Main.logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
 				usersocks[num].write(packs[1]);

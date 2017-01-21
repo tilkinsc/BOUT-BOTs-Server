@@ -2,10 +2,6 @@ package channelserver;
 
 public class MiscFunctions {
 
-	protected void debug(String msg) {
-		Main.debug("[Function]", msg);
-	}
-
 	public int bytetoint(String thestring, int bytec) {
 		try {
 			String hex_data_s = "";
@@ -90,7 +86,7 @@ public class MiscFunctions {
 
 			final int chende = b;
 			final String chname = chatpack.substring(chstart, chende);
-			debug(chname + "-  -" + rlcharname);
+			Main.logger.log("MiscFunctions", chname + "-  -" + rlcharname);
 			if (chname.equals(rlcharname))
 				return a;
 			else

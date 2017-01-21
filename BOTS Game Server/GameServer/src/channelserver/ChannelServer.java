@@ -59,27 +59,31 @@ public class ChannelServer extends Thread {
 		return this.clientConnections.size();
 	}
 
-	protected void debug(String msg) {
-		Main.debug("ChannelServer (" + this.port + ")", msg);
-	}
-
-	public boolean remove(SocketAddress remoteAddress) {
+	public boolean removeClient(SocketAddress remoteAddress) {
 		try {
-			debug("IP : " + remoteAddress);
 			for (int i = 0; i < this.clientConnections.size(); i++) {
-				final ChannelServerConnection client = this.clientConnections.get(i);
-				debug("" + client.getRemoteAddress());
-				if (client.getRemoteAddress().equals(remoteAddress)) {
+				final ChannelServerConnection con = this.clientConnections.get(i);
+				if (con.getRemoteAddress().equals(remoteAddress)) {
 					this.clientConnections.remove(i);
-					debug("client " + remoteAddress + " removed");
+					con.finalize();
+					Main.logger.log("LoginServer", remoteAddress + " removed");
 					return true;
 				}
 			}
 		} catch (Exception e) {
-			debug("Exception (remove): " + e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
-
 		return false;
+	}
+	
+	public void removeAllClients() {
+		try {
+			for (int i=0; i<this.clientConnections.size(); i++)
+				this.clientConnections.get(i).finalize();
+			this.clientConnections.clear();
+		} catch (Exception e) {
+			Main.logger.log("Exception", e.getMessage());
+		}
 	}
 
 	@Override
@@ -87,21 +91,21 @@ public class ChannelServer extends Thread {
 		try {
 			this.serverSocket = new ServerSocket(this.port);
 			this.listening = true;
-			debug("listening");
+			Main.logger.log("ChannelServer", "listening");
 			final Lobby lobby = new Lobby(this);
 
 			while (this.listening) {
 				final Socket socket = this.serverSocket.accept();
 				// if(!Main.getip(socket).equals("127.0.0.1")){ // seems to
 				// remove the ability to login from locahost
-				debug("client connection from " + socket.getRemoteSocketAddress());
+				Main.logger.log("ChannelServer", "client connection from " + socket.getRemoteSocketAddress());
 				final ChannelServerConnection socketConnection = new ChannelServerConnection(socket, this, lobby);
 				clientConnections.add(socketConnection);
 				socketConnection.start();
 				// }
 			}
 		} catch (Exception e) {
-			debug("Exception (run): " + e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 
@@ -110,9 +114,9 @@ public class ChannelServer extends Thread {
 		try {
 			this.serverSocket.close();
 			this.listening = false;
-			debug("stopped");
+			Main.logger.log("ChannelServer", "stopped");
 		} catch (Exception e) {
-			debug("Exception (finalize): " + e.getMessage());
+			Main.logger.log("Exception", e.getMessage());
 		}
 	}
 }

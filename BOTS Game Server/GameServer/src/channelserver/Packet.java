@@ -6,10 +6,6 @@ public class Packet {
 	private String header = "";
 	private boolean calced = false;
 
-	protected void debug(String msg) {
-		Main.debug("Packet", msg);
-	}
-
 	public int getLen() {
 		return this.packet.length();
 	}
