@@ -10,8 +10,6 @@ public class BotClass {
 	private final ItemClass item;
 	private final MiscFunctions func = new MiscFunctions();
 
-	private String ip = "";
-
 	private int id;
 	private final String account;
 	private String botname = "";
@@ -47,9 +45,8 @@ public class BotClass {
 	private int gigas = 0;
 	private int coins = 0;
 
-	public BotClass(String accountn, String ipadd, ItemClass itemn) {
+	public BotClass(String accountn, ItemClass itemn) {
 		this.account = accountn;
-		this.ip = ipadd;
 		this.item = itemn;
 	}
 

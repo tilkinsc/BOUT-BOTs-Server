@@ -774,7 +774,7 @@ public class ChannelServerConnection extends Thread {
 			this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), "ISO8859-1"));
 			this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
 			checkAccount();
-			bot = new BotClass(this.account, this.ip, this.item);
+			bot = new BotClass(this.account, this.item);
 			shop = new Shop(bot, item);
 			String packet;
 			while ((packet = read()) != null)
