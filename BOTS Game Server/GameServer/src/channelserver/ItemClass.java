@@ -6,9 +6,6 @@ import shared.SQLDatabase;
 
 public class ItemClass {
 
-	private String ip;
-	private String botname;
-
 	public String getItemName(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT name FROM bout_items WHERE id=" + id + " LIMIT 1");
