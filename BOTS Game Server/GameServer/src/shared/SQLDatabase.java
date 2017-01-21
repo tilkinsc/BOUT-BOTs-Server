@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import loginserver.Main;
-
 public class SQLDatabase {
 
 	protected static Properties sqldata = new Properties();
@@ -46,10 +44,10 @@ public class SQLDatabase {
 			final String url = "jdbc:mysql://" + ip + "/" + database;
 			
 			con = DriverManager.getConnection(url, user, pass);
-			if (!con.isClosed())
-				Main.logger.log("SQLDatabase", "Successfully connected");
+			if (con.isClosed())
+				throw new Exception("SQLDatabase did not connect!");
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -67,7 +65,7 @@ public class SQLDatabase {
 			final Statement st = con.createStatement();
 			rs = st.executeQuery(query);
 		} catch (SQLException e) {
-			Main.logger.log("SQLDatabase", e.getMessage());
+			e.printStackTrace();
 		}
 		return rs;
 	}
@@ -76,8 +74,8 @@ public class SQLDatabase {
 		try {
 			final Statement st = con.createStatement();
 			st.executeUpdate(query);
-		} catch (SQLException ex) {
-			Main.logger.log("SQLDatabase", ex.getMessage());
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
