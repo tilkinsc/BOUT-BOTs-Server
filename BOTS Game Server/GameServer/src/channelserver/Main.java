@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,12 +12,11 @@ import shared.SQLDatabase;
 
 public class Main {
 
-	public static final String SESSION_LOG_DIR = "log";
+	public static final String SESSION_LOG_DIR = "log_channel";
 	public static Logger logger;
 	
 	public static ChannelServer channelserver;
 	public static ChannelGameServerGUI gui;
-	public static String str = new String();
 
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
@@ -40,7 +38,7 @@ public class Main {
 	public static File createSessionLog() throws IOException {
 		final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		final File f = new File(SESSION_LOG_DIR + "\\" + format.format(new Date()) + ".log");
-		boolean created = f.createNewFile();
+		final boolean created = f.createNewFile();
 		if(!created) {
 			System.out.println("Session log already exists! Check your time!");
 			System.exit(1);
@@ -50,37 +48,40 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			final PrintStream[] ps = new PrintStream[] {
-					System.out
-			};
-			logger = new Logger(ps);
-			
-			channelserver = new ChannelServer(11002, 5000);
-			channelserver.start();
-
 			gui = new ChannelGameServerGUI();
-			gui.setTitle("Bots Channel Server!");
+			
+			final PrintStream guisession = createGuiSessionStream();
+			final File session = createSessionLog();
+			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
+			
+			gui.setTitle("Bots Channel Server");
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
-			// if you remove, you will instantly die by a flying pig.
-			logger.log("Credits", "Server Files Edited by Secured!");
+			
+			channelserver = new ChannelServer(11002, 5000);
+			gui.startUpdateTimer();
+			SQLDatabase.start();
+			channelserver.start();
 
+			// wtf is this ?!?! :o oh init of longbyte in ChannelServer.. doesn't belong here
 			final String nullbyte = new String(ChannelServer.NULLBYTE, "ISO8859-1");
 			for (int i = 0; i < 1372; i++)
 				ChannelServer.longnullbyte += nullbyte;
 
-			SQLDatabase.start();
-			logger.log("[ChannelServer]", "Server Starting...!");
-			logger.log("[ChannelServer]", "ChannelServer has jumped on port " + 11002 + "");
-			logger.log("[ChannelServer]", "Server Started!");
+			logger.log("Main", "Login server started!");
 		} catch (Exception e) {
-			logger.log("Main", "Exception (main)" + e.getMessage());
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
 	public static void invokeShutdown() {
-		
+		channelserver.stopThread();
+		System.out.println("channel server closed");
+		SQLDatabase.close();
+		System.out.println("SQL closed");
+		logger.flushAll();
+		logger.closeAll();
 	}
 
 }
