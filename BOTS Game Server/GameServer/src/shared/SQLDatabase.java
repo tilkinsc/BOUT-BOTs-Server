@@ -13,9 +13,9 @@ public class SQLDatabase {
 	protected static Properties sqldata = new Properties();
 	protected static Connection con;
 	protected static Statement st;
-
+	
 	protected static String ip, port, user, pass, database;
-
+	
 	private static void loadconfigs() {
 		try {
 			final FileInputStream fin = new FileInputStream("configs/mysql.conf");
@@ -31,7 +31,7 @@ public class SQLDatabase {
 		pass = sqldata.getProperty("MySQL_pw");
 		database = sqldata.getProperty("MySQL_db");
 	}
-
+	
 	public static void start() {
 		loadconfigs();
 		
@@ -40,7 +40,7 @@ public class SQLDatabase {
 			final String driverName = "org.gjt.mm.mysql.Driver";
 			
 			Class.forName(driverName);
-
+			
 			final String url = "jdbc:mysql://" + ip + "/" + database;
 			
 			con = DriverManager.getConnection(url, user, pass);
@@ -58,7 +58,7 @@ public class SQLDatabase {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static ResultSet doquery(String query) {
 		ResultSet rs = null;
 		try {
@@ -69,7 +69,7 @@ public class SQLDatabase {
 		}
 		return rs;
 	}
-
+	
 	public static void doupdate(String query) {
 		try {
 			final Statement st = con.createStatement();
@@ -78,5 +78,5 @@ public class SQLDatabase {
 			e.printStackTrace();
 		}
 	}
-
+	
 }
