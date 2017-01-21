@@ -50,14 +50,12 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			final int ChannelPort = 11002;
-
 			final PrintStream[] ps = new PrintStream[] {
 					System.out
 			};
 			logger = new Logger(ps);
 			
-			channelserver = new ChannelServer(ChannelPort);
+			channelserver = new ChannelServer(11002, 5000);
 			channelserver.start();
 
 			gui = new ChannelGameServerGUI();
@@ -73,7 +71,7 @@ public class Main {
 
 			SQLDatabase.start();
 			logger.log("[ChannelServer]", "Server Starting...!");
-			logger.log("[ChannelServer]", "ChannelServer has jumped on port " + ChannelPort + "");
+			logger.log("[ChannelServer]", "ChannelServer has jumped on port " + 11002 + "");
 			logger.log("[ChannelServer]", "Server Started!");
 		} catch (Exception e) {
 			logger.log("Main", "Exception (main)" + e.getMessage());
