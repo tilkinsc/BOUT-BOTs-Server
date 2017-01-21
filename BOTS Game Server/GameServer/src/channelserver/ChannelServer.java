@@ -3,7 +3,6 @@ package channelserver;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Vector;
 
@@ -67,8 +66,7 @@ public class ChannelServer extends Thread {
 			while (!stop) {
 				try {
 					final Socket socket = this.serverSocket.accept();
-					// if(!Main.getip(socket).equals("127.0.0.1")){ // seems to
-					// remove the ability to login from locahost
+					// if(!Main.getip(socket).equals("127.0.0.1")){
 					Main.logger.log("ChannelServer", "client connection from " + socket.getRemoteSocketAddress());
 					final ChannelServerConnection socketConnection = new ChannelServerConnection(socket, this, lobby);
 					clientConnections.add(socketConnection);
