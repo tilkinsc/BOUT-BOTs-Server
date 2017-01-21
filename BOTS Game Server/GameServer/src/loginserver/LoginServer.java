@@ -61,12 +61,15 @@ public class LoginServer extends Thread {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	public static final byte[] LOGINHEADER = { (byte) 0xEC, (byte) 0x2C, (byte) 0x4A, (byte) 0x00 };
 	
-	protected int port;
 	protected ServerSocket socketServer;
 	protected Vector<LoginServerConnection> clientConnections;
 	
-	public LoginServer(int serverPort) {
-		this.port = serverPort;
+	public final int port;
+	public final int timeout;
+	
+	public LoginServer(int port, int timeout) {
+		this.port = port;
+		this.timeout = timeout;
 		this.clientConnections = new Vector<LoginServerConnection>();
 	}
 	
@@ -110,8 +113,8 @@ public class LoginServer extends Thread {
 	public void run() {
 		try {
 			Main.logger.log("LoginServer", "Has Hopped on " + this.port + "!");
-			this.socketServer = new ServerSocket(this.port);
-			this.socketServer.setSoTimeout(5000);
+			this.socketServer = new ServerSocket(port);
+			this.socketServer.setSoTimeout(timeout);
 
 			while (!stop) {
 				try {

@@ -33,6 +33,15 @@ class ChannelServer extends Thread {
 	// SQL Querys
 	protected static final String GET_CHANNEL_QUERY = "SELECT * FROM bout_channels WHERE status=1 LIMIT 12";
 	
+	
+	public final int port;
+	public final int timeout;
+	
+	public ChannelServer(int port, int timeout) {
+		this.port = port;
+		this.timeout = timeout;
+	}
+	
 	protected void getChannels() {
 
 		try {
@@ -82,14 +91,14 @@ class ChannelServer extends Thread {
 		final byte[] receiveData = new byte[12];
 		byte[] sendData = new byte[340];
 		String reqString;
-		int port;
+		int client_port;
 		InetAddress IPAddress;
 		
 		try {
-			final DatagramSocket serverSocket = new DatagramSocket(11010);
-			serverSocket.setSoTimeout(5000);
+			final DatagramSocket serverSocket = new DatagramSocket(port);
+			serverSocket.setSoTimeout(timeout);
 			DatagramPacket sendPacket;
-			Main.logger.log("ChannelList", "Channel List is walking on " + 11010);
+			Main.logger.log("ChannelList", "Channel List is walking on " + port);
 			
 			while (!stop) {
 				final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -118,9 +127,9 @@ class ChannelServer extends Thread {
 		
 					IPAddress = receivePacket.getAddress();
 		
-					port = receivePacket.getPort();
+					client_port = receivePacket.getPort();
 		
-					sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+					sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, client_port);
 		
 					serverSocket.send(sendPacket);
 					Main.logger.log("ChannelList", "Sent Channels");

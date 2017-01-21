@@ -12,6 +12,14 @@ public class RoomUDPServer extends Thread {
 	
 	private boolean stop;
 	
+	public final int port;
+	public final int timeout;
+	
+	public RoomUDPServer(int port, int timeout) {
+		this.port = port;
+		this.timeout = timeout;
+	}
+	
 	@Override
 	public void start() {
 		stop = false;
@@ -21,8 +29,8 @@ public class RoomUDPServer extends Thread {
 	@Override
 	public void run() {
 		try {
-			final DatagramSocket socket = new DatagramSocket(11011);
-			socket.setSoTimeout(5000);
+			final DatagramSocket socket = new DatagramSocket(port);
+			socket.setSoTimeout(timeout);
 			while (!stop) {
 
 				final DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
