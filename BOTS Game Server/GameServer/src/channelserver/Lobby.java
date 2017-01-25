@@ -3,9 +3,10 @@ package channelserver;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import shared.Util;
+
 public class Lobby {
 
-	MiscFunctions func = new MiscFunctions();
 	String nullbyte = new String(ChannelServer.NULLBYTE);
 	ChannelServer server;
 	private int users = 0;
@@ -267,7 +268,7 @@ public class Lobby {
 		final String recvUser = pack.getString(0, 15, false);
 		final String message = pack.getString(0, pack.getLen(), false);
 		pack.clean();
-		if (func.compareChat(message, sender, true, false) == -1)
+		if (Util.compareChat(message, sender, true, false) == -1)
 			kickPlayer(sender, "Player " + sender + " has been kick for wrong chatname(hacking)");
 		else {
 			pack.addHeader((byte) 0x2B, (byte) 0x2F);

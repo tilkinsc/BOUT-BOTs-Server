@@ -8,7 +8,6 @@ import shared.Util;
 public class BotClass {
 
 	private final ItemClass item;
-	private final MiscFunctions func = new MiscFunctions();
 	
 	private int id;
 	private final String account;
@@ -668,7 +667,7 @@ public class BotClass {
 			packet.addHeader((byte) 0x27, (byte) 0x2F);
 			packet.addInt(1, 4, false);
 			final ResultSet rs = SQLDatabase.doquery(
-					"SELECT * FROM bout_characters WHERE name='" + func.removenullbyte(charname) + "' LIMIT 1");
+					"SELECT * FROM bout_characters WHERE name='" + Util.removenullbyte(charname) + "' LIMIT 1");
 			rs.next();
 			final int clevel = rs.getInt("level");
 			final int cbot = rs.getInt("bot");

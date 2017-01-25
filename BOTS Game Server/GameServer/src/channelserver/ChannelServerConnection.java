@@ -9,6 +9,7 @@ import java.net.SocketAddress;
 import java.sql.ResultSet;
 
 import shared.SQLDatabase;
+import shared.Util;
 
 public class ChannelServerConnection extends Thread {
 
@@ -21,7 +22,6 @@ public class ChannelServerConnection extends Thread {
 	protected int bottype;
 	protected String ip;
 	protected String charname = "";
-	protected MiscFunctions func = new MiscFunctions();
 	protected boolean firstlog = true;
 	protected BotClass bot;
 	protected ItemClass item;
@@ -205,7 +205,7 @@ public class ChannelServerConnection extends Thread {
 				pack.setPacket(packet);
 				pack.removeHeader();
 				String chatpack = pack.getPacket();
-				final int a = func.compareChat(chatpack, this.charname, false, isGM());
+				final int a = Util.compareChat(chatpack, this.charname, false, isGM());
 				if (a == -1)
 					lobby.kickPlayer(this.charname,
 							"Player " + this.charname + " has been kick for wrong chatname(hacking)");
@@ -700,7 +700,7 @@ public class ChannelServerConnection extends Thread {
 					buffer.appendCodePoint(codePoint);
 			}
 			
-			final int plen = func.bytetoint(buffer.toString().substring(2), 2);
+			final int plen = Util.bytetoint(buffer.toString().substring(2), 2);
 			if (plen > 1)
 				for (int i = 0; i < plen; i++) {
 					codePoint = this.socketIn.read();
@@ -730,7 +730,7 @@ public class ChannelServerConnection extends Thread {
 			String packet;
 			while ((packet = read()) != null)
 				// debug("main");
-				prasecmd(func.getcmd(packet), packet);
+				prasecmd(Util.getcmd(packet), packet);
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
