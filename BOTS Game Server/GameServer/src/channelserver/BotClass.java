@@ -702,6 +702,10 @@ public class BotClass {
 		return ret;
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	
 	public int getAttMin() {
 		return this.attmin;
 	}

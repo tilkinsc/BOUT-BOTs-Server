@@ -38,7 +38,7 @@ public class Room {
 	private final int[] killcount = new int[8]; // player kill counts
 	private int[] monster;
 	private Sector sector;
-	private final int lala = 0; // unused random variable
+	// private final int lala = 0; // unused random variable
 	private int[] items;
 	private String owner;
 	

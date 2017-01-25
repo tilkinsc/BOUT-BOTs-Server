@@ -392,7 +392,7 @@ public class ChannelServerConnection extends Thread {
 				final String rpass = pack.getString(0, 10, false);
 				final int[] room = { roommode, roomnum };
 				final Packet npacket = lobby.addRoomPlayer(room, rpass, ip, socketOut, bot);
-				if (npacket.getBodyLen() == 1715) { // TODO: may be head len I forget
+				if (npacket.getBodyLen() == 1715) {
 					bot.setRoom(room);
 					send(npacket);
 					// lobby.setStatus(bot.getName(),0);
