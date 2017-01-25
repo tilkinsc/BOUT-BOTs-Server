@@ -589,13 +589,13 @@ public class BotClass {
 					this.setInvent(0, slot);
 					this.setEquip(aid, epart, part);
 					// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-					packet.setPacket(this.getpacketcinfo());
+					packet.setBody(this.getpacketcinfo());
 					return packet;
 				}
 				this.setInvent(old, slot);
 				this.setEquip(aid, epart, part);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setPacket(this.getpacketcinfo());
+				packet.setBody(this.getpacketcinfo());
 				return packet;
 			}
 			packet.addPacketHead((byte) 0x00, (byte) 0x60);
@@ -642,7 +642,7 @@ public class BotClass {
 				this.setInvent(aid, islot);
 				this.setEquip(0, epart, slot);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setPacket(this.getpacketcinfo());
+				packet.setBody(this.getpacketcinfo());
 				return packet;
 			}
 			

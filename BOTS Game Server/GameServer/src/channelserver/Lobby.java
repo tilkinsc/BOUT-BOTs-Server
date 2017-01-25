@@ -120,7 +120,7 @@ public class Lobby {
 			final String[] packandhead = new String[2];
 			
 			packandhead[0] = packet.getHeader();
-			packandhead[1] = packet.getPacket();
+			packandhead[1] = packet.getBody();
 			
 			int i = 0;
 			do {
@@ -147,7 +147,7 @@ public class Lobby {
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
-		while (packet.getLen() != 17)
+		while (packet.getBodyLen() != 17) // TODO: may be head len I forget
 			packet.addByte((byte) 0xCC);
 		
 		packet.addByte((byte) (bots[num] & 0xff), (byte) this.status[num]);
@@ -155,7 +155,7 @@ public class Lobby {
 		final String[] packandhead = new String[2];
 		
 		packandhead[0] = packet.getHeader();
-		packandhead[1] = packet.getPacket();
+		packandhead[1] = packet.getBody();
 		
 		packet.clean();
 		return packandhead;
@@ -169,7 +169,7 @@ public class Lobby {
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
-		while (packet.getLen() != 17)
+		while (packet.getBodyLen() != 17) // TODO: may be head len. I forget
 			packet.addByte((byte) 0xCC);
 		
 		packet.addByte((byte) (bots[num] & 0xff), (byte) 0xFF);
@@ -177,7 +177,7 @@ public class Lobby {
 		final String[] packandhead = new String[2];
 		
 		packandhead[0] = packet.getHeader();
-		packandhead[1] = packet.getPacket();
+		packandhead[1] = packet.getBody();
 		
 		packet.clean();
 		return packandhead;
@@ -212,7 +212,7 @@ public class Lobby {
 		final String[] packandhead = new String[2];
 		
 		packandhead[0] = packet.getHeader();
-		packandhead[1] = packet.getPacket();
+		packandhead[1] = packet.getBody();
 		
 		for (int i = 0; i < this.users; i++)
 			if (usersocks[i] == null)
@@ -241,7 +241,7 @@ public class Lobby {
 				pack.addInt(1, 2, false);
 				final String[] packandhead = new String[2];
 				packandhead[0] = pack.getHeader();
-				packandhead[1] = pack.getPacket();
+				packandhead[1] = pack.getBody();
 				usersocks[num].write(packandhead[0]);
 				usersocks[num].flush();
 				usersocks[num].write(packandhead[1]);
@@ -263,11 +263,11 @@ public class Lobby {
 	public void whisper(String packet, String sender) {
 		final Packet pack = new Packet();
 		final String[] packs = new String[2];
-		pack.setPacket(packet);
+		pack.setBody(packet);
 		pack.removeHeader();
 		final int len = pack.getInt(2);
 		final String recvUser = pack.getString(0, 15, false);
-		final String message = pack.getString(0, pack.getLen(), false);
+		final String message = pack.getString(0, pack.getBodyLen(), false); // TODO: may be head len I forget
 		pack.clean();
 		if (Util.compareChat(message, sender, true, false) == -1)
 			kickPlayer(sender, "Player " + sender + " has been kick for wrong chatname(hacking)");
@@ -277,7 +277,7 @@ public class Lobby {
 			if (num == -1) {
 				pack.addByte((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
 				packs[0] = pack.getHeader();
-				packs[1] = pack.getPacket();
+				packs[1] = pack.getBody();
 				num = getNum(sender);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
@@ -289,7 +289,7 @@ public class Lobby {
 				pack.addString(message);
 				pack.addByte((byte) 0x00);
 				packs[0] = pack.getHeader();
-				packs[1] = pack.getPacket();
+				packs[1] = pack.getBody();
 				Main.logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
@@ -397,7 +397,7 @@ public class Lobby {
 		final String[] packandhead = new String[2];
 		
 		packandhead[0] = packet.getHeader();
-		packandhead[1] = packet.getPacket();
+		packandhead[1] = packet.getBody();
 		
 		packet.clean();
 		return packandhead;
@@ -412,7 +412,7 @@ public class Lobby {
 		final String[] packandhead = new String[2];
 		
 		packandhead[0] = packet.getHeader();
-		packandhead[1] = packet.getPacket();
+		packandhead[1] = packet.getBody();
 		
 		packet.clean();
 		return packandhead;
