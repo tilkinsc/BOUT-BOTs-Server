@@ -2,6 +2,7 @@ package channelserver;
 
 import java.sql.ResultSet;
 
+import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
 
@@ -450,9 +451,9 @@ public class BotClass {
 		for (int i = 0; i < 10; i++) {
 			packet.addInt(this.inventitems[i], 4, false);
 			if (this.inventitems[i] == 0)
-				packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+				packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 			else
-				packet.addByte4((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF);
+				packet.addByte((byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF);
 
 			packet.addByte((byte) 0x00);
 		}

@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.sql.ResultSet;
 
+import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
 
@@ -120,12 +121,12 @@ public class ChannelServerConnection extends Thread {
 					pack.addInt(1, 2, false);
 					pack.addString(charname);
 					pack.addByte((byte) 0x00);
-					pack.addByte4((byte) 0xCC, (byte) 0xCC, (byte) 0x01, (byte) 0x01);
+					pack.addByte((byte) 0xCC, (byte) 0xCC, (byte) 0x01, (byte) 0x01);
 					send(pack);
 					pack.clean();
 					pack.addHeader((byte) 0x4F, (byte) 0x2F);
 					pack.addInt(1, 2, false);
-					pack.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+					pack.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 					send(pack);
 					pack.clean();
 				} else {
@@ -449,7 +450,7 @@ public class ChannelServerConnection extends Thread {
 			case 0x6F2B: // respawn thing
 			{
 				pack.addHeader((byte) 0x54, (byte) 0x2F);
-				pack.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+				pack.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 				send(pack);
 				break;
 			}
@@ -645,7 +646,7 @@ public class ChannelServerConnection extends Thread {
 		
 		pack.addHeader((byte) 0x1A, (byte) 0x27);
 		
-		pack.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+		pack.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		pack.addInt(color, 2, false);
 		pack.addString(msg);
 		pack.addByte((byte) 0x00);

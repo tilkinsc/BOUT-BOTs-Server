@@ -1,5 +1,7 @@
 package channelserver;
 
+import shared.Packet;
+
 public class Shop {
 
 	BotClass bot;

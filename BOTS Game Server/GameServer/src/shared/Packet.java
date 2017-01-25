@@ -1,11 +1,10 @@
-package channelserver;
-
-import shared.Util;
+package shared;
 
 public class Packet {
 
-	private String packet = "";
 	private String header = "";
+	private String packet = "";
+	
 	private boolean calced = false;
 	
 	public int getLen() {
@@ -28,7 +27,7 @@ public class Packet {
 	}
 	
 	protected void calcHeader() {
-		this.header += getasByte(this.packet.length(), 2);
+		this.header += Util.getbyteiso(this.packet.length(), 2);
 		calced = true;
 	}
 	
@@ -36,17 +35,15 @@ public class Packet {
 		if (!calced)
 			this.calcHeader();
 		try {
-			final byte[] packb = this.header.getBytes("ISO8859-1");
-			return Util.isoString(packb);
+			return Util.isoString(this.header.getBytes("ISO8859-1"));
 		} catch (Exception e) {
 		}
 		return null;
 	}
 	
-	public void addPacketHead(byte b1, byte b2) {
+	public void addPacketHead(final byte... b) {
 		try {
-			final byte[] head = { b1, b2 };
-			this.packet += Util.isoString(head);
+			this.packet += Util.isoString(b);
 		} catch (Exception e) {
 		}
 	}
@@ -58,43 +55,8 @@ public class Packet {
 	public String getString(int start, int end, boolean nulled) {
 		final String thestring = this.packet.substring(start, end);
 		this.packet = this.packet.substring(end);
-		if (nulled)
-			return thestring;
-		else
-			return removenullbyte(thestring);
-	}
-	
-	protected String removenullbyte(String thestring) {
-		try {
-			final byte[] stringbyte = thestring.getBytes("ISO8859-1");
-			int a = 0;
-			while (stringbyte[a] != 0x00)
-				a++;
-			return thestring.substring(0, a);
-		} catch (Exception e) {
-			
-		}
-		return null;
-	}
-	
-	public String getasByte(int var, int num) {
-		try {
-			if (num == 2) {
-				final int b1 = var & 0xff;
-				final int b2 = (var >> 8) & 0xff;
-				final byte[] varbyte = { (byte) b1, (byte) b2 };
-				return Util.isoString(varbyte);
-			} else if (num == 4) {
-				final int b1 = var & 0xff;
-				final int b2 = (var >> 8) & 0xff;
-				final int b3 = (var >> 16) & 0xff;
-				final int b4 = (var >> 24) & 0xff;
-				final byte[] varbyte = { (byte) b1, (byte) b2, (byte) b3, (byte) b4 };
-				return Util.isoString(varbyte);
-			}
-		} catch (Exception e) {
-		}
-		return null;
+		if (nulled) return thestring;
+		else return Util.removenullbyte(thestring);
 	}
 	
 	public void addInt(int var, int num, boolean reverse) {
@@ -144,35 +106,15 @@ public class Packet {
 		return 0;
 	}
 	
-	public void addByte(byte b1) {
-		try {
-			final byte[] packbyte = { b1 };
-			this.packet += Util.isoString(packbyte);
-		} catch (Exception e) {
-		}
-	}
-	
-	public void addByte2(byte b1, byte b2) {
-		try {
-			final byte[] packbyte = { b1, b2 };
-			this.packet += Util.isoString(packbyte);
-		} catch (Exception e) {
-		}
-	}
-	
-	public void addByte4(byte b1, byte b2, byte b3, byte b4) {
-		try {
-			final byte[] packbyte = { b1, b2, b3, b4 };
-			this.packet += Util.isoString(packbyte);
-		} catch (Exception e) {
-		}
-	}
-	
 	public void addByteArray(byte[] bytearr) {
 		try {
 			this.packet += Util.isoString(bytearr);
 		} catch (Exception e) {
 		}
+	}
+	
+	public void addByte(final byte... b) {
+		addByteArray(b);
 	}
 	
 	public String getPacket() {

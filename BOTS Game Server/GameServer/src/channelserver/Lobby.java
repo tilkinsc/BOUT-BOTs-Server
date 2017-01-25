@@ -3,6 +3,7 @@ package channelserver;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import shared.Packet;
 import shared.Util;
 
 public class Lobby {
@@ -101,7 +102,7 @@ public class Lobby {
 			while (user.length() != 15)
 				user += nullbyte;
 			packet.addString(user);
-			packet.addByte2((byte) (bots[i] & 0xff), (byte) this.status[i]);
+			packet.addByte((byte) (bots[i] & 0xff), (byte) this.status[i]);
 		}
 		return packet;
 	}
@@ -149,7 +150,7 @@ public class Lobby {
 		while (packet.getLen() != 17)
 			packet.addByte((byte) 0xCC);
 		
-		packet.addByte2((byte) (bots[num] & 0xff), (byte) this.status[num]);
+		packet.addByte((byte) (bots[num] & 0xff), (byte) this.status[num]);
 		
 		final String[] packandhead = new String[2];
 		
@@ -171,7 +172,7 @@ public class Lobby {
 		while (packet.getLen() != 17)
 			packet.addByte((byte) 0xCC);
 		
-		packet.addByte2((byte) (bots[num] & 0xff), (byte) 0xFF);
+		packet.addByte((byte) (bots[num] & 0xff), (byte) 0xFF);
 		
 		final String[] packandhead = new String[2];
 		
@@ -203,7 +204,7 @@ public class Lobby {
 		final Packet packet = new Packet();
 		packet.addHeader((byte) 0x1A, (byte) 0x27);
 		
-		packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		packet.addInt(color, 2, false);
 		packet.addString("[Server] " + msg);
 		packet.addByte((byte) 0x00);
@@ -274,7 +275,7 @@ public class Lobby {
 			pack.addHeader((byte) 0x2B, (byte) 0x2F);
 			int num = getNum(recvUser);
 			if (num == -1) {
-				pack.addByte4((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
+				pack.addByte((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
 				packs[0] = pack.getHeader();
 				packs[1] = pack.getPacket();
 				num = getNum(sender);
@@ -283,7 +284,7 @@ public class Lobby {
 				usersocks[num].write(packs[1]);
 				usersocks[num].flush();
 			} else {
-				pack.addByte2((byte) 0x01, (byte) 0x00);
+				pack.addByte((byte) 0x01, (byte) 0x00);
 				pack.addInt(len, 2, false);
 				pack.addString(message);
 				pack.addByte((byte) 0x00);
@@ -380,7 +381,7 @@ public class Lobby {
 				packet.addByte((byte) 0x08);
 				packet.addByte((byte) this.rooms[cmode][i + (6 * page)].getStatus());
 				packet.addByte((byte) this.rooms[cmode][i + (6 * page)].getLevel());
-				packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+				packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 			} else
 				for (int z = 0; z < 48; z++)
 					packet.addByte((byte) 0x00);

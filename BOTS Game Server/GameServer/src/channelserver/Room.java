@@ -3,6 +3,7 @@ package channelserver;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
 
+import shared.Packet;
 import shared.SQLDatabase;
 
 public class Room {
@@ -94,7 +95,7 @@ public class Room {
 				break;
 			}
 			final String[] aip = this.roomip.split("\\.");
-			pack.addByte4((byte) Integer.parseInt(aip[0]), (byte) Integer.parseInt(aip[1]),
+			pack.addByte((byte) Integer.parseInt(aip[0]), (byte) Integer.parseInt(aip[1]),
 					(byte) Integer.parseInt(aip[2]), (byte) Integer.parseInt(aip[3]));
 			
 			writeRoomPlayer(0, pack);
@@ -114,7 +115,7 @@ public class Room {
 			Main.logger.log("Room", "[this.roompass]" + this.roompass);
 			
 			pack.addHeader((byte) 0x4A, (byte) 0x2F);
-			pack.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+			pack.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 			writeRoomPlayer(0, pack);
 			pack.clean();
 			this.roommap = 0;
@@ -122,7 +123,7 @@ public class Room {
 			pack.addHeader((byte) 0x39, (byte) 0x27);
 			pack.addInt(7033, 2, true);
 			for (int i = 0; i < 7; i++)
-				pack.addByte2((byte) 0x00, (byte) 0x00);
+				pack.addByte((byte) 0x00, (byte) 0x00);
 			writeRoomPlayer(0, pack);
 		} catch (Exception e) {
 		}
@@ -258,10 +259,10 @@ public class Room {
 				packet.addByte((byte) (roomnum[1] + 89));
 				packet.addByte(this.roomtype);
 				packet.addInt(this.roommap, 2, false);
-				packet.addByte2((byte) 0x03, (byte) 0x00);
-				packet.addByte2((byte) (this.roomnum[1]), (byte) this.roomid[i]);
-				packet.addByte2((byte) 0x00, (byte) 0x00);
-				packet.addByte2((byte) 0x03, (byte) 0x00);
+				packet.addByte((byte) 0x03, (byte) 0x00);
+				packet.addByte((byte) (this.roomnum[1]), (byte) this.roomid[i]);
+				packet.addByte((byte) 0x00, (byte) 0x00);
+				packet.addByte((byte) 0x03, (byte) 0x00);
 				writeRoomPlayer(i, packet);
 			}
 	}
@@ -292,14 +293,14 @@ public class Room {
 			{
 				final Packet packet = new Packet();
 				packet.addHeader((byte) 0x28, (byte) 0x2F);
-				packet.addByte2((byte) 0x00, (byte) 0x3E);
+				packet.addByte((byte) 0x00, (byte) 0x3E);
 				return packet;
 			}
 			if (this.roomstatus == 3) // already starten
 			{
 				final Packet packet = new Packet();
 				packet.addHeader((byte) 0x28, (byte) 0x2F);
-				packet.addByte2((byte) 0x00, (byte) 0x3B);
+				packet.addByte((byte) 0x00, (byte) 0x3B);
 				return packet;
 			}
 			for (int i = 0; i < 8; i++)
@@ -329,7 +330,7 @@ public class Room {
 				}
 			final Packet packet = new Packet();
 			packet.addHeader((byte) 0x28, (byte) 0x2F);
-			packet.addByte2((byte) 0x00, (byte) 0x50);
+			packet.addByte((byte) 0x00, (byte) 0x50);
 			return packet;
 		} catch (Exception e) {
 			
@@ -352,31 +353,31 @@ public class Room {
 		final int[] equip = this.bot[num].getEquipAll();
 		for (int i = 0; i < 19; i++)
 			packet.addInt(equip[i], 4, false);
-		packet.addByte2((byte) 0x02, (byte) 0x00);
-		packet.addByte2((byte) (this.roomnum[1]), (byte) this.roomid[num]);
+		packet.addByte((byte) 0x02, (byte) 0x00);
+		packet.addByte((byte) (this.roomnum[1]), (byte) this.roomid[num]);
 		
 		for (int i = 0; i < 4; i++)
 			packet.addByte(this.roomips[num][i]);
 		
 		for (int i = 0; i < 2; i++)
-			packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
-		packet.addByte2((byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00);
 		
 		if (num == 0)
 			packet.addInt(this.roomport[num], 2, true);
 		else
-			packet.addByte2((byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x00, (byte) 0x00);
 		
 		for (int i = 0; i < 4; i++)
 			packet.addByte(this.roomips[num][i]);
 		
 		for (int i = 0; i < 5; i++)
-			packet.addByte2((byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x00, (byte) 0x00);
 		
 		packet.addByte((byte) this.roomposi[num]);
 		
 		for (int i = 0; i < 5; i++)
-			packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		
 		packet.addInt(bot[num].getAttMin() + bot[num].getAttMinB(), 2, false);
 		packet.addInt(bot[num].getAttMax() + bot[num].getAttMaxB(), 2, false);
@@ -397,7 +398,7 @@ public class Room {
 		packet.addInt(bot[num].getBot(), 2, false);
 		
 		packet.addByte((byte) num);
-		packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		
 		String name = this.roomplayer[num];
 		
@@ -424,8 +425,8 @@ public class Room {
 				packet.addString(this.generateUserPack(i));
 			else
 				for (int z = 0; z < 52; z++)
-					packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
-		packet.addByte2((byte) (this.roomnum[1] + 89), this.roomtype);
+					packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+		packet.addByte((byte) (this.roomnum[1] + 89), this.roomtype);
 		String cname = this.roomname;
 		
 		final byte[] nullbyteb = { 0x00 };
@@ -435,11 +436,11 @@ public class Room {
 			cname += nullbyte;
 		
 		packet.addString(cname);
-		packet.addByte2(this.roomtype, (byte) 0x08);
-		packet.addByte2((byte) 0x01, (byte) 0x00);
-		packet.addByte2((byte) 0x00, (byte) 0x00);
+		packet.addByte(this.roomtype, (byte) 0x08);
+		packet.addByte((byte) 0x01, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00);
 		packet.addByte((byte) 0x00); // key
-		packet.addByte2((byte) 0x00, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00);
 		
 		// 16 --- locked
 		return packet;
@@ -455,7 +456,7 @@ public class Room {
 	private Packet getQuitPacket(int slot) {
 		final Packet pack = new Packet();
 		pack.addHeader((byte) 0x2E, (byte) 0x27);
-		pack.addByte4((byte) 0x01, (byte) 0x00, (byte) slot, (byte) 0x01);
+		pack.addByte((byte) 0x01, (byte) 0x00, (byte) slot, (byte) 0x01);
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null)
 				pack.addByte((byte) this.roomposi[i]);
@@ -471,7 +472,7 @@ public class Room {
 			if (this.roomsocks[i] != null)
 				packet.addInt(this.roomport[i], 2, true);
 			else
-				packet.addByte2((byte) 0x00, (byte) 0x00);
+				packet.addByte((byte) 0x00, (byte) 0x00);
 		return packet;
 	}
 	
@@ -488,11 +489,11 @@ public class Room {
 		final Packet packet = new Packet();
 		packet.addHeader((byte) 0x20, (byte) 0x2F);
 		packet.addInt(slot, 2, false);
-		packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00);
+		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00);
 		if (this.roomready[slot])
-			packet.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		else
-			packet.addByte4((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
+			packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks != null)
@@ -516,16 +517,16 @@ public class Room {
 				packet.addHeader((byte) 0x25, (byte) 0x2F);
 				packet.addPacketHead((byte) 0x25, (byte) 0x2F);
 				packet.addInt(num, 2, false);
-				packet.addByte2((byte) 0x08, (byte) 0x00);
+				packet.addByte((byte) 0x08, (byte) 0x00);
 				// if(typ == 2) {
-				// packet.addByte4((byte) 0x25, (byte) 0x2F, (byte) 0x08,
+				// packet.addByte((byte) 0x25, (byte) 0x2F, (byte) 0x08,
 				// (byte)0x00);
 				// } else if (typ == 102)
 				// {
-				packet.addByte4((byte) 0x25, (byte) 0x2F, (byte) 0x08, (byte) 0x06);
+				packet.addByte((byte) 0x25, (byte) 0x2F, (byte) 0x08, (byte) 0x06);
 				// }
 				// else
-				// packet.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x0C, (byte)
+				// packet.addByte((byte) 0x01, (byte) 0x00, (byte) 0x0C, (byte)
 				// 0x06);
 				
 				writeRoomAll(packet); // write monster death
@@ -551,8 +552,8 @@ public class Room {
 	private void writeRoomMessage(String msg) {
 		final Packet packet = new Packet();
 		packet.addHeader((byte) 0x1A, (byte) 0x27);
-		packet.addByte4((byte) 0x01, (byte) 0x00, (byte) 0x0F, (byte) 0x00);
-		packet.addByte2((byte) 0x01, (byte) 0x00);
+		packet.addByte((byte) 0x01, (byte) 0x00, (byte) 0x0F, (byte) 0x00);
+		packet.addByte((byte) 0x01, (byte) 0x00);
 		packet.addString("[Room] ");
 		packet.addString(msg);
 		packet.addByte((byte) 0x00);
