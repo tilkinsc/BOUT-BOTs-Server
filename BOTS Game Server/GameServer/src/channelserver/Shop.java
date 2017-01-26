@@ -5,7 +5,6 @@ import shared.Packet;
 public class Shop {
 
 	BotClass bot;
-	ItemClass item;
 	
 	protected final int head_buy = 0xEA;
 	protected final int head_sell = 0xEB;
@@ -16,13 +15,12 @@ public class Shop {
 	protected final int noitem = 0x42;
 	protected final int noslot = 0x44;
 	
-	public Shop(BotClass pbot, ItemClass pitem) {
+	public Shop(BotClass pbot) {
 		this.bot = pbot;
-		this.item = pitem;
 	}
 	
 	public Packet buy(int id) {
-		final int price = item.getBuy(id);
+		final int price = ItemClass.getBuy(id);
 		if (price == -1)
 			return getErrorPacket(noitem, head_buy);
 		final int cgigas = bot.getGigas();
@@ -37,7 +35,7 @@ public class Shop {
 	}
 	
 	public Packet buycoin(int id) {
-		final int price = item.getBuyCoins(id);
+		final int price = ItemClass.getBuyCoins(id);
 		if (price == -1)
 			return getErrorPacket(noitem, head_buycoins);
 		final int ccoins = bot.getCoins();
@@ -52,7 +50,7 @@ public class Shop {
 	}
 	
 	public Packet sell(int id, int slot) {
-		final int price = item.getSell(id);
+		final int price = ItemClass.getSell(id);
 		if (price == -1 || !itemAtSlot(id, slot))
 			return getErrorPacket(noitem, 0xEB);
 		bot.setGigas(bot.getGigas() + price);
