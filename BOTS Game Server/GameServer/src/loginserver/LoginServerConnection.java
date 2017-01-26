@@ -107,7 +107,7 @@ public class LoginServerConnection extends Thread {
 				packet.setBody(Util.isoString(LoginServer.LOGIN_ALREADYLOGGEDIN));
 				break;
 			}
-			this.socketOut.write(packet.getHeader());
+			this.socketOut.write(packet.getHead());
 			this.socketOut.flush();
 			this.socketOut.write(packet.getBody());
 			this.socketOut.flush();

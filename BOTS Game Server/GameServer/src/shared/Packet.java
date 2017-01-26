@@ -113,6 +113,14 @@ public class Packet {
 		return null;
 	}
 	
+	public String getHead() {
+		try {
+			return Util.isoString(this.head.toString().getBytes("ISO8859-1"));
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
 	public String getBody() {
 		try {
 			return Util.isoString(this.body.toString().getBytes("ISO8859-1"));
