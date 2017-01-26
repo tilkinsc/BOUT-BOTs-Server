@@ -7,7 +7,7 @@ import shared.SQLDatabase;
 public class ItemClass {
 
 	
-	public static String getItemName(int id) {
+	public String getItemName(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT name FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -19,7 +19,7 @@ public class ItemClass {
 		return null;
 	}
 	
-	public static int getItemId(String name) {
+	public int getItemId(String name) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT id FROM bout_items WHERE name='" + name + "' LIMIT 1");
 			if (rs.next())
@@ -31,7 +31,7 @@ public class ItemClass {
 		return 0;
 	}
 	
-	public static String[] getItemIdLike(String name) {
+	public String[] getItemIdLike(String name) {
 		try {
 			int i = 0;
 			final String[] ret = new String[6];
@@ -51,7 +51,7 @@ public class ItemClass {
 		return null;
 	}
 	
-	public static ResultSet getItemShopInfos(int id) {
+	public ResultSet getItemShopInfos(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -63,7 +63,7 @@ public class ItemClass {
 		return null;
 	}
 	
-	public static int getSell(int id) {
+	public int getSell(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT sell FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -75,7 +75,7 @@ public class ItemClass {
 		return -1;
 	}
 	
-	public static int getBuy(int id) {
+	public int getBuy(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT buy, buyable FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -88,7 +88,7 @@ public class ItemClass {
 		return -1;
 	}
 	
-	public static int getBuyCoins(int id) {
+	public int getBuyCoins(int id) {
 		try {
 			final ResultSet rs = SQLDatabase
 					.doquery("SELECT coins, buyable FROM bout_items WHERE id=" + id + " LIMIT 1");
@@ -102,7 +102,7 @@ public class ItemClass {
 		return -1;
 	}
 	
-	public static int getCoinDays(int id) {
+	public int getCoinDays(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT day FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -114,7 +114,7 @@ public class ItemClass {
 		return -1;
 	}
 	
-	public static String getItemScript(int id) {
+	public String getItemScript(int id) {
 		try {
 			final ResultSet rs = SQLDatabase.doquery("SELECT script FROM bout_items WHERE id=" + id + " LIMIT 1");
 			if (rs.next())
@@ -126,7 +126,7 @@ public class ItemClass {
 		return null;
 	}
 	
-	public static ResultSet getItemInfo(int id) {
+	public ResultSet getItemInfo(int id) {
 		final ResultSet rs = SQLDatabase
 				.doquery("SELECT reqlevel, bot, part FROM bout_items WHERE id=" + id + " LIMIT 1");
 		return rs;

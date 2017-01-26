@@ -2,55 +2,59 @@ package shared;
 
 public class Packet {
 
-	private StringBuilder head = new StringBuilder();
-	private StringBuilder body = new StringBuilder();
+	private String header = "";
+	private String packet = "";
 	
 	private boolean calced = false;
 	
-	public int getBodyLen() {
-		return this.body.length();
+	public int getLen() {
+		return this.packet.length();
 	}
 	
-	public int getHeadLen() {
-		return this.head.length();
+	public void setPacket(String pack) {
+		this.packet = pack;
 	}
 	
-	public void setHead(String head) {
-		this.head = new StringBuilder(head);
-	}
-	
-	public void setBody(String body) {
-		this.body = new StringBuilder(body);
-	}
-	
-	public void addHeader(final byte... b) {
+	public void addHeader(byte b1, byte b2) {
 		calced = false;
-		this.head.append(b);
+		final byte[] headbyte = { b1, b2 };
+		final String head = new String(headbyte);
+		this.header = head;
 	}
 	
 	public void removeHeader() {
-		this.body = new StringBuilder(this.body.substring(4));
+		this.packet = this.packet.substring(4);
 	}
 	
 	protected void calcHeader() {
+		this.header += Util.getbyteiso(this.packet.length(), 2);
 		calced = true;
-		this.head.append(Util.getbyteiso(this.body.length(), 2));
+	}
+	
+	public String getHeader() {
+		if (!calced)
+			this.calcHeader();
+		try {
+			return Util.isoString(this.header.getBytes("ISO8859-1"));
+		} catch (Exception e) {
+		}
+		return null;
 	}
 	
 	public void addPacketHead(final byte... b) {
 		try {
-			this.body.append(Util.isoString(b));
+			this.packet += Util.isoString(b);
 		} catch (Exception e) {
 		}
 	}
 	
 	public void addString(String string) {
-		this.body.append(string);
+		this.packet += string;
 	}
 	
 	public String getString(int start, int end, boolean nulled) {
-		final String thestring = this.body.substring(start, end);
-		this.body = new StringBuilder(this.body.substring(end));
+		final String thestring = this.packet.substring(start, end);
+		this.packet = this.packet.substring(end);
 		if (nulled) return thestring;
 		else return Util.removenullbyte(thestring);
 	}
@@ -60,32 +64,41 @@ public class Packet {
 			if (num == 2) {
 				final int b1 = var & 0xff;
 				final int b2 = (var >> 8) & 0xff;
-				if (!reverse)
-					this.body.append(Util.isoString(new byte[] {(byte) b1, (byte) b2}));
-				else this.body.append(Util.isoString(new byte[] {(byte) b2, (byte) b1}));
-			} else if (num == 4)
-				this.body.append(Util.isoString(new byte[]{
-						(byte) (var & 0xff),
-						(byte) ((var >> 8) & 0xff),
-						(byte) ((var >> 16) & 0xff),
-						(byte) ((var >> 24) & 0xff)
-					}));
+				
+				if (!reverse) {
+					final byte[] varbyte = { (byte) b1, (byte) b2 };
+					this.packet += Util.isoString(varbyte);
+				} else {
+					final byte[] varbyte = { (byte) b2, (byte) b1 };
+					this.packet += Util.isoString(varbyte);
+				}
+			} else if (num == 4) {
+				final int b1 = var & 0xff;
+				final int b2 = (var >> 8) & 0xff;
+				final int b3 = (var >> 16) & 0xff;
+				final int b4 = (var >> 24) & 0xff;
+				final byte[] varbyte = { (byte) b1, (byte) b2, (byte) b3, (byte) b4 };
+				this.packet += Util.isoString(varbyte);
+			}
 		} catch (Exception e) {
 		}
 	}
 	
 	public int getInt(int bytec) {
 		try {
-			final byte[] bytes = this.body.substring(0, bytec).getBytes("ISO8859-1");
+			final String thestring = this.packet.substring(0, bytec);
 			String hex_data_s = "";
 			for (int i = bytec - 1; i >= 0; i--) {
-				int data = bytes[i];
+				int data = thestring.getBytes("ISO8859-1")[i];
 				if (data < 0)
 					data += 256;
 				final String hex_data = Integer.toHexString(data);
-				hex_data_s += hex_data.length() == 1 ? "0" + hex_data : hex_data;
+				if (hex_data.length() == 1)
+					hex_data_s += "0" + hex_data;
+				else
+					hex_data_s += hex_data;
 			}
-			this.body = new StringBuilder(this.body.substring(bytec));
+			this.packet = this.packet.substring(bytec);
 			return Integer.parseInt(hex_data_s, 16);
 		} catch (Exception e) {
 			
@@ -95,7 +108,7 @@ public class Packet {
 	
 	public void addByteArray(byte[] bytearr) {
 		try {
-			this.body.append(Util.isoString(bytearr));
+			this.packet += Util.isoString(bytearr);
 		} catch (Exception e) {
 		}
 	}
@@ -104,34 +117,18 @@ public class Packet {
 		addByteArray(b);
 	}
 	
-	public String getHeader() {
-		if (!calced) this.calcHeader();
+	public String getPacket() {
 		try {
-			return Util.isoString(this.head.toString().getBytes("ISO8859-1"));
-		} catch (Exception e) {
-		}
-		return null;
-	}
-	
-	public String getHead() {
-		try {
-			return Util.isoString(this.head.toString().getBytes("ISO8859-1"));
-		} catch (Exception e) {
-		}
-		return null;
-	}
-	
-	public String getBody() {
-		try {
-			return Util.isoString(this.body.toString().getBytes("ISO8859-1"));
+			final byte[] packb = this.packet.getBytes("ISO8859-1");
+			return Util.isoString(packb);
 		} catch (Exception e) {
 		}
 		return null;
 	}
 	
 	public void clean() {
-		this.head = new StringBuilder();
-		this.body = new StringBuilder();
+		this.header = "";
+		this.packet = "";
 	}
 	
 }

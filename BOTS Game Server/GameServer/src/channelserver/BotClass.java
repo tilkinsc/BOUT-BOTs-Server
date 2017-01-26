@@ -8,6 +8,8 @@ import shared.Util;
 
 public class BotClass {
 
+	private final ItemClass item;
+	
 	private int id;
 	private final String account;
 	private String botname = "";
@@ -43,8 +45,9 @@ public class BotClass {
 	private int gigas = 0;
 	private int coins = 0;
 	
-	public BotClass(String accountn) {
+	public BotClass(String accountn, ItemClass itemn) {
 		this.account = accountn;
+		this.item = itemn;
 	}
 	
 	public void loadchar() {
@@ -131,25 +134,25 @@ public class BotClass {
 		lukb = 0;
 		for (int i = 0; i < 3; i++)
 			if (this.equipitemspart[i] != 0) {
-				final String script = ItemClass.getItemScript(equipitemspart[i]);
+				final String script = item.getItemScript(equipitemspart[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 8; i++)
 			if (this.equipitemsgear[i] != 0) {
-				final String script = ItemClass.getItemScript(equipitemsgear[i]);
+				final String script = item.getItemScript(equipitemsgear[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 6; i++)
 			if (this.equipitemspack[i] != 0) {
-				final String script = ItemClass.getItemScript(equipitemspack[i]);
+				final String script = item.getItemScript(equipitemspack[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 2; i++)
 			if (this.equipitemscoin[i] != 0) {
-				final String script = ItemClass.getItemScript(equipitemscoin[i]);
+				final String script = item.getItemScript(equipitemscoin[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
@@ -549,7 +552,7 @@ public class BotClass {
 				return packet;
 			}
 			
-			final ResultSet rs = ItemClass.getItemInfo(aid);
+			final ResultSet rs = item.getItemInfo(aid);
 			rs.next();
 			if (rs.getInt("reqlevel") > this.level) {
 				packet.addPacketHead((byte) 0x00, (byte) 0x65);
@@ -586,13 +589,13 @@ public class BotClass {
 					this.setInvent(0, slot);
 					this.setEquip(aid, epart, part);
 					// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-					packet.setBody(this.getpacketcinfo());
+					packet.setPacket(this.getpacketcinfo());
 					return packet;
 				}
 				this.setInvent(old, slot);
 				this.setEquip(aid, epart, part);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setBody(this.getpacketcinfo());
+				packet.setPacket(this.getpacketcinfo());
 				return packet;
 			}
 			packet.addPacketHead((byte) 0x00, (byte) 0x60);
@@ -639,7 +642,7 @@ public class BotClass {
 				this.setInvent(aid, islot);
 				this.setEquip(0, epart, slot);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setBody(this.getpacketcinfo());
+				packet.setPacket(this.getpacketcinfo());
 				return packet;
 			}
 			
@@ -697,10 +700,6 @@ public class BotClass {
 		for (int i = 0; i < 2; i++)
 			ret[i + 17] = this.equipitemscoin[i];
 		return ret;
-	}
-	
-	public int getId() {
-		return this.id;
 	}
 	
 	public int getAttMin() {

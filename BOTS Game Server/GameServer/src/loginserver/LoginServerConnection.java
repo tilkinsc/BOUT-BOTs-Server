@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
 
@@ -84,35 +83,39 @@ public class LoginServerConnection extends Thread {
 		try {
 			final int login_result = checkUser(this.user, this.pass);
 			
-			final Packet packet = new Packet();
-			packet.setHead(Util.isoString(LoginServer.LOGINHEADER));
-			
+			String status;
+			String result;
 			switch (login_result) {
 			case 0:
 				updateaccount(user);
-				packet.setBody(Util.isoString(LoginServer.LOGIN_SUCCESSBYTE));
+				status = Util.isoString(LoginServer.LOGIN_SUCCESSBYTE);
+				result = "Success";
 				break;
 			default: // attempt to find out if there is a correct way to give unspecified error
 				Main.logger.log("LoginServerConnection", "Unspecified login return");
 			case 1:
-				packet.setBody(Util.isoString(LoginServer.LOGIN_INCUSERBYTE));
+				status = Util.isoString(LoginServer.LOGIN_INCUSERBYTE);
+				result = "Incorrect Username";
 				break;
 			case 2:
-				packet.setBody(Util.isoString(LoginServer.LOGIN_INCPASSBYTE));
+				status = Util.isoString(LoginServer.LOGIN_INCPASSBYTE);
+				result = "Incorrect Password";
 				break;
 			case 3:
-				packet.setBody(Util.isoString(LoginServer.LOGIN_BANUSERBYTE));
+				status = Util.isoString(LoginServer.LOGIN_BANUSERBYTE);
+				result = "Banned Username";
 				break;
 			case 4:
-				packet.setBody(Util.isoString(LoginServer.LOGIN_ALREADYLOGGEDIN));
+				status = Util.isoString(LoginServer.LOGIN_ALREADYLOGGEDIN);
+				result = "User is already Logged in";
 				break;
 			}
-			this.socketOut.write(packet.getHead());
+			this.socketOut.write(Util.isoString(LoginServer.LOGINHEADER));
 			this.socketOut.flush();
-			this.socketOut.write(packet.getBody());
+			this.socketOut.write(status);
 			this.socketOut.flush();
 			this.socketOut.close();
-			Main.logger.log("LoginServerConnection", "Response sent " + login_result);
+			Main.logger.log("LoginServerConnection", "Login Sent " + result);
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}
@@ -121,12 +124,9 @@ public class LoginServerConnection extends Thread {
 	private void updateaccount(String user) {
 		try {
 			int logincount = 0;
-			String old_ip = "";
 			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
-			while (rs.next()) {
+			while (rs.next())
 				logincount = rs.getInt("logincount");
-				old_ip = rs.getString("last_ip");
-			}
 			logincount++;
 			
 			final Date dt = new Date();
@@ -135,7 +135,7 @@ public class LoginServerConnection extends Thread {
 			
 			// add later online=1
 			SQLDatabase.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + logincount + ", last_ip='"
-					+ old_ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + user + "'");
+					+ ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + user + "'");
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}

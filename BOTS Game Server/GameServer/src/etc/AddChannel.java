@@ -21,7 +21,6 @@ public class AddChannel {
 		
 		SQLDatabase.start();
 		SQLDatabase.doupdate(query);
-		SQLDatabase.close();
 	}
 	
 }

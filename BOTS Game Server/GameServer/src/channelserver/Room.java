@@ -38,7 +38,7 @@ public class Room {
 	private final int[] killcount = new int[8]; // player kill counts
 	private int[] monster;
 	private Sector sector;
-	// private final int lala = 0; // unused random variable
+	private final int lala = 0; // unused random variable
 	private int[] items;
 	private String owner;
 	
@@ -211,7 +211,7 @@ public class Room {
 			if (this.roomsocks[i] != null) {
 				this.roomsocks[i].write(packet.getHeader());
 				this.roomsocks[i].flush();
-				this.roomsocks[i].write(packet.getBody());
+				this.roomsocks[i].write(packet.getPacket());
 				this.roomsocks[i].flush();
 			}
 		}
@@ -222,7 +222,7 @@ public class Room {
 			if (this.roomsocks[i] != null && i != num) {
 				this.roomsocks[i].write(packet.getHeader());
 				this.roomsocks[i].flush();
-				this.roomsocks[i].write(packet.getBody());
+				this.roomsocks[i].write(packet.getPacket());
 				this.roomsocks[i].flush();
 			}
 	}
@@ -230,7 +230,7 @@ public class Room {
 	protected void writeRoomPlayer(int num, Packet packet) {
 		this.roomsocks[num].write(packet.getHeader());
 		this.roomsocks[num].flush();
-		this.roomsocks[num].write(packet.getBody());
+		this.roomsocks[num].write(packet.getPacket());
 		this.roomsocks[num].flush();
 	}
 	
@@ -413,7 +413,7 @@ public class Room {
 		for (int i = 0; i < 21; i++)
 			packet.addByte((byte) 0x00);
 		
-		return packet.getBody();
+		return packet.getPacket();
 	}
 	
 	private Packet getRoomPacket() {
