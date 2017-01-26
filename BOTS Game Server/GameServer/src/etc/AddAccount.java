@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 import shared.SQLDatabase;
 
-public class AddCharacter {
+public class AddAccount {
 
 	
 	// Adds a user to the database...
