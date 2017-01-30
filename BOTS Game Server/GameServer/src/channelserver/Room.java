@@ -38,9 +38,9 @@ public class Room {
 	private final int[] killcount = new int[8]; // player kill counts
 	private int[] monster;
 	private Sector sector;
-	private final int lala = 0; // unused random variable
-	private int[] items;
-	private String owner;
+	// private final int lala = 0; // unused random variable
+	private int[] items; // probably for listing available items for grabs
+	private String owner; // probably going to be transferred here from somewhere else
 	
 	public Room(int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock,
 			BotClass _bot) {
