@@ -25,13 +25,11 @@ public class ChannelServerConnection extends Thread {
 	protected String charname = "";
 	protected boolean firstlog = true;
 	protected BotClass bot;
-	protected ItemClass item;
 	protected Shop shop;
 	
 	public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby) {
 		this.socket = socket;
 		this.server = server;
-		item = new ItemClass();
 		this.ip = socket.getInetAddress().getHostAddress();
 		this.lobby = _lobby;
 		Main.logger.log("ChannelServerConnection", "" + socket.getLocalSocketAddress());
@@ -540,7 +538,7 @@ public class ChannelServerConnection extends Thread {
 				bot.setInventAll(items);
 				sendChatMsg("Invetory deleted", 2);
 			} else {
-				final String old = item.getItemName(bot.getInvent(part - 1));
+				final String old = ItemClass.getItemName(bot.getInvent(part - 1));
 				bot.setInvent(0, part - 1);
 				sendChatMsg("Inventory-item " + old + " deleted.", 2);
 			}
@@ -549,19 +547,19 @@ public class ChannelServerConnection extends Thread {
 			if (cmd.substring(i + 1).matches("\\d*"))
 				id = Integer.parseInt(cmd.substring(i + 1));
 			else
-				id = item.getItemId(cmd.substring(i + 1));
+				id = ItemClass.getItemId(cmd.substring(i + 1));
 			if (id != 0) {
 				final int slot = shop.slotAvaible();
 				if (slot != -1) {
 					bot.setInvent(id, slot);
-					sendChatMsg("Item " + item.getItemName(id) + " added at slot " + slot, 2);
+					sendChatMsg("Item " + ItemClass.getItemName(id) + " added at slot " + slot, 2);
 				} else
 					sendChatMsg("Your inventory is full!", 2);
 			} else
 				sendChatMsg("Item not found!", 2);
 		} else if (rcmd.equals("itemname")) {
 			final int id = Integer.parseInt(cmd.substring(i + 1));
-			final String name = item.getItemName(id);
+			final String name = ItemClass.getItemName(id);
 			if (name != null) {
 				sendChatMsg("Found :", 2);
 				sendChatMsg("- " + name, 2);
@@ -569,7 +567,7 @@ public class ChannelServerConnection extends Thread {
 				sendChatMsg("Item not found!", 2);
 		} else if (rcmd.equals("itemid")) {
 			final String name = cmd.substring(i + 1);
-			final String id[] = item.getItemIdLike(name);
+			final String id[] = ItemClass.getItemIdLike(name);
 			if (id != null) {
 				final int found = Integer.parseInt(id[5]);
 				int display;
@@ -726,8 +724,8 @@ public class ChannelServerConnection extends Thread {
 			this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), "ISO8859-1"));
 			this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
 			checkAccount();
-			bot = new BotClass(this.account, this.item);
-			shop = new Shop(bot, item);
+			bot = new BotClass(this.account);
+			shop = new Shop(bot);
 			String packet;
 			while ((packet = read()) != null)
 				// debug("main");

@@ -8,8 +8,6 @@ import shared.Util;
 
 public class BotClass {
 
-	private final ItemClass item;
-	
 	private int id;
 	private final String account;
 	private String botname = "";
@@ -45,9 +43,8 @@ public class BotClass {
 	private int gigas = 0;
 	private int coins = 0;
 	
-	public BotClass(String accountn, ItemClass itemn) {
+	public BotClass(String accountn) {
 		this.account = accountn;
-		this.item = itemn;
 	}
 	
 	public void loadchar() {
@@ -134,25 +131,25 @@ public class BotClass {
 		lukb = 0;
 		for (int i = 0; i < 3; i++)
 			if (this.equipitemspart[i] != 0) {
-				final String script = item.getItemScript(equipitemspart[i]);
+				final String script = ItemClass.getItemScript(equipitemspart[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 8; i++)
 			if (this.equipitemsgear[i] != 0) {
-				final String script = item.getItemScript(equipitemsgear[i]);
+				final String script = ItemClass.getItemScript(equipitemsgear[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 6; i++)
 			if (this.equipitemspack[i] != 0) {
-				final String script = item.getItemScript(equipitemspack[i]);
+				final String script = ItemClass.getItemScript(equipitemspack[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
 		for (int i = 0; i < 2; i++)
 			if (this.equipitemscoin[i] != 0) {
-				final String script = item.getItemScript(equipitemscoin[i]);
+				final String script = ItemClass.getItemScript(equipitemscoin[i]);
 				if (!script.equals(null))
 					parseScript(script);
 			}
@@ -552,7 +549,7 @@ public class BotClass {
 				return packet;
 			}
 			
-			final ResultSet rs = item.getItemInfo(aid);
+			final ResultSet rs = ItemClass.getItemInfo(aid);
 			rs.next();
 			if (rs.getInt("reqlevel") > this.level) {
 				packet.addPacketHead((byte) 0x00, (byte) 0x65);
