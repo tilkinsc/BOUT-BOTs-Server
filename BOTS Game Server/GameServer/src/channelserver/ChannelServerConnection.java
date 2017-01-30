@@ -25,7 +25,6 @@ public class ChannelServerConnection extends Thread {
 	protected String charname = "";
 	protected boolean firstlog = true;
 	protected BotClass bot;
-	protected Shop shop;
 	
 	public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby) {
 		this.socket = socket;
@@ -242,7 +241,7 @@ public class ChannelServerConnection extends Thread {
 				pack.setPacket(packet);
 				pack.getString(0, 42, true);
 				final int itemid = pack.getInt(4);
-				send(shop.buy(itemid));
+				send(Shop.buy(bot, itemid));
 				// Main.sql.doupdate("UPDATE `bout_items` SET `buyable` = 1
 				// WHERE id="+itemid);
 				break;
@@ -253,7 +252,7 @@ public class ChannelServerConnection extends Thread {
 				final int slotnum = pack.getInt(2);
 				pack.getInt(2);
 				final int itemid = pack.getInt(4);
-				send(shop.sell(itemid, slotnum));
+				send(Shop.sell(bot, itemid, slotnum));
 				break;
 			}
 			case 0x042B: {
@@ -262,7 +261,7 @@ public class ChannelServerConnection extends Thread {
 				pack.getInt(2);
 				final int itemid = pack.getInt(4);
 				
-				send(shop.buycoin(itemid));
+				send(Shop.buycoin(bot, itemid));
 				// Main.sql.doupdate("UPDATE `bout_items` SET `buyable` = 1
 				// WHERE id="+itemid);
 				break;
@@ -549,7 +548,7 @@ public class ChannelServerConnection extends Thread {
 			else
 				id = ItemClass.getItemId(cmd.substring(i + 1));
 			if (id != 0) {
-				final int slot = shop.slotAvaible();
+				final int slot = Shop.slotAvaible(bot);
 				if (slot != -1) {
 					bot.setInvent(id, slot);
 					sendChatMsg("Item " + ItemClass.getItemName(id) + " added at slot " + slot, 2);
@@ -725,7 +724,6 @@ public class ChannelServerConnection extends Thread {
 			this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
 			checkAccount();
 			bot = new BotClass(this.account);
-			shop = new Shop(bot);
 			String packet;
 			while ((packet = read()) != null)
 				// debug("main");
