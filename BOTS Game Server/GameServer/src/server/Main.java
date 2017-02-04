@@ -8,10 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import server.account.event.server.AccountPath;
-import server.account.event.server.ChannelPath;
-import server.account.event.server.RoomPath;
-import server.gameserver.ChannelServer;
+import server.event.account.server.AccountPath;
+import server.event.account.server.ChannelPath;
+import server.event.account.server.RoomPath;
+import server.event.gameserver.server.GamePath;
 import server.gui.ServerGui;
 import shared.ConfigStore;
 import static shared.ConfigStore.PropertyStructure;
@@ -29,7 +29,7 @@ public class Main {
 	public static ChannelPath channelpath;
 	public static RoomPath roomserver;
 	
-	public static Vector<ChannelServer> channelservers;
+	public static Vector<GamePath> gamepaths;
 	
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
@@ -60,7 +60,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		channelservers = new Vector<ChannelServer>();
+		gamepaths = new Vector<GamePath>();
 		try {
 			final PropertyStructure mysql = ConfigStore.loadProperties("configs/mysql.cfg");
 			final PropertyStructure channels = ConfigStore.loadProperties("configs/channels.cfg");
@@ -89,9 +89,9 @@ public class Main {
 				gui.addTab(channels.getProperty("name_"+i));
 				
 				//TODO: Connect logger
-				final ChannelServer channelserver = new ChannelServer(Integer.valueOf(channels.getProperty("port_"+i)), Integer.valueOf(channels.getProperty("timeout_"+i)));
+				final GamePath channelserver = new GamePath(Integer.valueOf(channels.getProperty("port_"+i)), Integer.valueOf(channels.getProperty("timeout_"+i)));
 				channelserver.start();
-				channelservers.add(channelserver);
+				gamepaths.add(channelserver);
 				logger.log("Main", "Started new channel server");
 			}
 			
@@ -104,8 +104,9 @@ public class Main {
 	
 	public static void invokeShutdown() {
 		gui.dispose();
-		for (int i=0; i<channelservers.size(); i++)
-			channelservers.get(i).stopThread();
+		for (int i=0; i<gamepaths.size(); i++)
+			gamepaths.get(i).stopThread();
+		logger.log("Main", "games closed");
 		accountpath.stopThread();
 		logger.log("Main", "login closed");
 		roomserver.stopThread();

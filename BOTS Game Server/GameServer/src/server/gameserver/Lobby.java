@@ -4,13 +4,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import server.Main;
+import server.event.gameserver.server.GamePath;
 import shared.Packet;
 import shared.Util;
 
 public class Lobby {
 
-	String nullbyte = new String(ChannelServer.NULLBYTE);
-	ChannelServer server;
+	String nullbyte = new String(GameServer.NULLBYTE);
+	GamePath server;
 	private int users = 0;
 	private final String[] charnames = new String[300];
 	private final PrintWriter[] usersocks = new PrintWriter[300];
@@ -37,8 +38,8 @@ public class Lobby {
 	 */
 	private final Room[][] rooms = new Room[MODES][MAXROOMS];
 	
-	public Lobby(ChannelServer server) {
-		this.server = server;
+	public Lobby(GamePath gamePath) {
+		this.server = gamePath;
 		/*
 		 * for (int i = 0; i < MODES; i++) { for (int i2 = 0; i2 < MAXROOMS;
 		 * i2++) { roomname[i][i2]=""; roompass[i][i2]=""; roomowner[i][i2]="";

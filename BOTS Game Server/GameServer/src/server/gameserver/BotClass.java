@@ -238,8 +238,8 @@ public class BotClass {
 			loadEquipBonus();
 			String packet = "";
 			
-			final String packetshead = new String(ChannelServer.PACKETS_HEADER);
-			final String nullbyte = new String(ChannelServer.NULLBYTE);
+			final String packetshead = new String(GameServer.PACKETS_HEADER);
+			final String nullbyte = new String(GameServer.NULLBYTE);
 
 			String charname = this.botname;
 			while (charname.length() != 15)

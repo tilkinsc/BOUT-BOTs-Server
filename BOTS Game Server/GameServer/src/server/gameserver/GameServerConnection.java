@@ -9,6 +9,7 @@ import java.net.SocketAddress;
 import java.sql.ResultSet;
 
 import server.Main;
+import server.event.gameserver.server.GamePath;
 import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
@@ -18,7 +19,7 @@ public class GameServerConnection extends Thread {
 	protected Socket socket;
 	protected BufferedReader socketIn;
 	protected PrintWriter socketOut;
-	protected GameServer server;
+	protected GamePath server;
 	protected Lobby lobby;
 	protected String account;
 	protected int bottype;
@@ -28,7 +29,7 @@ public class GameServerConnection extends Thread {
 	protected BotClass bot;
 	protected Shop shop;
 	
-	public GameServerConnection(Socket socket, GameServer server, Lobby _lobby) {
+	public GameServerConnection(Socket socket, GamePath server, Lobby _lobby) {
 		this.socket = socket;
 		this.server = server;
 		this.ip = socket.getInetAddress().getHostAddress();
@@ -729,7 +730,7 @@ public class GameServerConnection extends Thread {
 	}
 	
 	@Override
-	protected void finalize() {
+	public void finalize() {
 		try {
 			if (!this.charname.equals("")) {
 				final int[] room = bot.getRoom();
