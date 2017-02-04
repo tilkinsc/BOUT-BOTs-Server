@@ -1,6 +1,6 @@
 package accountserver.event;
 
-import accountserver.AccountServer;
+import accountserver.Account;
 import accountserver.Main;
 import accountserver.ServerConnection;
 import accountserver.UserPack;
@@ -30,31 +30,31 @@ public class LoginEvent extends ClientPath {
 				if (line.length() >= 4 && !user.equals(line.replace("H", ""))) {
 					pass = line;
 					try {
-						final UserPack userdata = AccountServer.getUser(user);
-						final int login_result = AccountServer.checkUser(userdata, pass);
+						final UserPack userdata = Account.getUser(user);
+						final int login_result = Account.checkUser(userdata, pass);
 						
 						String status;
 						switch (login_result) {
 						case 0:
-							AccountServer.updateUser(userdata, connection.getSocket().getInetAddress().getHostAddress());
-							status = Util.isoString(AccountServer.LOGIN_SUCCESSBYTE);
+							Account.updateUser(userdata, connection.getSocket().getInetAddress().getHostAddress());
+							status = Util.isoString(Account.LOGIN_SUCCESSBYTE);
 							break;
 						default: // attempt to find out if there is a correct way to give unspecified error
 							Main.logger.log("LoginServerConnection", "Unspecified login return");
 						case 1:
-							status = Util.isoString(AccountServer.LOGIN_INCUSERBYTE);
+							status = Util.isoString(Account.LOGIN_INCUSERBYTE);
 							break;
 						case 2:
-							status = Util.isoString(AccountServer.LOGIN_INCPASSBYTE);
+							status = Util.isoString(Account.LOGIN_INCPASSBYTE);
 							break;
 						case 3:
-							status = Util.isoString(AccountServer.LOGIN_BANUSERBYTE);
+							status = Util.isoString(Account.LOGIN_BANUSERBYTE);
 							break;
 						case 4:
-							status = Util.isoString(AccountServer.LOGIN_ALREADYLOGGEDIN);
+							status = Util.isoString(Account.LOGIN_ALREADYLOGGEDIN);
 							break;
 						}
-						connection.write(Util.isoString(AccountServer.LOGINHEADER));
+						connection.write(Util.isoString(Account.LOGINHEADER));
 						connection.write(status);
 						connection.getSocket().close();
 						Main.logger.log("LoginServerConnection", "Login Sent " + login_result);
