@@ -22,7 +22,6 @@ public class Main {
 	
 	public static AccountPath accountpath;
 	public static ChannelPath channelpath;
-	
 	public static RoomPath roomserver;
 	
 	public static PrintStream createGuiSessionStream() {
@@ -56,20 +55,20 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			gui = new ServerGUI();
+			gui.setTitle("Bots Account Server");
+			gui.setLocationRelativeTo(null);
+			gui.setVisible(true);
 			
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
-			
-			gui.setTitle("Bots Account Server");
-			gui.setLocationRelativeTo(null);
-			gui.setVisible(true);
 
 			accountpath = new AccountPath(11000, 5000);
 			channelpath = new ChannelPath(11010, 5000);
 			roomserver = new RoomPath(11011, 5000);
 			
 			gui.startUpdateTimer();
+			
 			SQLDatabase.start();
 			accountpath.start();
 			roomserver.start();
