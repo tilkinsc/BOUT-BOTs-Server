@@ -26,8 +26,12 @@ public class Channel {
 	// SQL Querys
 	protected static final String GET_CHANNEL_QUERY = "SELECT * FROM bout_channels WHERE status=1 LIMIT 12";
 	
+	public static boolean cached = false;
+	
 	// probably could add a 'channel list updated' to avoid getting over and over and over again
 	public static void getChannels() {
+		if(cached) return; // TODO: once I implement some form of control, I will change the caching
+		cached = true;
 		try {
 			final ResultSet rs = SQLDatabase.doquery(GET_CHANNEL_QUERY);
 			if (channel_i != 0)
