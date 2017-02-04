@@ -21,6 +21,7 @@ public class ServerConnection {
 	
 	@Override
 	public void finalize() {
+		if(this.socket.isClosed()) return;
 		try {
 			Main.accountpath.removeClient(this.getRemoteAddress());
 			this.socket.close();
