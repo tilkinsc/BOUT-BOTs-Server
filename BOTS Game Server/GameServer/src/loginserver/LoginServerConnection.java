@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,33 +21,20 @@ public class LoginServerConnection extends Thread {
 		this.socket = socket;
 	}
 	
-	public int checkUser(String user, String pass) {
+	public int checkUser(UserPack userdata, String pass) {
 		System.out.println("Checking user....");
 		try {
-			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
-			String puser = "", ppass = "";
-			int id = 0, banned = 0, allog = 0;
-			while (rs.next()) {
-				id = rs.getInt("id");
-				puser = rs.getString("username");
-				ppass = rs.getString("password");
-				banned = rs.getInt("banned");
-				allog = rs.getInt("online");
-			}
-			
 			Main.logger.log("LoginServerConnection",
 					"(" + this.socket.getRemoteSocketAddress() + ")"
-						+ id + " " + user + " " + puser + " "
-						+ pass + " " + ppass + " " + banned + " "
-						+ allog);
+						+ userdata.toString());
 			
-			if (id == 0)
+			if (userdata.getId() == 0)
 				return 1;
-			else if (!Util.md5hash(pass).equals(ppass))
+			else if (!Util.md5hash(pass).equals(userdata.getPass()))
 				return 2;
-			else if (banned == 1)
+			else if (userdata.getBanned() == 1)
 				return 3;
-			else if (allog == 1)
+			else if (userdata.isAlreadyLogged() == 1)
 				return 4;
 			return 0;
 		} catch (Exception e) {
@@ -61,12 +47,13 @@ public class LoginServerConnection extends Thread {
 	protected void doLogin(String user, String pass) {
 		System.out.println("Doing login");
 		try {
-			final int login_result = checkUser(user, pass);
+			final UserPack userdata = LoginServer.getUser(user);
+			final int login_result = checkUser(userdata, pass);
 			
 			String status;
 			switch (login_result) {
 			case 0:
-				updateaccount(user);
+				updateaccount(userdata);
 				status = Util.isoString(LoginServer.LOGIN_SUCCESSBYTE);
 				break;
 			default: // attempt to find out if there is a correct way to give unspecified error
@@ -93,21 +80,15 @@ public class LoginServerConnection extends Thread {
 		}
 	}
 	
-	private void updateaccount(String user) {
+	private void updateaccount(UserPack userdata) {
 		try {
-			int logincount = 0;
-			final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
-			while (rs.next())
-				logincount = rs.getInt("logincount");
-			logincount++;
-			
 			final Date dt = new Date();
 			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			final String ip = socket.getInetAddress().getHostAddress();
 			
 			// add later online=1
-			SQLDatabase.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + logincount + ", last_ip='"
-					+ ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + user + "'");
+			SQLDatabase.doupdate("UPDATE bout_users SET current_ip='" + ip + "', logincount=" + (userdata.getLoginCount()+1) + ", last_ip='"
+					+ ip + "', lastlogin='" + df.format(dt) + "' WHERE username='" + userdata.getUser() + "'");
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}

@@ -4,7 +4,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
+
+import shared.SQLDatabase;
 
 
 public class LoginServer extends Thread {
@@ -71,6 +75,21 @@ public class LoginServer extends Thread {
 		this.port = port;
 		this.timeout = timeout;
 		this.clientConnections = new Vector<LoginServerConnection>();
+	}
+	
+	public static UserPack getUser(String user) throws SQLException {
+		final ResultSet rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + user + "' LIMIT 1");
+		while (rs.next()) {
+			return new UserPack(
+					rs.getString("username"),
+					rs.getString("password"),
+					rs.getInt("id"),
+					rs.getInt("banned"),
+					rs.getInt("online"),
+					rs.getInt("logincount")
+				);
+		}
+		return null;
 	}
 	
 	private boolean stop;
