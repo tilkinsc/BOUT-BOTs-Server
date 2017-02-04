@@ -67,7 +67,6 @@ public class ChannelPath extends ServerPath {
 		} catch(Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
-		System.out.println("Ended");
 	}
 
 }
