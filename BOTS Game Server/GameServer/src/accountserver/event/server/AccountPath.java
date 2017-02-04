@@ -9,6 +9,7 @@ import java.util.Vector;
 import accountserver.Account;
 import accountserver.Main;
 import accountserver.ServerConnection;
+import accountserver.event.ServerPath;
 import accountserver.event.client.LoginEvent;
 import accountserver.event.client.RegisterEvent;
 

@@ -1,4 +1,4 @@
-package accountserver.event.client;
+package accountserver.event;
 
 import accountserver.ServerConnection;
 

@@ -4,6 +4,7 @@ import accountserver.Account;
 import accountserver.Main;
 import accountserver.ServerConnection;
 import accountserver.UserPack;
+import accountserver.event.ClientEvent;
 import shared.Util;
 
 public class LoginEvent extends ClientEvent {
