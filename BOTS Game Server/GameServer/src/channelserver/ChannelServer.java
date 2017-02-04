@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.Vector;
 
 import accountserver.Main;
+import shared.Util;
 
 public class ChannelServer extends Thread {
 
@@ -36,6 +37,14 @@ public class ChannelServer extends Thread {
 	
 	public static final byte[] NULLBYTE = { (byte) 0x00 };
 	public static String longnullbyte = "";
+	
+	static {
+		final String nullbyte = Util.isoString(NULLBYTE);
+		final StringBuilder nullbyte_builder = new StringBuilder();
+		for (int i = 0; i < 1372; i++)
+			nullbyte_builder.append(nullbyte);
+		longnullbyte = nullbyte_builder.toString();
+	}
 	
 	public static int fake_i = 0;
 	

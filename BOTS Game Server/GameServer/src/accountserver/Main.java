@@ -73,11 +73,6 @@ public class Main {
 			final File session = createSessionLog();
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
 			
-			// wtf is this ?!?! :o oh init of longbyte in ChannelServer.. doesn't belong here
-			final String nullbyte = new String(ChannelServer.NULLBYTE, "ISO8859-1");
-			for (int i = 0; i < 1372; i++)
-				ChannelServer.longnullbyte += nullbyte;
-			
 			accountpath = new AccountPath(11000, 5000);
 			channelpath = new ChannelPath(11010, 5000);
 			roomserver = new RoomPath(11011, 5000);
