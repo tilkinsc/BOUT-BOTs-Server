@@ -14,7 +14,7 @@ public class Main {
 	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
-	public static LoginServer loginServer;
+	public static AccountServer loginServer;
 	public static LoginServerGUI gui;
 	public static ChannelServer channelserver;
 	
@@ -56,11 +56,11 @@ public class Main {
 			final File session = createSessionLog();
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
 			
-			gui.setTitle("Bots Login Server");
+			gui.setTitle("Bots Account Server");
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 
-			loginServer = new LoginServer(11000, 5000);
+			loginServer = new AccountServer(11000, 5000);
 			gui.startUpdateTimer();
 			SQLDatabase.start();
 			loginServer.start();
