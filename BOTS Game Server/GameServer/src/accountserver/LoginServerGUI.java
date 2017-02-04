@@ -1,4 +1,4 @@
-package loginserver;
+package accountserver;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

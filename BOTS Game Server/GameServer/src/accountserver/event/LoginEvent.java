@@ -1,9 +1,9 @@
-package loginserver.event;
+package accountserver.event;
 
-import loginserver.AccountServer;
-import loginserver.ServerConnection;
-import loginserver.Main;
-import loginserver.UserPack;
+import accountserver.AccountServer;
+import accountserver.Main;
+import accountserver.ServerConnection;
+import accountserver.UserPack;
 import shared.Util;
 
 public class LoginEvent extends ServerEvent {

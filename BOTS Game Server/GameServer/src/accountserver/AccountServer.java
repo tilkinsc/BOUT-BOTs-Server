@@ -1,4 +1,4 @@
-package loginserver;
+package accountserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import loginserver.event.LoginEvent;
-import loginserver.event.RegisterEvent;
+import accountserver.event.LoginEvent;
+import accountserver.event.RegisterEvent;
 import shared.SQLDatabase;
 import shared.Util;
 

@@ -1,4 +1,4 @@
-package loginserver;
+package accountserver;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

@@ -1,6 +1,6 @@
-package loginserver.event;
+package accountserver.event;
 
-import loginserver.ServerConnection;
+import accountserver.ServerConnection;
 
 public class RegisterEvent extends ServerEvent {
 

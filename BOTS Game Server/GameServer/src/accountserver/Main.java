@@ -1,4 +1,4 @@
-package loginserver;
+package accountserver;
 
 import java.io.File;
 import java.io.IOException;

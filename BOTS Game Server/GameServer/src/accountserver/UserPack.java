@@ -1,4 +1,4 @@
-package loginserver;
+package accountserver;
 
 public class UserPack {
 
