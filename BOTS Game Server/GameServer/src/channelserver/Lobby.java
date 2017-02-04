@@ -93,7 +93,7 @@ public class Lobby {
 	public Packet getlobbypacket() {
 		final Packet packet = new Packet();
 		
-		packet.addHeader((byte) 0xF2, (byte) 0x2E);
+		packet.addHead((byte) 0xF2, (byte) 0x2E);
 		
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addInt(this.users, 2, false);
@@ -110,7 +110,7 @@ public class Lobby {
 	public void writeMessage(String msg, String charna, boolean isgm) {
 		try {
 			final Packet packet = new Packet();
-			packet.addHeader((byte) 0x1A, (byte) 0x27);
+			packet.addHead((byte) 0x1A, (byte) 0x27);
 			if (isgm) {
 				final byte[] stringbyte = msg.getBytes("ISO8859-1");
 				stringbyte[4] = 0x01;
@@ -119,7 +119,7 @@ public class Lobby {
 				packet.addString(msg);
 			final String[] packandhead = new String[2];
 			
-			packandhead[0] = packet.getHeader();
+			packandhead[0] = packet.getHeader(2);
 			packandhead[1] = packet.getPacket();
 			
 			int i = 0;
@@ -143,7 +143,7 @@ public class Lobby {
 		final int num = getNum(chname);
 		final Packet packet = new Packet();
 		
-		packet.addHeader((byte) 0x27, (byte) 0x27);
+		packet.addHead((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
@@ -154,7 +154,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader();
+		packandhead[0] = packet.getHeader(2);
 		packandhead[1] = packet.getPacket();
 		
 		packet.clean();
@@ -165,7 +165,7 @@ public class Lobby {
 		final int num = getNum(chname);
 		final Packet packet = new Packet();
 		
-		packet.addHeader((byte) 0x27, (byte) 0x27);
+		packet.addHead((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addString(chname);
 		packet.addByte((byte) 0x00);
@@ -176,7 +176,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader();
+		packandhead[0] = packet.getHeader(2);
 		packandhead[1] = packet.getPacket();
 		
 		packet.clean();
@@ -202,7 +202,7 @@ public class Lobby {
 	
 	public void LobbyMsg(String msg, int color) {
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x1A, (byte) 0x27);
+		packet.addHead((byte) 0x1A, (byte) 0x27);
 		
 		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		packet.addInt(color, 2, false);
@@ -211,7 +211,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader();
+		packandhead[0] = packet.getHeader(2);
 		packandhead[1] = packet.getPacket();
 		
 		for (int i = 0; i < this.users; i++)
@@ -237,10 +237,10 @@ public class Lobby {
 		if (num != -1) {
 			if (usersocks[num] != null) {
 				final Packet pack = new Packet();
-				pack.addHeader((byte) 0x0A, (byte) 0x2F);
+				pack.addHead((byte) 0x0A, (byte) 0x2F);
 				pack.addInt(1, 2, false);
 				final String[] packandhead = new String[2];
-				packandhead[0] = pack.getHeader();
+				packandhead[0] = pack.getHeader(2);
 				packandhead[1] = pack.getPacket();
 				usersocks[num].write(packandhead[0]);
 				usersocks[num].flush();
@@ -263,8 +263,7 @@ public class Lobby {
 	public void whisper(String packet, String sender) {
 		final Packet pack = new Packet();
 		final String[] packs = new String[2];
-		pack.setPacket(packet);
-		pack.removeHeader();
+		pack.setBody(Packet.removeHeader(4, packet));
 		final int len = pack.getInt(2);
 		final String recvUser = pack.getString(0, 15, false);
 		final String message = pack.getString(0, pack.getLen(), false);
@@ -272,11 +271,11 @@ public class Lobby {
 		if (Util.compareChat(message, sender, true, false) == -1)
 			kickPlayer(sender, "Player " + sender + " has been kick for wrong chatname(hacking)");
 		else {
-			pack.addHeader((byte) 0x2B, (byte) 0x2F);
+			pack.addHead((byte) 0x2B, (byte) 0x2F);
 			int num = getNum(recvUser);
 			if (num == -1) {
 				pack.addByte((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
-				packs[0] = pack.getHeader();
+				packs[0] = pack.getHeader(2);
 				packs[1] = pack.getPacket();
 				num = getNum(sender);
 				usersocks[num].write(packs[0]);
@@ -288,7 +287,7 @@ public class Lobby {
 				pack.addInt(len, 2, false);
 				pack.addString(message);
 				pack.addByte((byte) 0x00);
-				packs[0] = pack.getHeader();
+				packs[0] = pack.getHeader(2);
 				packs[1] = pack.getPacket();
 				Main.logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
@@ -358,7 +357,7 @@ public class Lobby {
 		}
 		
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0xEF, (byte) 0x2E);
+		packet.addHead((byte) 0xEF, (byte) 0x2E);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		
 		for (int i = 0; i < 6; i++)
@@ -391,12 +390,12 @@ public class Lobby {
 	public String[] getaddpacketroom(int[] room) {
 		final Packet packet = new Packet();
 		
-		packet.addHeader((byte) 0x27, (byte) 0x27);
+		packet.addHead((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader();
+		packandhead[0] = packet.getHeader(2);
 		packandhead[1] = packet.getPacket();
 		
 		packet.clean();
@@ -406,12 +405,12 @@ public class Lobby {
 	public String[] getdelpacketroom(int[] room) {
 		final Packet packet = new Packet();
 		
-		packet.addHeader((byte) 0x27, (byte) 0x27);
+		packet.addHead((byte) 0x27, (byte) 0x27);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader();
+		packandhead[0] = packet.getHeader(2);
 		packandhead[1] = packet.getPacket();
 		
 		packet.clean();

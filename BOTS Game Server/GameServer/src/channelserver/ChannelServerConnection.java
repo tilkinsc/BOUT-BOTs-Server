@@ -96,7 +96,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			case 0xF92A:
 				Main.logger.log("ChannelServerConnection", "parsing bots");
-				pack.addHeader((byte) 0x28, (byte) 0x27);
+				pack.addHead((byte) 0x28, (byte) 0x27);
 				pack.addInt(1, 2, false);
 				send(pack);
 				pack.clean();
@@ -111,18 +111,18 @@ public class ChannelServerConnection extends Thread {
 					final byte[] bytearr = { (byte) 0x4E, (byte) 0x95, (byte) 0xDD, (byte) 0x29, (byte) 0xCE,
 							(byte) 0x3A, (byte) 0x55, (byte) 0xDB, (byte) 0x20, (byte) 0xB6, (byte) 0xAD, (byte) 0x97,
 							(byte) 0xA6, (byte) 0x5C, (byte) 0xC0, (byte) 0x1C };
-					pack.addHeader((byte) 0x53, (byte) 0x2F);
+					pack.addHead((byte) 0x53, (byte) 0x2F);
 					pack.addByteArray(bytearr);
 					send(pack);
 					pack.clean();
-					pack.addHeader((byte) 0x27, (byte) 0x27);
+					pack.addHead((byte) 0x27, (byte) 0x27);
 					pack.addInt(1, 2, false);
 					pack.addString(charname);
 					pack.addByte((byte) 0x00);
 					pack.addByte((byte) 0xCC, (byte) 0xCC, (byte) 0x01, (byte) 0x01);
 					send(pack);
 					pack.clean();
-					pack.addHeader((byte) 0x4F, (byte) 0x2F);
+					pack.addHead((byte) 0x4F, (byte) 0x2F);
 					pack.addInt(1, 2, false);
 					pack.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 					send(pack);
@@ -142,8 +142,7 @@ public class ChannelServerConnection extends Thread {
 			case 0xFA2A: {
 				// debug("parse fa");
 				// Packet pack = new Packet();
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				final int client_num = pack.getInt(2);
 				final int bottype = pack.getInt(2);
 				final int unknown = pack.getInt(2);
@@ -201,8 +200,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x1A27:
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				String chatpack = pack.getPacket();
 				final int a = Util.compareChat(chatpack, this.charname, false, isGM());
 				if (a == -1)
@@ -232,14 +230,14 @@ public class ChannelServerConnection extends Thread {
 				sendBye(anwser);
 				break;
 			case 0x512B:
-				pack.addHeader((byte) 0x37, (byte) 0x2F);
+				pack.addHead((byte) 0x37, (byte) 0x2F);
 				pack.addPacketHead((byte) 0x01, (byte) 0x00);
 				pack.addInt(bot.getCoins(), 4, false);
 				send(pack);
 				send(bot.getInventPacket(0xEB));
 				break;
 			case 0x022B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 42, true);
 				final int itemid = pack.getInt(4);
 				send(shop.buy(itemid));
@@ -248,7 +246,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x032B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 42, true);
 				final int slotnum = pack.getInt(2);
 				pack.getInt(2);
@@ -257,7 +255,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x042B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 42, true);
 				pack.getInt(2);
 				final int itemid = pack.getInt(4);
@@ -268,7 +266,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0xFC2A: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 29, false);
 				final int slot = pack.getInt(2);
 				pack.getInt(2);
@@ -276,7 +274,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0xFD2A: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 29, false);
 				final int slot = pack.getInt(2);
 				pack.getInt(2);
@@ -284,7 +282,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x322B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 6, false);
 				final int slot = pack.getInt(2);
 				pack.clean();
@@ -292,7 +290,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x332B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 6, false);
 				final int slot = pack.getInt(2);
 				pack.clean();
@@ -300,7 +298,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x342B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 6, false);
 				final int slot = pack.getInt(2);
 				pack.clean();
@@ -308,7 +306,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x352B: {
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				pack.getString(0, 6, false);
 				final int slot = pack.getInt(2);
 				pack.clean();
@@ -316,14 +314,12 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x412B: {
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				send(bot.getEquipByName(pack.getPacket()));
 				break;
 			}
 			case 0x0A2B: {
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				pack.getInt(2);
 				final int page = pack.getInt(2);
 				final int mode = pack.getInt(2);
@@ -332,8 +328,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x092B: {
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				final String cname = pack.getString(0, 27, false);
 				final String cpass = pack.getString(0, 10, false);
 				pack.getInt(2);
@@ -362,8 +357,7 @@ public class ChannelServerConnection extends Thread {
 					lobby.kickPlayer(this.charname, "Player " + this.charname
 							+ " has been kick for try to change map of not owning room(hacking)");
 				else {
-					pack.setPacket(packet);
-					pack.removeHeader();
+					pack.setBody(Packet.removeHeader(4, packet));
 					pack.getInt(2);
 					lobby.setRoomMap(room, pack.getInt(2));
 					pack.clean();
@@ -371,8 +365,7 @@ public class ChannelServerConnection extends Thread {
 				break;
 			}
 			case 0x062B: {
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				final int roomnum = pack.getInt(1) - 89;
 				int roommode = pack.getInt(1);
 				switch (roommode) {
@@ -422,8 +415,7 @@ public class ChannelServerConnection extends Thread {
 				if (room[0] == -1)
 					lobby.kickPlayer(this.charname,
 							"Player " + this.charname + " has been kick for try to start not owning room(hacking)");
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				pack.getInt(2);
 				final int map = pack.getInt(2);
 				final int unknown = pack.getInt(2);
@@ -447,7 +439,7 @@ public class ChannelServerConnection extends Thread {
 			}
 			case 0x6F2B: // respawn thing
 			{
-				pack.addHeader((byte) 0x54, (byte) 0x2F);
+				pack.addHead((byte) 0x54, (byte) 0x2F);
 				pack.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 				send(pack);
 				break;
@@ -460,8 +452,7 @@ public class ChannelServerConnection extends Thread {
 					System.out.println("Room is -1");
 					break;
 				}
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				System.out.println("0: " + pack.getInt(0) + ", 1: " + pack.getInt(1) + ", 2: " + pack.getInt(2)
 						+ ", 3: " + pack.getInt(3) + ", 4: " + pack.getInt(4));
 				final int who = pack.getInt(2); // I wanna try with TWO computers
@@ -474,8 +465,7 @@ public class ChannelServerConnection extends Thread {
 			{
 				if (bot.getRoom()[0] == -1)
 					break;
-				pack.setPacket(packet);
-				pack.removeHeader();
+				pack.setBody(Packet.removeHeader(4, packet));
 				pack.getInt(2);
 				final int typ = pack.getInt(1);
 				final int num = pack.getInt(1);
@@ -485,7 +475,7 @@ public class ChannelServerConnection extends Thread {
 			case 0x3f2b: // Heartbeat?
 			{
 				System.out.println("Entered special packet");
-				pack.setPacket(packet);
+				pack.setBody(packet);
 				System.out.println("0: " + pack.getInt(0) + ", 1: " + pack.getInt(1) + ", 2: " + pack.getInt(2)
 						+ ", 3: " + pack.getInt(3) + ", 4: " + pack.getInt(4));
 				break;
@@ -600,7 +590,7 @@ public class ChannelServerConnection extends Thread {
 	
 	protected void send(Packet pack) {
 		final String[] packet = new String[2];
-		packet[0] = pack.getHeader();
+		packet[0] = pack.getHeader(2);
 		packet[1] = pack.getPacket();
 		this.socketOut.write(packet[0]);
 		this.socketOut.flush();
@@ -613,9 +603,9 @@ public class ChannelServerConnection extends Thread {
 		final String[] packandhead = new String[2];
 		switch (whatpack) {
 		case 1:
-			pack.addHeader((byte) 0x0A, (byte) 0x2F);
+			pack.addHead((byte) 0x0A, (byte) 0x2F);
 			pack.addInt(1, 2, false);
-			packandhead[0] = pack.getHeader();
+			packandhead[0] = pack.getHeader(2);
 			packandhead[1] = pack.getPacket();
 			this.socketOut.write(packandhead[0]);
 			this.socketOut.flush();
@@ -623,9 +613,9 @@ public class ChannelServerConnection extends Thread {
 			this.socketOut.flush();
 			break;
 		case 2:
-			pack.addHeader((byte) 0xE3, (byte) 0x2E);
+			pack.addHead((byte) 0xE3, (byte) 0x2E);
 			pack.addInt(1, 2, false);
-			packandhead[0] = pack.getHeader();
+			packandhead[0] = pack.getHeader(2);
 			packandhead[1] = pack.getPacket();
 			this.socketOut.write(packandhead[0]);
 			this.socketOut.flush();
@@ -642,7 +632,7 @@ public class ChannelServerConnection extends Thread {
 	protected void sendChatMsg(String msg, int color) {
 		final Packet pack = new Packet();
 		
-		pack.addHeader((byte) 0x1A, (byte) 0x27);
+		pack.addHead((byte) 0x1A, (byte) 0x27);
 		
 		pack.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 		pack.addInt(color, 2, false);
@@ -651,7 +641,7 @@ public class ChannelServerConnection extends Thread {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = pack.getHeader();
+		packandhead[0] = pack.getHeader(2);
 		packandhead[1] = pack.getPacket();
 		
 		this.socketOut.write(packandhead[0]);

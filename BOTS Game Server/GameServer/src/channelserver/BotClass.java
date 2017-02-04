@@ -442,7 +442,7 @@ public class BotClass {
 	
 	public Packet getInventPacket(int head) {
 		final Packet packet = new Packet();
-		packet.addHeader((byte) head, (byte) 0x2E);
+		packet.addHead((byte) head, (byte) 0x2E);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addByte((byte) 0x01);
 		for (int i = 0; i < 10; i++) {
@@ -533,13 +533,13 @@ public class BotClass {
 		// packet.addHeader((byte)0xE4, (byte)0x2E);
 		switch (epart) {
 		case 1:
-			packet.addHeader((byte) 0xE4, (byte) 0x2E);
+			packet.addHead((byte) 0xE4, (byte) 0x2E);
 			break;
 		case 2:
-			packet.addHeader((byte) 0x19, (byte) 0x2F);
+			packet.addHead((byte) 0x19, (byte) 0x2F);
 			break;
 		case 3:
-			packet.addHeader((byte) 0x1B, (byte) 0x2F);
+			packet.addHead((byte) 0x1B, (byte) 0x2F);
 			break;
 		}
 		try {
@@ -586,13 +586,13 @@ public class BotClass {
 					this.setInvent(0, slot);
 					this.setEquip(aid, epart, part);
 					// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-					packet.setPacket(this.getpacketcinfo());
+					packet.setBody(this.getpacketcinfo());
 					return packet;
 				}
 				this.setInvent(old, slot);
 				this.setEquip(aid, epart, part);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setPacket(this.getpacketcinfo());
+				packet.setBody(this.getpacketcinfo());
 				return packet;
 			}
 			packet.addPacketHead((byte) 0x00, (byte) 0x60);
@@ -608,14 +608,14 @@ public class BotClass {
 		final Packet packet = new Packet();
 		switch (epart) {
 		case 1:
-			packet.addHeader((byte) 0xE5, (byte) 0x2E);
+			packet.addHead((byte) 0xE5, (byte) 0x2E);
 			if (slot == 0 && this.equipitemscoin[0] != 0) {
 				epart = 4;
 				slot = 0;
 			}
 			break;
 		case 2:
-			packet.addHeader((byte) 0x1A, (byte) 0x2F);
+			packet.addHead((byte) 0x1A, (byte) 0x2F);
 			if (slot == 0 && this.equipitemscoin[1] != 0) {
 				epart = 4;
 				slot = 1;
@@ -623,7 +623,7 @@ public class BotClass {
 				slot += 3;
 			break;
 		case 3:
-			packet.addHeader((byte) 0x1C, (byte) 0x2F);
+			packet.addHead((byte) 0x1C, (byte) 0x2F);
 			slot += 11;
 			break;
 		}
@@ -639,7 +639,7 @@ public class BotClass {
 				this.setInvent(aid, islot);
 				this.setEquip(0, epart, slot);
 				// packet.addPacketHead((byte) 0x01, (byte) 0x00);
-				packet.setPacket(this.getpacketcinfo());
+				packet.setBody(this.getpacketcinfo());
 				return packet;
 			}
 			
@@ -662,7 +662,7 @@ public class BotClass {
 	public Packet getEquipByName(String charname) {
 		try {
 			final Packet packet = new Packet();
-			packet.addHeader((byte) 0x27, (byte) 0x2F);
+			packet.addHead((byte) 0x27, (byte) 0x2F);
 			packet.addInt(1, 4, false);
 			final ResultSet rs = SQLDatabase.doquery(
 					"SELECT * FROM bout_characters WHERE name='" + Util.removenullbyte(charname) + "' LIMIT 1");

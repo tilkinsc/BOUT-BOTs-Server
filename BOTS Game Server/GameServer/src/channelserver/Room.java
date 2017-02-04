@@ -80,7 +80,7 @@ public class Room {
 			SQLDatabase.doupdate("INSERT INTO `rooms` (`ip`) VALUES ('" + this.roomip + "')");
 			
 			final Packet pack = new Packet();
-			pack.addHeader((byte) 0xEE, (byte) 0x2E);
+			pack.addHead((byte) 0xEE, (byte) 0x2E);
 			pack.addPacketHead((byte) 0x01, (byte) 0x00);
 			pack.addByte((byte) (this.roomnum[1] + 89));
 			switch (this.roomnum[0]) {
@@ -114,13 +114,13 @@ public class Room {
 			Main.logger.log("Room", "[this.roomport]" + this.roomport);
 			Main.logger.log("Room", "[this.roompass]" + this.roompass);
 			
-			pack.addHeader((byte) 0x4A, (byte) 0x2F);
+			pack.addHead((byte) 0x4A, (byte) 0x2F);
 			pack.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 			writeRoomPlayer(0, pack);
 			pack.clean();
 			this.roommap = 0;
 			
-			pack.addHeader((byte) 0x39, (byte) 0x27);
+			pack.addHead((byte) 0x39, (byte) 0x27);
 			pack.addInt(7033, 2, true);
 			for (int i = 0; i < 7; i++)
 				pack.addByte((byte) 0x00, (byte) 0x00);
@@ -199,7 +199,7 @@ public class Room {
 	public void setMap(int map) {
 		this.roommap = map;
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x4A, (byte) 0x2F);
+		packet.addHead((byte) 0x4A, (byte) 0x2F);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		packet.addInt(map, 2, false);
 		writeRoomAll(packet);
@@ -209,7 +209,7 @@ public class Room {
 		for (int i = 0; i < 8; i++) {
 			final Packet packet = pack;
 			if (this.roomsocks[i] != null) {
-				this.roomsocks[i].write(packet.getHeader());
+				this.roomsocks[i].write(packet.getHeader(2));
 				this.roomsocks[i].flush();
 				this.roomsocks[i].write(packet.getPacket());
 				this.roomsocks[i].flush();
@@ -220,7 +220,7 @@ public class Room {
 	protected void writeRoomAllExcept(int num, Packet packet) {
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null && i != num) {
-				this.roomsocks[i].write(packet.getHeader());
+				this.roomsocks[i].write(packet.getHeader(2));
 				this.roomsocks[i].flush();
 				this.roomsocks[i].write(packet.getPacket());
 				this.roomsocks[i].flush();
@@ -228,7 +228,7 @@ public class Room {
 	}
 	
 	protected void writeRoomPlayer(int num, Packet packet) {
-		this.roomsocks[num].write(packet.getHeader());
+		this.roomsocks[num].write(packet.getHeader(2));
 		this.roomsocks[num].flush();
 		this.roomsocks[num].write(packet.getPacket());
 		this.roomsocks[num].flush();
@@ -240,7 +240,7 @@ public class Room {
 				for (int i2 = 0; i2 < 8; i2++)
 					this.killcount[i2] = 0;
 				final Packet packet = new Packet();
-				packet.addHeader((byte) 0xF3, (byte) 0x2E);
+				packet.addHead((byte) 0xF3, (byte) 0x2E);
 				packet.addPacketHead((byte) 0x00, (byte) 0x50);
 				writeRoomPlayer(getSlot(this.roomowner), packet);
 				return;
@@ -254,7 +254,7 @@ public class Room {
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null) {
 				final Packet packet = new Packet();
-				packet.addHeader((byte) 0xF3, (byte) 0x2E);
+				packet.addHead((byte) 0xF3, (byte) 0x2E);
 				packet.addPacketHead((byte) 0x01, (byte) 0x00);
 				packet.addByte((byte) (roomnum[1] + 89));
 				packet.addByte(this.roomtype);
@@ -282,7 +282,7 @@ public class Room {
 				return;
 		
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x24, (byte) 0x2F);
+		packet.addHead((byte) 0x24, (byte) 0x2F);
 		packet.addByte((byte) 0xCC);
 		writeRoomAll(packet);
 	}
@@ -292,14 +292,14 @@ public class Room {
 			if (!this.roompass.equals(pass)) // wrong pass
 			{
 				final Packet packet = new Packet();
-				packet.addHeader((byte) 0x28, (byte) 0x2F);
+				packet.addHead((byte) 0x28, (byte) 0x2F);
 				packet.addByte((byte) 0x00, (byte) 0x3E);
 				return packet;
 			}
 			if (this.roomstatus == 3) // already starten
 			{
 				final Packet packet = new Packet();
-				packet.addHeader((byte) 0x28, (byte) 0x2F);
+				packet.addHead((byte) 0x28, (byte) 0x2F);
 				packet.addByte((byte) 0x00, (byte) 0x3B);
 				return packet;
 			}
@@ -321,7 +321,7 @@ public class Room {
 						this.roomips[i][i2] = (byte) Integer.parseInt(ip[i2]);
 					
 					final Packet packet = new Packet();
-					packet.addHeader((byte) 0x29, (byte) 0x27);
+					packet.addHead((byte) 0x29, (byte) 0x27);
 					packet.addString(generateUserPack(i));
 					this.writeRoomAll(packet);
 					this.roomsocks[i] = socks;
@@ -329,7 +329,7 @@ public class Room {
 					return getRoomPacket();
 				}
 			final Packet packet = new Packet();
-			packet.addHeader((byte) 0x28, (byte) 0x2F);
+			packet.addHead((byte) 0x28, (byte) 0x2F);
 			packet.addByte((byte) 0x00, (byte) 0x50);
 			return packet;
 		} catch (Exception e) {
@@ -418,7 +418,7 @@ public class Room {
 	
 	private Packet getRoomPacket() {
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x28, (byte) 0x2F);
+		packet.addHead((byte) 0x28, (byte) 0x2F);
 		packet.addPacketHead((byte) 0x01, (byte) 0x00);
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null)
@@ -455,7 +455,7 @@ public class Room {
 	
 	private Packet getQuitPacket(int slot) {
 		final Packet pack = new Packet();
-		pack.addHeader((byte) 0x2E, (byte) 0x27);
+		pack.addHead((byte) 0x2E, (byte) 0x27);
 		pack.addByte((byte) 0x01, (byte) 0x00, (byte) slot, (byte) 0x01);
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null)
@@ -467,7 +467,7 @@ public class Room {
 	
 	public Packet getConnectedPacket() {
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x39, (byte) 0x27);
+		packet.addHead((byte) 0x39, (byte) 0x27);
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null)
 				packet.addInt(this.roomport[i], 2, true);
@@ -487,7 +487,7 @@ public class Room {
 		this.roomready[slot] = !this.roomready[slot];
 		
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x20, (byte) 0x2F);
+		packet.addHead((byte) 0x20, (byte) 0x2F);
 		packet.addInt(slot, 2, false);
 		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00);
 		if (this.roomready[slot])
@@ -514,7 +514,7 @@ public class Room {
 				this.monster[num] = -1;
 				this.killcount[killedby]++;
 				final Packet packet = new Packet();
-				packet.addHeader((byte) 0x25, (byte) 0x2F);
+				packet.addHead((byte) 0x25, (byte) 0x2F);
 				packet.addPacketHead((byte) 0x25, (byte) 0x2F);
 				packet.addInt(num, 2, false);
 				packet.addByte((byte) 0x08, (byte) 0x00);
@@ -551,7 +551,7 @@ public class Room {
 	
 	private void writeRoomMessage(String msg) {
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x1A, (byte) 0x27);
+		packet.addHead((byte) 0x1A, (byte) 0x27);
 		packet.addByte((byte) 0x01, (byte) 0x00, (byte) 0x0F, (byte) 0x00);
 		packet.addByte((byte) 0x01, (byte) 0x00);
 		packet.addString("[Room] ");
@@ -563,7 +563,7 @@ public class Room {
 	public void useItem(String who, int typ, int num) {
 		final int slot = getSlot(who);
 		final Packet packet = new Packet();
-		packet.addHeader((byte) 0x23, (byte) 0x2F);
+		packet.addHead((byte) 0x23, (byte) 0x2F);
 		packet.addInt(slot, 2, false);
 		packet.addByte((byte) typ);
 		packet.addByte((byte) num);
