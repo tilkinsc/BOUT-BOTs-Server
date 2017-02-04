@@ -27,9 +27,10 @@ public class AddAccount {
 		final java.text.SimpleDateFormat dformat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		final String query = "INSERT INTO `bout_users` (username, password, coins, banned, online, current_ip, logincount, last_ip, lastlogin, email)"
-				+ "VALUES ("+ LOGIN_USERNAME + "\",\"" + LOGIN_PASSWORD + "\"," + COINS + ","
+				+ " VALUES (\""+ LOGIN_USERNAME + "\",\"" + LOGIN_PASSWORD + "\"," + COINS + ","
 				+ LOGIN_BANNED + "," + LOGIN_ALLOG + ",\"" + LOGIN_IP + "\"," + LOGIN_COUNT + ",\"" + LOGIN_IP + "\",'"
 				+ dformat.format(date) + "',\"" + LOGIN_EMAIL + "\");";
+		System.out.println(query);
 		
 		SQLDatabase.loadconfig(ConfigStore.loadProperties("configs/mysql.cfg"));
 		SQLDatabase.start();
