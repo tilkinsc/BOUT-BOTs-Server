@@ -6,7 +6,7 @@ import accountserver.ServerConnection;
 import accountserver.UserPack;
 import shared.Util;
 
-public class LoginEvent extends ServerEvent {
+public class LoginEvent extends ClientPath {
 
 	public LoginEvent(ServerConnection connection) {
 		super(connection);
