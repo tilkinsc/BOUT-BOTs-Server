@@ -1,4 +1,4 @@
-package etc;
+package tools;
 
 import java.io.IOException;
 import java.net.InetAddress;
