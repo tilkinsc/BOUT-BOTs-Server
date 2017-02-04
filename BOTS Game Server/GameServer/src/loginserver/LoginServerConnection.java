@@ -18,28 +18,8 @@ public class LoginServerConnection extends Thread {
 	protected BufferedReader socketIn;
 	protected PrintWriter socketOut;
 	
-	public String user;
-	public String pass;
-	
-	// unused
-	// public int LOGIN_ID;
-	// public String LOGIN_USERNAME;
-	// public String LOGIN_PASSWORD;
-	// public int LOGIN_BANNED;
-	// public int LOGIN_ALLOG;
-	// public int LOGIN_RESULT;
-	// public String LOGIN_RESULTSTR;
-	
-	// unused
-	//private String pass1;
-	//private String oldline;
-	
 	public LoginServerConnection(Socket socket) {
 		this.socket = socket;
-	}
-	
-	public SocketAddress getRemoteAddress() {
-		return this.socket.getRemoteSocketAddress();
 	}
 	
 	public int checkUser(String user, String pass) {
@@ -64,7 +44,7 @@ public class LoginServerConnection extends Thread {
 			
 			if (id == 0)
 				return 1;
-			else if (!Util.md5hash(this.pass).equals(ppass))
+			else if (!Util.md5hash(pass).equals(ppass))
 				return 2;
 			else if (banned == 1)
 				return 3;
@@ -78,44 +58,36 @@ public class LoginServerConnection extends Thread {
 		return 1; // would love to put in unspecified error
 	}
 	
-	protected void doLogin() {
+	protected void doLogin(String user, String pass) {
 		System.out.println("Doing login");
 		try {
-			final int login_result = checkUser(this.user, this.pass);
+			final int login_result = checkUser(user, pass);
 			
 			String status;
-			String result;
 			switch (login_result) {
 			case 0:
 				updateaccount(user);
 				status = Util.isoString(LoginServer.LOGIN_SUCCESSBYTE);
-				result = "Success";
 				break;
 			default: // attempt to find out if there is a correct way to give unspecified error
 				Main.logger.log("LoginServerConnection", "Unspecified login return");
 			case 1:
 				status = Util.isoString(LoginServer.LOGIN_INCUSERBYTE);
-				result = "Incorrect Username";
 				break;
 			case 2:
 				status = Util.isoString(LoginServer.LOGIN_INCPASSBYTE);
-				result = "Incorrect Password";
 				break;
 			case 3:
 				status = Util.isoString(LoginServer.LOGIN_BANUSERBYTE);
-				result = "Banned Username";
 				break;
 			case 4:
 				status = Util.isoString(LoginServer.LOGIN_ALREADYLOGGEDIN);
-				result = "User is already Logged in";
 				break;
 			}
-			this.socketOut.write(Util.isoString(LoginServer.LOGINHEADER));
-			this.socketOut.flush();
-			this.socketOut.write(status);
-			this.socketOut.flush();
+			write(Util.isoString(LoginServer.LOGINHEADER));
+			write(status);
 			this.socketOut.close();
-			Main.logger.log("LoginServerConnection", "Login Sent " + result);
+			Main.logger.log("LoginServerConnection", "Login Sent " + login_result);
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}
@@ -143,7 +115,7 @@ public class LoginServerConnection extends Thread {
 	
 	public void write(String msg) {
 		try {
-			this.socketOut.write(msg + "\u0000");
+			this.socketOut.write(msg);
 			this.socketOut.flush();
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
@@ -152,7 +124,6 @@ public class LoginServerConnection extends Thread {
 	
 	protected String read() {
 		final StringBuffer buffer = new StringBuffer();
-		
 		try {
 			boolean zeroByteRead = false;
 			int codePoint;
@@ -170,25 +141,32 @@ public class LoginServerConnection extends Thread {
 		return buffer.toString();
 	}
 	
+	public SocketAddress getRemoteAddress() {
+		return this.socket.getRemoteSocketAddress();
+	}
+	
 	@Override
 	public void run() {
 		try {
 			this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			this.socketOut = new PrintWriter(this.socket.getOutputStream(), true);
 			
+			String user = "", pass = "";
+			
 			String line = read();
 			while (line != null) {
-				if (!line.isEmpty()) {
-					if (line.startsWith("H")) {
-						final String newLine = line.replace("H", "");
-						this.user = newLine;
-					}
-					
-					if (line.length() >= 4 && !this.user.equals(line.replace("H", ""))) {
-						this.pass = line;
-						doLogin();
-						break;
-					}
+				if (line.isEmpty()) {
+					line = read();
+					continue;
+				}
+				if (line.startsWith("H")) {
+					user = line.replace("H", "");
+				}
+				
+				if (line.length() >= 4 && !user.equals(line.replace("H", ""))) {
+					pass = line;
+					doLogin(user, pass);
+					break;
 				}
 				line = read();
 			}
