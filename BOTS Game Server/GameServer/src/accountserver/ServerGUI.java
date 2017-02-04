@@ -3,23 +3,31 @@ package accountserver;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.text.BadLocationException;
 
-public class LoginServerGUI extends JFrame {
+public class ServerGUI extends JFrame {
 
 	private static final long serialVersionUID = -5261847908536149302L;
 	
 	protected Timer timer;
 	
-	public LoginServerGUI() {
+	public ServerGUI() {
 		initComponents();
 	}
 	
 	public void startUpdateTimer() {
 		this.timer = new Timer();
-		this.timer.schedule(new UpdateClientCountTask(0), 1000, 1000);
+		this.timer.schedule(new TimerTask(){
+			private int count = 0;
+			@Override
+			public void run() {
+				count = Main.accountpath.getClientCount();
+				Main.gui.setClientCount(count + " client" + ((count > 1) ? "s" : ""));
+			}
+		}, 1000, 1000);
 	}
 	
 	public void write(String msg) throws BadLocationException {

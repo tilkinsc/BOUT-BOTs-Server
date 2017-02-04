@@ -17,7 +17,7 @@ public class Main {
 	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
-	public static LoginServerGUI gui;
+	public static ServerGUI gui;
 	
 	public static AccountPath accountpath;
 	public static ChannelPath channelpath;
@@ -54,7 +54,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		try {
-			gui = new LoginServerGUI();
+			gui = new ServerGUI();
 			
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
