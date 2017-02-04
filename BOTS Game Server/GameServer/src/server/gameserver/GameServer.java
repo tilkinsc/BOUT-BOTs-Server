@@ -9,7 +9,7 @@ import java.util.Vector;
 import server.Main;
 import shared.Util;
 
-public class ChannelServer extends Thread {
+public class GameServer extends Thread {
 
 	public static final byte[] PACKETS_HEADER = { (byte) 0x01, (byte) 0x00 };
 	
@@ -49,21 +49,15 @@ public class ChannelServer extends Thread {
 	public static int fake_i = 0;
 	
 	protected ServerSocket serverSocket;
-	protected Vector<ChannelServerConnection> clientConnections;
+	protected Vector<GameServerConnection> clientConnections;
 	
 	protected final int port, timeout;
 	private boolean stop;
 	
-	public ChannelServer(int port, int timeout) {
+	public GameServer(int port, int timeout) {
 		this.port = port;
 		this.timeout = timeout;
-		this.clientConnections = new Vector<ChannelServerConnection>();
-	}
-	
-	@Override
-	public void start() {
-		stop = false;
-		super.start();
+		this.clientConnections = new Vector<GameServerConnection>();
 	}
 	
 	@Override
@@ -79,7 +73,7 @@ public class ChannelServer extends Thread {
 					final Socket socket = this.serverSocket.accept();
 					// if(!Main.getip(socket).equals("127.0.0.1")){
 					Main.logger.log("ChannelServer", "client connection from " + socket.getRemoteSocketAddress());
-					final ChannelServerConnection socketConnection = new ChannelServerConnection(socket, this, lobby);
+					final GameServerConnection socketConnection = new GameServerConnection(socket, this, lobby);
 					clientConnections.add(socketConnection);
 					socketConnection.start();
 					// }
@@ -89,15 +83,6 @@ public class ChannelServer extends Thread {
 			}
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
-		}
-	}
-	
-	public void stopThread() {
-		this.stop = true;
-		try {
-			this.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -115,7 +100,7 @@ public class ChannelServer extends Thread {
 	public boolean removeClient(SocketAddress remoteAddress) {
 		try {
 			for (int i = 0; i < this.clientConnections.size(); i++) {
-				final ChannelServerConnection con = this.clientConnections.get(i);
+				final GameServerConnection con = this.clientConnections.get(i);
 				if (con.getRemoteAddress().equals(remoteAddress)) {
 					this.clientConnections.remove(i);
 					con.finalize();

@@ -13,12 +13,12 @@ import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
 
-public class ChannelServerConnection extends Thread {
+public class GameServerConnection extends Thread {
 
 	protected Socket socket;
 	protected BufferedReader socketIn;
 	protected PrintWriter socketOut;
-	protected ChannelServer server;
+	protected GameServer server;
 	protected Lobby lobby;
 	protected String account;
 	protected int bottype;
@@ -28,7 +28,7 @@ public class ChannelServerConnection extends Thread {
 	protected BotClass bot;
 	protected Shop shop;
 	
-	public ChannelServerConnection(Socket socket, ChannelServer server, Lobby _lobby) {
+	public GameServerConnection(Socket socket, GameServer server, Lobby _lobby) {
 		this.socket = socket;
 		this.server = server;
 		this.ip = socket.getInetAddress().getHostAddress();
@@ -88,7 +88,7 @@ public class ChannelServerConnection extends Thread {
 			case 0xF82A:
 				// debug("parse f8");
 				final byte[] spacketb = { 0x01, 0x00, 0x01, 0x00 };
-				socketOut.write(new String(ChannelServer.CLIENT_NUMBER_HEADER));
+				socketOut.write(new String(GameServer.CLIENT_NUMBER_HEADER));
 				socketOut.flush();
 				// debug("send cnumberhead");
 				socketOut.write(new String(spacketb));
@@ -105,7 +105,7 @@ public class ChannelServerConnection extends Thread {
 					bot.loadchar();
 					charname = bot.getName();
 					bottype = bot.getBot();
-					socketOut.write(new String(ChannelServer.CHARACTER_INFORMATION_HEADER));
+					socketOut.write(new String(GameServer.CHARACTER_INFORMATION_HEADER));
 					socketOut.flush();
 					socketOut.write(bot.getpacketcinfo());
 					socketOut.flush();
@@ -129,12 +129,12 @@ public class ChannelServerConnection extends Thread {
 					send(pack);
 					pack.clean();
 				} else {
-					socketOut.write(new String(ChannelServer.CHARACTER_INFORMATION_HEADER));
+					socketOut.write(new String(GameServer.CHARACTER_INFORMATION_HEADER));
 					socketOut.flush();
 					// debug("send cinfohead");
 					final byte[] cinfopackbyte = { (byte) 0x00, (byte) 0x35 };
 					String cinfopack = new String(cinfopackbyte);
-					cinfopack += ChannelServer.longnullbyte;
+					cinfopack += GameServer.longnullbyte;
 					socketOut.write(cinfopack);
 					socketOut.flush();
 				}
@@ -153,7 +153,7 @@ public class ChannelServerConnection extends Thread {
 				
 				if (this.account.equals("a")) {
 					final byte[] loginhack = { (byte) 0x00, (byte) 0x32 };
-					this.socket.getOutputStream().write(ChannelServer.BOT_CREATION_HEADER);
+					this.socket.getOutputStream().write(GameServer.BOT_CREATION_HEADER);
 					this.socket.getOutputStream().flush();
 					this.socket.getOutputStream().write(loginhack);
 					this.socket.getOutputStream().flush();
@@ -161,21 +161,21 @@ public class ChannelServerConnection extends Thread {
 				} else if (!checkexist(charname, accountname)) {
 					if (charname.matches("[a-zA-Z0-9.~_!\\x2d]+")) {
 						bot.createbot(accountname, charname, bottype);
-						socketOut.write(new String(ChannelServer.BOT_CREATION_HEADER));
+						socketOut.write(new String(GameServer.BOT_CREATION_HEADER));
 						socketOut.flush();
-						socketOut.write(new String(ChannelServer.CREATE_BOT_CREATED));
+						socketOut.write(new String(GameServer.CREATE_BOT_CREATED));
 						socketOut.flush();
 					} else {
-						socketOut.write(new String(ChannelServer.BOT_CREATION_HEADER));
+						socketOut.write(new String(GameServer.BOT_CREATION_HEADER));
 						socketOut.flush();
-						socketOut.write(new String(ChannelServer.CREATE_BOT_USERNAME_ERROR));
+						socketOut.write(new String(GameServer.CREATE_BOT_USERNAME_ERROR));
 						socketOut.flush();
 						this.finalize();
 					}
 				} else {
-					socketOut.write(new String(ChannelServer.BOT_CREATION_HEADER));
+					socketOut.write(new String(GameServer.BOT_CREATION_HEADER));
 					socketOut.flush();
-					socketOut.write(new String(ChannelServer.CREATE_BOT_USERNAME_TAKEN));
+					socketOut.write(new String(GameServer.CREATE_BOT_USERNAME_TAKEN));
 					socketOut.flush();
 					this.finalize();
 				}
@@ -194,9 +194,9 @@ public class ChannelServerConnection extends Thread {
 				sendChatMsg("Welcome Secured's Test Server!", 4);
 				sendChatMsg("Have fun :)", 4);
 				
-				this.socketOut.write(new String(ChannelServer.OK_HEADER));
+				this.socketOut.write(new String(GameServer.OK_HEADER));
 				this.socketOut.flush();
-				this.socketOut.write(new String(ChannelServer.OK_PACKET));
+				this.socketOut.write(new String(GameServer.OK_PACKET));
 				this.socketOut.flush();
 				break;
 			}
@@ -684,7 +684,7 @@ public class ChannelServerConnection extends Thread {
 			for (int i = 0; i < 4; i++) {
 				codePoint = this.socketIn.read();
 				if (codePoint == 0) {
-					final String nulls = new String(ChannelServer.NULLBYTE);
+					final String nulls = new String(GameServer.NULLBYTE);
 					buffer.append(nulls);
 				} else if (Character.isValidCodePoint(codePoint))
 					buffer.appendCodePoint(codePoint);
@@ -695,7 +695,7 @@ public class ChannelServerConnection extends Thread {
 				for (int i = 0; i < plen; i++) {
 					codePoint = this.socketIn.read();
 					if (codePoint == 0) {
-						final String nulls = new String(ChannelServer.NULLBYTE);
+						final String nulls = new String(GameServer.NULLBYTE);
 						buffer.append(nulls);
 					} else if (Character.isValidCodePoint(codePoint))
 						buffer.appendCodePoint(codePoint);
