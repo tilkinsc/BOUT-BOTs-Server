@@ -1,30 +1,21 @@
-package accountserver;
+package accountserver.event.server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
+import accountserver.Main;
+import accountserver.event.ServerPath;
 import shared.SQLDatabase;
 
-public class RoomUDPServer extends Thread {
+public class RoomPath extends ServerPath {
 
-	private boolean stop;
 	
-	public final int port;
-	public final int timeout;
-	
-	public RoomUDPServer(int port, int timeout) {
-		this.port = port;
-		this.timeout = timeout;
+	public RoomPath(int port, int timeout) {
+		super(port, timeout);
 	}
-	
-	@Override
-	public void start() {
-		stop = false;
-		super.start();
-	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -57,10 +48,6 @@ public class RoomUDPServer extends Thread {
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
-	}
-	
-	public void stopThread() {
-		this.stop = true;
 	}
 	
 }

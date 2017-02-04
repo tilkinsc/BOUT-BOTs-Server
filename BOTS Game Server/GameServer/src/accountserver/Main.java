@@ -9,6 +9,7 @@ import java.util.Date;
 
 import accountserver.event.server.AccountPath;
 import accountserver.event.server.ChannelPath;
+import accountserver.event.server.RoomPath;
 import shared.Logger;
 import shared.SQLDatabase;
 
@@ -22,7 +23,7 @@ public class Main {
 	public static AccountPath accountpath;
 	public static ChannelPath channelpath;
 	
-	public static RoomUDPServer roomserver;
+	public static RoomPath roomserver;
 	
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
@@ -66,7 +67,7 @@ public class Main {
 
 			accountpath = new AccountPath(11000, 5000);
 			channelpath = new ChannelPath(11010, 5000);
-			roomserver = new RoomUDPServer(11011, 5000);
+			roomserver = new RoomPath(11011, 5000);
 			
 			gui.startUpdateTimer();
 			SQLDatabase.start();
