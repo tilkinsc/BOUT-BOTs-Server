@@ -590,7 +590,7 @@ public class ChannelServerConnection extends Thread {
 	
 	protected void send(Packet pack) {
 		final String[] packet = new String[2];
-		packet[0] = pack.combinePacket(2);
+		packet[0] = pack.combineIsoPacket(2);
 		packet[1] = pack.getIsoBody();
 		this.socketOut.write(packet[0]);
 		this.socketOut.flush();
@@ -605,7 +605,7 @@ public class ChannelServerConnection extends Thread {
 		case 1:
 			pack.addHead((byte) 0x0A, (byte) 0x2F);
 			pack.addBodyInt(1, 2, false);
-			packandhead[0] = pack.combinePacket(2);
+			packandhead[0] = pack.combineIsoPacket(2);
 			packandhead[1] = pack.getIsoBody();
 			this.socketOut.write(packandhead[0]);
 			this.socketOut.flush();
@@ -615,7 +615,7 @@ public class ChannelServerConnection extends Thread {
 		case 2:
 			pack.addHead((byte) 0xE3, (byte) 0x2E);
 			pack.addBodyInt(1, 2, false);
-			packandhead[0] = pack.combinePacket(2);
+			packandhead[0] = pack.combineIsoPacket(2);
 			packandhead[1] = pack.getIsoBody();
 			this.socketOut.write(packandhead[0]);
 			this.socketOut.flush();
@@ -641,7 +641,7 @@ public class ChannelServerConnection extends Thread {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = pack.combinePacket(2);
+		packandhead[0] = pack.combineIsoPacket(2);
 		packandhead[1] = pack.getIsoBody();
 		
 		this.socketOut.write(packandhead[0]);

@@ -117,12 +117,16 @@ public class Packet {
 		return null;
 	}
 	
-	public String combinePacket(int len) {
+	public String combineIsoPacket(int len) {
 		try {
 			return Util.isoString(calcHeader(len).getBytes("ISO8859-1"));
 		} catch (Exception e) {
 		}
 		return null;
+	}
+	
+	public String getPacket() {
+		return this.header.append(this.body).toString();
 	}
 	
 	private String calcHeader(int len) {

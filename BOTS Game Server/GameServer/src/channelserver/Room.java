@@ -209,7 +209,7 @@ public class Room {
 		for (int i = 0; i < 8; i++) {
 			final Packet packet = pack;
 			if (this.roomsocks[i] != null) {
-				this.roomsocks[i].write(packet.combinePacket(2));
+				this.roomsocks[i].write(packet.combineIsoPacket(2));
 				this.roomsocks[i].flush();
 				this.roomsocks[i].write(packet.getIsoBody());
 				this.roomsocks[i].flush();
@@ -220,7 +220,7 @@ public class Room {
 	protected void writeRoomAllExcept(int num, Packet packet) {
 		for (int i = 0; i < 8; i++)
 			if (this.roomsocks[i] != null && i != num) {
-				this.roomsocks[i].write(packet.combinePacket(2));
+				this.roomsocks[i].write(packet.combineIsoPacket(2));
 				this.roomsocks[i].flush();
 				this.roomsocks[i].write(packet.getIsoBody());
 				this.roomsocks[i].flush();
@@ -228,7 +228,7 @@ public class Room {
 	}
 	
 	protected void writeRoomPlayer(int num, Packet packet) {
-		this.roomsocks[num].write(packet.combinePacket(2));
+		this.roomsocks[num].write(packet.combineIsoPacket(2));
 		this.roomsocks[num].flush();
 		this.roomsocks[num].write(packet.getIsoBody());
 		this.roomsocks[num].flush();

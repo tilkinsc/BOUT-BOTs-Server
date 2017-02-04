@@ -119,7 +119,7 @@ public class Lobby {
 				packet.addBodyString(msg);
 			final String[] packandhead = new String[2];
 			
-			packandhead[0] = packet.combinePacket(2);
+			packandhead[0] = packet.combineIsoPacket(2);
 			packandhead[1] = packet.getIsoBody();
 			
 			int i = 0;
@@ -154,7 +154,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.combinePacket(2);
+		packandhead[0] = packet.combineIsoPacket(2);
 		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
@@ -176,7 +176,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.combinePacket(2);
+		packandhead[0] = packet.combineIsoPacket(2);
 		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
@@ -211,7 +211,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.combinePacket(2);
+		packandhead[0] = packet.combineIsoPacket(2);
 		packandhead[1] = packet.getIsoBody();
 		
 		for (int i = 0; i < this.users; i++)
@@ -240,7 +240,7 @@ public class Lobby {
 				pack.addHead((byte) 0x0A, (byte) 0x2F);
 				pack.addBodyInt(1, 2, false);
 				final String[] packandhead = new String[2];
-				packandhead[0] = pack.combinePacket(2);
+				packandhead[0] = pack.combineIsoPacket(2);
 				packandhead[1] = pack.getIsoBody();
 				usersocks[num].write(packandhead[0]);
 				usersocks[num].flush();
@@ -275,7 +275,7 @@ public class Lobby {
 			int num = getNum(recvUser);
 			if (num == -1) {
 				pack.addByte((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
-				packs[0] = pack.combinePacket(2);
+				packs[0] = pack.combineIsoPacket(2);
 				packs[1] = pack.getIsoBody();
 				num = getNum(sender);
 				usersocks[num].write(packs[0]);
@@ -287,7 +287,7 @@ public class Lobby {
 				pack.addBodyInt(len, 2, false);
 				pack.addBodyString(message);
 				pack.addByte((byte) 0x00);
-				packs[0] = pack.combinePacket(2);
+				packs[0] = pack.combineIsoPacket(2);
 				packs[1] = pack.getIsoBody();
 				Main.logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
@@ -395,7 +395,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.combinePacket(2);
+		packandhead[0] = packet.combineIsoPacket(2);
 		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
@@ -410,7 +410,7 @@ public class Lobby {
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.combinePacket(2);
+		packandhead[0] = packet.combineIsoPacket(2);
 		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
