@@ -1,8 +1,10 @@
 package etc;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import shared.ConfigStore;
 import shared.SQLDatabase;
 import shared.Util;
 
@@ -10,7 +12,7 @@ public class AddAccount {
 
 	
 	// Adds a user to the database...
-	public static void main(String[] args) throws UnknownHostException {
+	public static void main(String[] args) throws IOException {
 		final int COINS = 1000;
 		final String LOGIN_USERNAME = "ydroque";
 		final String LOGIN_PASSWORD = Util.sha512Digest("abc1234", "example");
@@ -29,6 +31,7 @@ public class AddAccount {
 				+ LOGIN_BANNED + "," + LOGIN_ALLOG + ",\"" + LOGIN_IP + "\"," + LOGIN_COUNT + ",\"" + LOGIN_IP + "\",'"
 				+ dformat.format(date) + "',\"" + LOGIN_EMAIL + "\");";
 		
+		SQLDatabase.loadconfig(ConfigStore.loadProperties("configs/mysql.cfg"));
 		SQLDatabase.start();
 		SQLDatabase.doupdate(query);
 		SQLDatabase.close();

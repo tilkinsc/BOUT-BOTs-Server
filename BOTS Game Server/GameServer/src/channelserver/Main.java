@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import shared.ConfigStore;
 import shared.Logger;
 import shared.SQLDatabase;
 
@@ -60,6 +61,7 @@ public class Main {
 			
 			channelserver = new ChannelServer(11100, 5000);
 			gui.startUpdateTimer();
+			SQLDatabase.loadconfig(ConfigStore.loadProperties("configs/mysql.cfg"));
 			SQLDatabase.start();
 			channelserver.start();
 			
