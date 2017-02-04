@@ -10,6 +10,7 @@ import java.util.Date;
 import accountserver.event.server.AccountPath;
 import accountserver.event.server.ChannelPath;
 import accountserver.event.server.RoomPath;
+import accountserver.gui.ServerGui;
 import shared.Logger;
 import shared.SQLDatabase;
 
@@ -18,7 +19,7 @@ public class Main {
 	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
-	public static ServerGUI gui;
+	public static ServerGui gui;
 	
 	public static AccountPath accountpath;
 	public static ChannelPath channelpath;
@@ -54,8 +55,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		try {
-			gui = new ServerGUI();
-			gui.setTitle("Bots Account Server");
+			gui = new ServerGui();
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 			

@@ -1,43 +1,60 @@
-package accountserver;
+package accountserver.gui;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import accountserver.Main;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class ServerGui2 extends JFrame {
+public class ServerGui extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
+	private JTabbedPane tabbedPane;
+	private JTextArea txtrTest;
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
+	private final Timer timer = new Timer();
+	
+	public void startUpdateTimer() {
+		this.timer.schedule(new TimerTask(){
+			@Override
 			public void run() {
-				try {
-					ServerGui2 frame = new ServerGui2();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				final int count = Main.accountpath.getClientCount();
+				tabbedPane.setTitleAt(0, count + " client" + ((count > 1) ? "s" : ""));
 			}
-		});
+		}, 1000, 1000);
 	}
 	
-	public ServerGui2() {
+	public void write(String msg) {
+		txtrTest.setText(txtrTest.getText() + msg + '\n');
+	}
+	
+	public ServerGui() {
 		setTitle("Bout Server Control Panel");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				timer.cancel();
+				Main.invokeShutdown();
+			}
+		});
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -52,13 +69,18 @@ public class ServerGui2 extends JFrame {
 		mnFile.add(separator);
 		
 		JMenuItem mntmExit = new JMenuItem("Close");
+		mntmExit.addMouseListener(new Menu_Close());
 		mnFile.add(mntmExit);
 		
-		JMenu mnSql = new JMenu("SQL");
+		JMenu mnSql = new JMenu("Settings");
 		menuBar.add(mnSql);
 		
-		JMenuItem mntmEditInformation = new JMenuItem("Edit Information");
+		JMenuItem mntmEditInformation = new JMenuItem("Edit MySQL Config");
+		mntmEditInformation.addMouseListener(new Menu_EditMySQLConfig());
 		mnSql.add(mntmEditInformation);
+		
+		JMenuItem mntmEditPreferences = new JMenuItem("Edit Preferences");
+		mnSql.add(mntmEditPreferences);
 		
 		JMenu mnChannels = new JMenu("Channels");
 		menuBar.add(mnChannels);
@@ -85,7 +107,7 @@ public class ServerGui2 extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel panel = new JPanel();
@@ -95,7 +117,7 @@ public class ServerGui2 extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
-		JTextArea txtrTest = new JTextArea();
+		txtrTest = new JTextArea();
 		scrollPane.setViewportView(txtrTest);
 	}
 	
