@@ -1,8 +1,8 @@
-package accountserver.event;
+package accountserver.event.client;
 
 import accountserver.ServerConnection;
 
-public class RegisterEvent extends ClientPath {
+public class RegisterEvent extends ClientEvent {
 
 	
 	public RegisterEvent(ServerConnection connection) {

@@ -1,4 +1,4 @@
-package accountserver.event;
+package accountserver.event.server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

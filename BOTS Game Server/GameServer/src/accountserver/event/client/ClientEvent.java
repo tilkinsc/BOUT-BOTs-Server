@@ -1,12 +1,12 @@
-package accountserver.event;
+package accountserver.event.client;
 
 import accountserver.ServerConnection;
 
-public abstract class ClientPath extends Thread {
+public abstract class ClientEvent extends Thread {
 
 	protected final ServerConnection connection;
 	
-	public ClientPath(ServerConnection connection) {
+	public ClientEvent(ServerConnection connection) {
 		this.connection = connection;
 	}
 	

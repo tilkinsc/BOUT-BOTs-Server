@@ -1,4 +1,4 @@
-package accountserver.event;
+package accountserver.event.server;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +9,8 @@ import java.util.Vector;
 import accountserver.Account;
 import accountserver.Main;
 import accountserver.ServerConnection;
+import accountserver.event.client.LoginEvent;
+import accountserver.event.client.RegisterEvent;
 
 public class AccountPath extends ServerPath {
 

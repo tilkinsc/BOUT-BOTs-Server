@@ -1,4 +1,4 @@
-package accountserver.event;
+package accountserver.event.client;
 
 import accountserver.Account;
 import accountserver.Main;
@@ -6,7 +6,7 @@ import accountserver.ServerConnection;
 import accountserver.UserPack;
 import shared.Util;
 
-public class LoginEvent extends ClientPath {
+public class LoginEvent extends ClientEvent {
 
 	
 	public LoginEvent(ServerConnection connection) {
