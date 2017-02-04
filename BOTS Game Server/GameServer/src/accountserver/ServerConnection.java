@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import shared.Packet;
+
 public class ServerConnection {
 
 	private final Socket socket;
@@ -21,7 +23,6 @@ public class ServerConnection {
 	
 	@Override
 	public void finalize() {
-		if(this.socket.isClosed()) return;
 		try {
 			Main.accountpath.removeClient(this.getRemoteAddress());
 			this.socket.close();
@@ -34,6 +35,15 @@ public class ServerConnection {
 	public void write(String msg) {
 		try {
 			this.socketOut.write(msg);
+			this.socketOut.flush();
+		} catch (Exception e) {
+			Main.logger.log("Error", e.getMessage());
+		}
+	}
+	
+	public void write(Packet msg) {
+		try {
+			this.socketOut.write(msg.getPacket());
 			this.socketOut.flush();
 		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
