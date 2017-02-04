@@ -31,17 +31,18 @@ public class ServerGui extends JFrame {
 	private final Timer timer = new Timer();
 	
 	public void startUpdateTimer() {
-		this.timer.schedule(new TimerTask(){
+		this.timer.scheduleAtFixedRate(new TimerTask(){
 			@Override
 			public void run() {
 				final int count = Main.accountpath.getClientCount();
-				tabbedPane.setTitleAt(0, count + " client" + ((count > 1) ? "s" : ""));
+				tabbedPane.setTitleAt(0, "Account Server: " + count);
 			}
-		}, 1000, 1000);
+		}, 500, 500);
 	}
 	
 	public void write(String msg) {
 		txtrTest.setText(txtrTest.getText() + msg + '\n');
+		txtrTest.setCaretPosition(txtrTest.getDocument().getLength());
 	}
 	
 	public ServerGui() {
@@ -115,9 +116,12 @@ public class ServerGui extends JFrame {
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setAutoscrolls(true);
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
 		txtrTest = new JTextArea();
+		txtrTest.setAutoscrolls(true);
+		txtrTest.setEditable(false);
 		scrollPane.setViewportView(txtrTest);
 	}
 	
