@@ -19,6 +19,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 public class ServerGui extends JFrame {
 
@@ -27,6 +28,8 @@ public class ServerGui extends JFrame {
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
 	private JTextArea txtrTest;
+	
+	private Vector<JPanel> tabs;
 	
 	private final Timer timer = new Timer();
 	
@@ -45,7 +48,24 @@ public class ServerGui extends JFrame {
 		txtrTest.setCaretPosition(txtrTest.getDocument().getLength());
 	}
 	
+	public void addTab(String default_name) {
+		JPanel panel = new JPanel();
+		tabbedPane.addTab(default_name, null, panel, null);
+		panel.setLayout(new BorderLayout(0, 0));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setAutoscrolls(true);
+		panel.add(scrollPane, BorderLayout.CENTER);
+		
+		txtrTest = new JTextArea();
+		txtrTest.setAutoscrolls(true);
+		txtrTest.setEditable(false);
+		scrollPane.setViewportView(txtrTest);
+		tabs.add(panel);
+	}
+	
 	public ServerGui() {
+		tabs = new Vector<JPanel>();
 		setTitle("Bout Server Control Panel");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -111,18 +131,7 @@ public class ServerGui extends JFrame {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Account Server: 0", null, panel, null);
-		panel.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setAutoscrolls(true);
-		panel.add(scrollPane, BorderLayout.CENTER);
-		
-		txtrTest = new JTextArea();
-		txtrTest.setAutoscrolls(true);
-		txtrTest.setEditable(false);
-		scrollPane.setViewportView(txtrTest);
+		addTab("Account Server: 0");
 	}
 	
 }
