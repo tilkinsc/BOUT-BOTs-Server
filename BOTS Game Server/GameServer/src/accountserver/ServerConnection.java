@@ -22,10 +22,10 @@ public class ServerConnection {
 	@Override
 	public void finalize() {
 		try {
-			Main.loginserver.removeClient(this.getRemoteAddress());
+			Main.accountpath.removeClient(this.getRemoteAddress());
 			this.socket.close();
 			Main.logger.log("LoginServerConnection", "Thread " + Thread.currentThread() + " client removed");
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			Main.logger.log("Error", e.getMessage());
 		}
 	}

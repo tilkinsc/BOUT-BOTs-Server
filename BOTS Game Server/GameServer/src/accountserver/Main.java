@@ -6,6 +6,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import accountserver.event.AccountPath;
+import accountserver.event.ChannelPath;
 import shared.Logger;
 import shared.SQLDatabase;
 
@@ -14,9 +17,10 @@ public class Main {
 	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
-	public static AccountServer loginserver;
 	public static LoginServerGUI gui;
-	public static ChannelServer channelserver;
+	
+	public static AccountPath accountpath;
+	public static ChannelPath channelpath;
 	
 	public static RoomUDPServer roomserver;
 	
@@ -60,16 +64,15 @@ public class Main {
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 
-			loginserver = new AccountServer(11000, 5000);
+			accountpath = new AccountPath(11000, 5000);
+			channelpath = new ChannelPath(11010, 5000);
+			roomserver = new RoomUDPServer(11011, 5000);
+			
 			gui.startUpdateTimer();
 			SQLDatabase.start();
-			loginserver.start();
-
-			roomserver = new RoomUDPServer(11011, 5000);
+			accountpath.start();
 			roomserver.start();
-			
-			channelserver = new ChannelServer(11010, 5000);
-			channelserver.start();
+			channelpath.start();
 			
 			logger.log("Main", "Login server started!");
 		} catch (Exception e) {
@@ -80,16 +83,16 @@ public class Main {
 	
 	public static void invokeShutdown() {
 		gui.dispose();
-		loginserver.stopThread();
+		accountpath.stopThread();
 		logger.log("Main", "login closed");
 		roomserver.stopThread();
 		logger.log("Main", "room closed");
-		channelserver.stopThread();
+		channelpath.stopThread();
 		logger.log("Main", "channel closed");
 		try {
-			loginserver.join();
+			accountpath.join();
 			roomserver.join();
-			channelserver.join();
+			channelpath.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
