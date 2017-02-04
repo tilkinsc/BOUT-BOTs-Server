@@ -85,7 +85,7 @@ public class Account {
 	public static int checkUser(UserPack userdata, String pass) {
 		if (userdata.getId() == 0)
 			return 1;
-		else if (!Util.md5hash(pass).equals(userdata.getPass()))
+		else if (!Util.sha512Digest(pass, "example").equals(userdata.getPass()))
 			return 2;
 		else if (userdata.getBanned() == 1)
 			return 3;

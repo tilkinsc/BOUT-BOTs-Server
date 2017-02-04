@@ -14,7 +14,7 @@ public class AddAccount {
 		final int LOGIN_ID = 0;
 		final int COINS = 1000;
 		final String LOGIN_USERNAME = "ydroque";
-		final String LOGIN_PASSWORD = Util.md5hash("abc1234");
+		final String LOGIN_PASSWORD = Util.sha512Digest("abc1234", "example");
 		final int LOGIN_BANNED = 0;
 		final int LOGIN_ALLOG = 0;
 		final int LOGIN_COUNT = 0;

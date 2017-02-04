@@ -19,35 +19,20 @@ public class Util {
 		return null;
 	}
 	
-	public static String md5hash(String text) {
+	public static String sha512Digest(String text, String salt) {
 		try {
 			MessageDigest md = null;
 			byte[] encryptMsg = null;
 			try {
-				md = MessageDigest.getInstance("MD5");
+				md = MessageDigest.getInstance("SHA-512");
+				md.update(salt.getBytes("ISO8859-1"));
 				encryptMsg = md.digest(text.getBytes("ISO8859-1"));
 			} catch (NoSuchAlgorithmException e) {
 			}
-			String swap = "";
-			String byteStr = "";
 			final StringBuffer strBuf = new StringBuffer();
-			for (int i = 0; i <= encryptMsg.length - 1; i++) {
-				byteStr = Integer.toHexString(encryptMsg[i]);
-				switch (byteStr.length()) {
-				case 1:
-					swap = "0" + Integer.toHexString(encryptMsg[i]);
-					break;
-				case 2:
-					swap = Integer.toHexString(encryptMsg[i]);
-					break;
-				case 8:
-					swap = (Integer.toHexString(encryptMsg[i])).substring(6, 8);
-					break;
-				}
-				strBuf.append(swap);
-			}
-			final String hash = strBuf.toString();
-			return hash;
+			for (int i=0; i<encryptMsg.length; i++)
+				strBuf.append(Integer.toString((encryptMsg[i] & 0xFF) + 0x100, 16).substring(1));
+			return strBuf.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
