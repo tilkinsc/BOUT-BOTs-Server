@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import shared.Util;
-
 public class ServerConnection {
 
 	private final Socket socket;
