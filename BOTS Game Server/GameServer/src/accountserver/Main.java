@@ -7,8 +7,8 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import accountserver.event.AccountPath;
-import accountserver.event.ChannelPath;
+import accountserver.event.server.AccountPath;
+import accountserver.event.server.ChannelPath;
 import shared.Logger;
 import shared.SQLDatabase;
 
