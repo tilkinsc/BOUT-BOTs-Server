@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import server.Main;
 import server.event.gameserver.server.GamePath;
+import shared.Logger;
 import shared.Packet;
 import shared.Util;
 
@@ -38,7 +39,10 @@ public class Lobby {
 	 */
 	private final Room[][] rooms = new Room[MODES][MAXROOMS];
 	
-	public Lobby(GamePath gamePath) {
+	private final Logger logger;
+	
+	public Lobby(Logger logger, GamePath gamePath) {
+		this.logger = logger;
 		this.server = gamePath;
 		/*
 		 * for (int i = 0; i < MODES; i++) { for (int i2 = 0; i2 < MAXROOMS;
@@ -47,11 +51,11 @@ public class Lobby {
 		 * roomip[i][i2] = ""; for (int i3 = 0; i3 < 8; ++i3)
 		 * this.roomplayer[i][i2][i3] = ""; } }
 		 */
-		Main.logger.log("Lobby", "done");
+		logger.log("Lobby", "done");
 	}
 	
 	public void adduser(String username, int bot, PrintWriter sockout, Socket socket) {
-		Main.logger.log("Lobby", "add user " + username);
+		logger.log("Lobby", "add user " + username);
 		int i = 0;
 		for (; i <= this.users; i++)
 			if (charnames[i] == null || charnames[i].equals("")) {
@@ -60,13 +64,13 @@ public class Lobby {
 				this.usersocks[i] = sockout;
 				this.socks[i] = socket;
 				this.status[i] = 1;
-				Main.logger.log("Lobby", "user " + username + " added at " + i);
+				logger.log("Lobby", "user " + username + " added at " + i);
 				break;
 			}
-		Main.logger.log("Lobby", Integer.toString(i));
+		logger.log("Lobby", Integer.toString(i));
 		if (i == this.users)
 			this.users++;
-		Main.logger.log("Lobby", "current users(add) " + this.users);
+		logger.log("Lobby", "current users(add) " + this.users);
 		writelobbyall(username, getaddpacket(username));
 	}
 	
@@ -88,7 +92,7 @@ public class Lobby {
 			bots[clientnum] = 0;
 			if ((clientnum + 1) == this.users)
 				this.users--;
-			Main.logger.log("Lobby", "current users(remove) " + this.users);
+			logger.log("Lobby", "current users(remove) " + this.users);
 		}
 	}
 	
@@ -127,13 +131,13 @@ public class Lobby {
 			int i = 0;
 			do {
 				if (usersocks[i] == null)
-					Main.logger.log("Lobby", "client nr:" + i + " is empty");
+					logger.log("Lobby", "client nr:" + i + " is empty");
 				else {
 					usersocks[i].write(packandhead[0]);
 					usersocks[i].flush();
 					usersocks[i].write(packandhead[1]);
 					usersocks[i].flush();
-					Main.logger.log("Lobby", "send");
+					logger.log("Lobby", "send");
 				}
 				i++;
 			} while (i < this.users);
@@ -196,7 +200,7 @@ public class Lobby {
 				usersocks[i].flush();
 				usersocks[i].write(packet[1]);
 				usersocks[i].flush();
-				Main.logger.log("Lobby", "send to " + charnames[i]);
+				logger.log("Lobby", "send to " + charnames[i]);
 			}
 			i++;
 		} while (i < this.users + 1);
@@ -218,7 +222,7 @@ public class Lobby {
 		
 		for (int i = 0; i < this.users; i++)
 			if (usersocks[i] == null)
-				Main.logger.log("Lobby", "client nr:" + i + " is empty");
+				logger.log("Lobby", "client nr:" + i + " is empty");
 			else {
 				usersocks[i].write(packandhead[0]);
 				usersocks[i].flush();
@@ -291,7 +295,7 @@ public class Lobby {
 				pack.addByte((byte) 0x00);
 				packs[0] = pack.combineIsoPacket(2);
 				packs[1] = pack.getIsoBody();
-				Main.logger.log("Lobby", "test " + packs[1]);
+				logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
 				usersocks[num].write(packs[1]);
@@ -310,7 +314,7 @@ public class Lobby {
 		for (int i = 0; i <= MAXROOMS; i++)
 			if (this.rooms[mode][i] == null || this.rooms[mode][i].isEmpty()) {
 				final int[] room = { mode, i };
-				this.rooms[mode][i] = new Room(room, cname, cpass, masterlvl, owner, ip, socks, bot);
+				this.rooms[mode][i] = new Room(logger, room, cname, cpass, masterlvl, owner, ip, socks, bot);
 				// writelobbyall(owner, getaddpacketroom(room));
 				return i;
 			}

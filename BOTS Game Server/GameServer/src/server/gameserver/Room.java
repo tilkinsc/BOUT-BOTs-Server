@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.sql.ResultSet;
 
 import server.Main;
+import shared.Logger;
 import shared.Packet;
 import shared.SQLDatabase;
 
@@ -43,8 +44,11 @@ public class Room {
 	private int[] items; // probably for listing available items for grabs
 	private String owner; // probably going to be transferred here from somewhere else
 	
-	public Room(int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock,
+	private final Logger logger;
+	
+	public Room(Logger logger, int[] rnum, String rname, String rpass, int rlvl, String rowner, String rip, PrintWriter osock,
 			BotClass _bot) {
+		this.logger = logger;
 		try {
 			this.roomnum = rnum;
 			this.roomname = rname;
@@ -111,9 +115,9 @@ public class Room {
 			
 			SQLDatabase.doupdate(
 					"DELETE FROM `rooms` WHERE `ip` = '" + this.roomip + "' and `port` = '" + this.roomport[0] + "'");
-			Main.logger.log("Room", "[this.roomip]" + this.roomip);
-			Main.logger.log("Room", "[this.roomport]" + this.roomport);
-			Main.logger.log("Room", "[this.roompass]" + this.roompass);
+			logger.log("Room", "[this.roomip]" + this.roomip);
+			logger.log("Room", "[this.roomport]" + this.roomport);
+			logger.log("Room", "[this.roompass]" + this.roompass);
 			
 			pack.addHead((byte) 0x4A, (byte) 0x2F);
 			pack.addByte((byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00);

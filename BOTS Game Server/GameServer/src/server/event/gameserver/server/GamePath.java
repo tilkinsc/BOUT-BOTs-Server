@@ -10,14 +10,18 @@ import server.Main;
 import server.event.ServerPath;
 import server.gameserver.GameServerConnection;
 import server.gameserver.Lobby;
+import shared.Logger;
 
 public class GamePath extends ServerPath {
 
 	protected ServerSocket serverSocket;
 	public Vector<GameServerConnection> clientConnections;
 	
-	public GamePath(int port, int timeout) {
+	private final Logger logger;
+	
+	public GamePath(Logger logger, int port, int timeout) {
 		super(port, timeout);
+		this.logger = logger;
 		this.clientConnections = new Vector<GameServerConnection>();
 	}
 	
@@ -26,15 +30,15 @@ public class GamePath extends ServerPath {
 		try {
 			this.serverSocket = new ServerSocket(this.port);
 			this.serverSocket.setSoTimeout(this.timeout);
-			Main.logger.log("ChannelServer", "listening");
-			final Lobby lobby = new Lobby(this);
+			logger.log("ChannelServer", "listening on " + this.port);
+			final Lobby lobby = new Lobby(logger, this);
 			
 			while (!stop) {
 				try {
 					final Socket socket = this.serverSocket.accept();
 					// if(!Main.getip(socket).equals("127.0.0.1")){
-					Main.logger.log("ChannelServer", "client connection from " + socket.getRemoteSocketAddress());
-					final GameServerConnection socketConnection = new GameServerConnection(socket, this, lobby);
+					logger.log("ChannelServer", "client connection from " + socket.getRemoteSocketAddress());
+					final GameServerConnection socketConnection = new GameServerConnection(logger, socket, this, lobby);
 					clientConnections.add(socketConnection);
 					socketConnection.start();
 					// }
@@ -44,7 +48,7 @@ public class GamePath extends ServerPath {
 			}
 			this.serverSocket.close();
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 	}
 	
@@ -55,12 +59,12 @@ public class GamePath extends ServerPath {
 				if (con.getRemoteAddress().equals(remoteAddress)) {
 					this.clientConnections.remove(i);
 					con.finalize();
-					Main.logger.log("LoginServer", remoteAddress + " removed");
+					logger.log("LoginServer", remoteAddress + " removed");
 					return true;
 				}
 			}
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 		return false;
 	}
@@ -71,7 +75,7 @@ public class GamePath extends ServerPath {
 				this.clientConnections.get(i).finalize();
 			this.clientConnections.clear();
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 	}
 	

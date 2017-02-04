@@ -31,23 +31,6 @@ public class Main {
 	
 	public static Vector<GamePath> gamepaths;
 	
-	public static PrintStream createGuiSessionStream() {
-		final OutputStream os = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-			}
-		};
-		return new PrintStream(os) {
-			@Override
-			public void println(String x) {
-				try {
-					Main.gui.write(x);
-				} catch (Exception e) {
-				}
-			}
-		};
-	}
-	
 	public static File createSessionLog() throws IOException {
 		final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		final File f = new File(SESSION_LOG_DIR + "\\" + format.format(new Date()) + ".log");
@@ -69,9 +52,7 @@ public class Main {
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 			
-			final PrintStream guisession = createGuiSessionStream();
-			final File session = createSessionLog();
-			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
+			logger = gui.getLogger(gui.addTab("Account Server: 0"));
 			
 			accountpath = new AccountPath(11000, 5000);
 			channelpath = new ChannelPath(11010, 5000);
@@ -86,10 +67,10 @@ public class Main {
 			channelpath.start();
 			
 			for (int i=0; i<Integer.valueOf(channels.getProperty("channels")); i++) {
-				gui.addTab(channels.getProperty("name_"+i));
+				final Logger logger = gui.getLogger(gui.addTab(channels.getProperty("name_"+i)));
 				
 				//TODO: Connect logger
-				final GamePath channelserver = new GamePath(Integer.valueOf(channels.getProperty("port_"+i)), Integer.valueOf(channels.getProperty("timeout_"+i)));
+				final GamePath channelserver = new GamePath(logger, Integer.valueOf(channels.getProperty("port_"+i)), Integer.valueOf(channels.getProperty("timeout_"+i)));
 				channelserver.start();
 				gamepaths.add(channelserver);
 				logger.log("Main", "Started new channel server");

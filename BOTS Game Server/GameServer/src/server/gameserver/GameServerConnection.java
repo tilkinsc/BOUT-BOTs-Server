@@ -1,24 +1,25 @@
 package server.gameserver;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.sql.ResultSet;
 
 import server.Main;
 import server.event.gameserver.server.GamePath;
+import shared.Logger;
 import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
 
 public class GameServerConnection extends Thread {
 
-	protected Socket socket;
-	protected BufferedReader socketIn;
-	protected PrintWriter socketOut;
+	
 	protected GamePath server;
 	protected Lobby lobby;
 	protected String account;
@@ -29,12 +30,20 @@ public class GameServerConnection extends Thread {
 	protected BotClass bot;
 	protected Shop shop;
 	
-	public GameServerConnection(Socket socket, GamePath server, Lobby _lobby) {
+	public final Logger logger;
+	protected final Socket socket;
+	protected final BufferedReader socketIn;
+	protected final PrintWriter socketOut;
+	
+	public GameServerConnection(Logger logger, Socket socket, GamePath server, Lobby _lobby) throws IOException {
+		this.logger = logger;
 		this.socket = socket;
+		this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), "ISO8859-1"));
+		this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
 		this.server = server;
 		this.ip = socket.getInetAddress().getHostAddress();
 		this.lobby = _lobby;
-		Main.logger.log("ChannelServerConnection", "" + socket.getLocalSocketAddress());
+		logger.log("ChannelServerConnection", "" + socket.getLocalSocketAddress());
 	}
 	
 	public void checkAccount() {
@@ -50,7 +59,7 @@ public class GameServerConnection extends Thread {
 			} else
 				account = "a";
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 	}
 	
@@ -97,7 +106,7 @@ public class GameServerConnection extends Thread {
 				// debug("send cnumberpacket");
 				break;
 			case 0xF92A:
-				Main.logger.log("ChannelServerConnection", "parsing bots");
+				logger.log("ChannelServerConnection", "parsing bots");
 				pack.addHead((byte) 0x28, (byte) 0x27);
 				pack.addBodyInt(1, 2, false);
 				send(pack);
@@ -211,7 +220,7 @@ public class GameServerConnection extends Thread {
 				else {
 					chatpack = chatpack.substring((a + this.charname.length() + 3));
 					chatpack = chatpack.substring(0, (chatpack.length() - 1));
-					Main.logger.log("ChannelServerConnection", chatpack);
+					logger.log("ChannelServerConnection", chatpack);
 					if (chatpack.startsWith("@")) {
 						final String command = chatpack.substring(1, chatpack.length());
 						parsechatcmd(command);
@@ -483,15 +492,15 @@ public class GameServerConnection extends Thread {
 				break;
 			}
 			default:
-				Main.logger.log("ChannelServerConnection", "parse unknown packet (" + cmd + ", " + Integer.toHexString(cmd) + ")");
+				logger.log("ChannelServerConnection", "parse unknown packet (" + cmd + ", " + Integer.toHexString(cmd) + ")");
 			}
 		} catch (Exception e) {
-			Main.logger.log("ChannelServerConnection", e.getMessage());
+			logger.log("ChannelServerConnection", e.getMessage());
 		}
 	}
 	
 	protected void parsechatcmd(String cmd) {
-		Main.logger.log("ChannelServerConnection", cmd);
+		logger.log("ChannelServerConnection", cmd);
 		String rcmd;
 		final Packet packet = new Packet();
 		final byte[] bytecmd = cmd.getBytes();
@@ -503,7 +512,7 @@ public class GameServerConnection extends Thread {
 			rcmd = cmd.substring(0, cmd.length());
 		else
 			rcmd = cmd.substring(0, i);
-		Main.logger.log("ChannelServerConnection", "rcmd : -" + rcmd + "-");
+		logger.log("ChannelServerConnection", "rcmd : -" + rcmd + "-");
 		
 		if (rcmd.equals("kick") && isGM()) {
 			final String chaname = cmd.substring(i + 1);
@@ -658,13 +667,13 @@ public class GameServerConnection extends Thread {
 					.doquery("SELECT username FROM bout_characters WHERE name='" + charname + "' LIMIT 1");
 			if (rs.next()) {
 				final String username = rs.getString("username");
-				Main.logger.log("ChannelServerConnection", username);
+				logger.log("ChannelServerConnection", username);
 				return true;
 			}
 			rs = SQLDatabase.doquery("SELECT name FROM bout_characters WHERE username='" + account + "' LIMIT 1");
 			if (rs.next()) {
 				final String name = rs.getString("name");
-				Main.logger.log("ChannelServerConnection", name);
+				logger.log("ChannelServerConnection", name);
 				return true;
 			}
 			rs = SQLDatabase.doquery("SELECT * FROM bout_users WHERE username='" + account + "' LIMIT 1");
@@ -703,7 +712,7 @@ public class GameServerConnection extends Thread {
 				}
 			// debug("end read");
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 			this.server.removeClient(this.getRemoteAddress());
 			return null;
 		}
@@ -713,17 +722,15 @@ public class GameServerConnection extends Thread {
 	@Override
 	public void run() {
 		try {
-			this.socketIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), "ISO8859-1"));
-			this.socketOut = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream(), "ISO8859-1"));
 			checkAccount();
-			bot = new BotClass(this.account);
+			bot = new BotClass(logger, this.account);
 			shop = new Shop(bot);
 			String packet;
 			while ((packet = read()) != null)
 				// debug("main");
 				prasecmd(Util.getcmd(packet), packet);
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 		// debug("bye");
 		this.finalize();
@@ -737,7 +744,7 @@ public class GameServerConnection extends Thread {
 				if (room[0] != -1)
 					lobby.removeRoomPlayer(room, bot.getName());
 				lobby.removeuser(charname);
-				Main.logger.log("ChannelServerConnection", "remove charname " + charname);
+				logger.log("ChannelServerConnection", "remove charname " + charname);
 				this.charname = "";
 			}
 			this.server.removeClient(this.getRemoteAddress());
@@ -745,7 +752,7 @@ public class GameServerConnection extends Thread {
 			this.socketOut.close();
 			this.socket.close();
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 	}
 	

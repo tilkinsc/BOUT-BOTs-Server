@@ -3,6 +3,7 @@ package server.gameserver;
 import java.sql.ResultSet;
 
 import server.Main;
+import shared.Logger;
 import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
@@ -10,7 +11,6 @@ import shared.Util;
 public class BotClass {
 
 	private int id;
-	private final String account;
 	private String botname = "";
 	private int bottype = 0;
 	private int exp = 0;
@@ -44,7 +44,11 @@ public class BotClass {
 	private int gigas = 0;
 	private int coins = 0;
 	
-	public BotClass(String accountn) {
+	private final Logger logger;
+	private final String account;
+	
+	public BotClass(Logger logger, String accountn) {
+		this.logger = logger;
 		this.account = accountn;
 	}
 	
@@ -165,14 +169,14 @@ public class BotClass {
 				if (i < 5)
 					break;
 				final String onescript = script.substring(0, i);
-				Main.logger.log("BotClass", onescript);
+				logger.log("BotClass", onescript);
 				script = script.substring(i + 2);
 				int i2 = 0;
 				while (onescript.charAt(i2) != ',')
 					i2++;
 				final String stat = onescript.substring(0, i2);
 				final int value = Integer.parseInt(onescript.substring(i2 + 1));
-				Main.logger.log("BotClass", stat + "  " + value);
+				logger.log("BotClass", stat + "  " + value);
 				parseStat(stat, value);
 			}
 		} catch (Exception e) {
@@ -413,13 +417,13 @@ public class BotClass {
 	}
 	
 	public int getCoins() {
-		Main.logger.log("BotClass", "getcoins : " + this.coins);
+		logger.log("BotClass", "getcoins : " + this.coins);
 		return this.coins;
 	}
 	
 	public void setCoins(int coins) {
 		this.coins = coins;
-		Main.logger.log("BotClass", "Setcoins : " + this.coins);
+		logger.log("BotClass", "Setcoins : " + this.coins);
 		updateCoins();
 	}
 	
@@ -599,7 +603,7 @@ public class BotClass {
 			packet.addIsoBody((byte) 0x00, (byte) 0x60);
 			return packet;
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 		packet.addIsoBody((byte) 0x00, (byte) 0x60);
 		return packet;
@@ -647,7 +651,7 @@ public class BotClass {
 			packet.addIsoBody((byte) 0x00, (byte) 0x61);
 			return packet;
 		} catch (Exception e) {
-			Main.logger.log("Exception", e.getMessage());
+			logger.log("Exception", e.getMessage());
 		}
 		packet.addIsoBody((byte) 0x00, (byte) 0x60);
 		return packet;

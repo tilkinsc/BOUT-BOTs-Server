@@ -3,12 +3,16 @@ package server.gui;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import server.Main;
+import shared.Logger;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
@@ -27,8 +31,8 @@ public class ServerGui extends JFrame {
 	
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private JTextArea txtrTest;
 	
+	private Vector<Logger> loggers;
 	private Vector<JPanel> tabs;
 	
 	private final Timer timer = new Timer();
@@ -43,12 +47,29 @@ public class ServerGui extends JFrame {
 		}, 500, 500);
 	}
 	
-	public void write(String msg) {
-		txtrTest.setText(txtrTest.getText() + msg + '\n');
-		txtrTest.setCaretPosition(txtrTest.getDocument().getLength());
+	public static void write(JTextArea textarea, String msg) {
+		textarea.setText(textarea.getText() + msg + '\n');
+		textarea.setCaretPosition(textarea.getDocument().getLength());
 	}
 	
-	public JTextArea addTab(String default_name) {
+	public static PrintStream createGuiSessionStream(JTextArea textarea) {
+		final OutputStream os = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+			}
+		};
+		return new PrintStream(os) {
+			@Override
+			public void println(String x) {
+				try {
+					write(textarea, x);
+				} catch (Exception e) {
+				}
+			}
+		};
+	}
+	
+	public int addTab(String default_name) {
 		JPanel panel = new JPanel();
 		tabbedPane.addTab(default_name, null, panel, null);
 		panel.setLayout(new BorderLayout(0, 0));
@@ -62,10 +83,15 @@ public class ServerGui extends JFrame {
 		txtrTest2.setEditable(false);
 		scrollPane.setViewportView(txtrTest2);
 		tabs.add(panel);
-		return txtrTest2;
+		
+		Logger logger = new Logger(new PrintStream[] {System.out, createGuiSessionStream(txtrTest2)});
+		loggers.add(logger);
+		
+		return loggers.size() - 1;
 	}
 	
 	public ServerGui() {
+		loggers = new Vector<Logger>();
 		tabs = new Vector<JPanel>();
 		setTitle("Bout Server Control Panel");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -131,8 +157,10 @@ public class ServerGui extends JFrame {
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
-		
-		txtrTest = addTab("Account Server: 0");
+	}
+	
+	public Logger getLogger(int id) {
+		return this.loggers.get(id);
 	}
 	
 }
