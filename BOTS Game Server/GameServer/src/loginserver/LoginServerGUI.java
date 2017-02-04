@@ -43,7 +43,6 @@ public class LoginServerGUI extends JFrame {
 			public void windowClosing(WindowEvent we) {
 				timer.cancel();
 				Main.invokeShutdown();
-				dispose();
 			}
 		});
 		

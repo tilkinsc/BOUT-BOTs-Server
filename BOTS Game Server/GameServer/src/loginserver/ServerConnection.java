@@ -24,7 +24,7 @@ public class ServerConnection {
 	@Override
 	public void finalize() {
 		try {
-			Main.loginServer.removeClient(this.getRemoteAddress());
+			Main.loginserver.removeClient(this.getRemoteAddress());
 			this.socket.close();
 			Main.logger.log("LoginServerConnection", "Thread " + Thread.currentThread() + " client removed");
 		} catch (final Exception e) {

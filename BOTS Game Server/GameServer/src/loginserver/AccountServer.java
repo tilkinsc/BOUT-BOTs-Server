@@ -170,11 +170,6 @@ public class AccountServer extends Thread {
 	
 	public void stopThread() {
 		this.stop = true;
-		try {
-			this.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public boolean removeClient(SocketAddress remoteAddress) {

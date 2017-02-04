@@ -12,7 +12,7 @@ public class UpdateClientCountTask extends TimerTask {
 	
 	@Override
 	public void run() {
-		count = Main.loginServer.getClientCount();
+		count = Main.loginserver.getClientCount();
 		final String msg = count + " client" + ((count > 1) ? "s" : "");
 		Main.gui.setClientCount(msg);
 	}

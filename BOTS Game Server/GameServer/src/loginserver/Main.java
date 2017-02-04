@@ -14,7 +14,7 @@ public class Main {
 	public static final String SESSION_LOG_DIR = "log_login";
 	public static Logger logger;
 	
-	public static AccountServer loginServer;
+	public static AccountServer loginserver;
 	public static LoginServerGUI gui;
 	public static ChannelServer channelserver;
 	
@@ -60,10 +60,10 @@ public class Main {
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 
-			loginServer = new AccountServer(11000, 5000);
+			loginserver = new AccountServer(11000, 5000);
 			gui.startUpdateTimer();
 			SQLDatabase.start();
-			loginServer.start();
+			loginserver.start();
 
 			roomserver = new RoomUDPServer(11011, 5000);
 			roomserver.start();
@@ -79,14 +79,22 @@ public class Main {
 	}
 	
 	public static void invokeShutdown() {
-		loginServer.stopThread();
-		System.out.println("login closed");
+		gui.dispose();
+		loginserver.stopThread();
+		logger.log("Main", "login closed");
 		roomserver.stopThread();
-		System.out.println("room closed");
+		logger.log("Main", "room closed");
 		channelserver.stopThread();
-		System.out.println("channel closed");
+		logger.log("Main", "channel closed");
+		try {
+			loginserver.join();
+			roomserver.join();
+			channelserver.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		SQLDatabase.close();
-		System.out.println("SQL closed");
+		logger.log("Main", "SQL closed");
 		logger.flushAll();
 		logger.closeAll();
 	}

@@ -102,11 +102,6 @@ class ChannelServer extends Thread {
 	
 	public void stopThread() {
 		stop = true;
-		try {
-			this.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	// probably could add a 'channel list updated' to avoid getting over and over and over again

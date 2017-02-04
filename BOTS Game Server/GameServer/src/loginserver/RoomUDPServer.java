@@ -61,11 +61,6 @@ public class RoomUDPServer extends Thread {
 	
 	public void stopThread() {
 		this.stop = true;
-		try {
-			this.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 }
