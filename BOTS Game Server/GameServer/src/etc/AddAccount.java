@@ -2,7 +2,6 @@ package etc;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import shared.ConfigStore;
 import shared.SQLDatabase;
