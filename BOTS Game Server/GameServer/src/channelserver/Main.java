@@ -58,7 +58,7 @@ public class Main {
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
 			
-			channelserver = new ChannelServer(11002, 5000);
+			channelserver = new ChannelServer(11100, 5000);
 			gui.startUpdateTimer();
 			SQLDatabase.start();
 			channelserver.start();

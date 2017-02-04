@@ -64,8 +64,8 @@ public class Main {
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
 
 			accountpath = new AccountPath(11000, 5000);
-			channelpath = new ChannelPath(11010, 5000);
-			roomserver = new RoomPath(11011, 5000);
+			channelpath = new ChannelPath(11001, 5000);
+			roomserver = new RoomPath(11002, 5000);
 			
 			gui.startUpdateTimer();
 			
