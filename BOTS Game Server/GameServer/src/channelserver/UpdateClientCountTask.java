@@ -2,6 +2,8 @@ package channelserver;
 
 import java.util.TimerTask;
 
+import accountserver.Main;
+
 public class UpdateClientCountTask extends TimerTask {
 
 	protected int count;
@@ -12,9 +14,9 @@ public class UpdateClientCountTask extends TimerTask {
 	
 	@Override
 	public void run() {
-		count = Main.channelserver.getClientCount();
-		final String msg = count + " client" + ((count > 1) ? "s" : "");
-		Main.gui.setClientCount(msg);
+//		count = Main.channelserver.getClientCount();
+//		final String msg = count + " client" + ((count > 1) ? "s" : "");
+//		Main.gui.setClientCount(msg);
 	}
 	
 }

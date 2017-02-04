@@ -4,8 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import channelserver.Main;
-
 public class Util {
 
 	
@@ -142,7 +140,6 @@ public class Util {
 			
 			final int chende = b;
 			final String chname = chatpack.substring(chstart, chende);
-			Main.logger.log("MiscFunctions", chname + "-  -" + rlcharname);
 			if (chname.equals(rlcharname))
 				return a;
 			else

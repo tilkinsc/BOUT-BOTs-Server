@@ -48,7 +48,7 @@ public class ServerGui extends JFrame {
 		txtrTest.setCaretPosition(txtrTest.getDocument().getLength());
 	}
 	
-	public void addTab(String default_name) {
+	public JTextArea addTab(String default_name) {
 		JPanel panel = new JPanel();
 		tabbedPane.addTab(default_name, null, panel, null);
 		panel.setLayout(new BorderLayout(0, 0));
@@ -57,11 +57,12 @@ public class ServerGui extends JFrame {
 		scrollPane.setAutoscrolls(true);
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
-		txtrTest = new JTextArea();
-		txtrTest.setAutoscrolls(true);
-		txtrTest.setEditable(false);
-		scrollPane.setViewportView(txtrTest);
+		JTextArea txtrTest2 = new JTextArea();
+		txtrTest2.setAutoscrolls(true);
+		txtrTest2.setEditable(false);
+		scrollPane.setViewportView(txtrTest2);
 		tabs.add(panel);
+		return txtrTest2;
 	}
 	
 	public ServerGui() {
@@ -131,7 +132,7 @@ public class ServerGui extends JFrame {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
-		addTab("Account Server: 0");
+		txtrTest = addTab("Account Server: 0");
 	}
 	
 }

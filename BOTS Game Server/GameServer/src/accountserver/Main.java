@@ -6,11 +6,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 import accountserver.event.server.AccountPath;
 import accountserver.event.server.ChannelPath;
 import accountserver.event.server.RoomPath;
 import accountserver.gui.ServerGui;
+import channelserver.ChannelServer;
 import shared.ConfigStore;
 import static shared.ConfigStore.PropertyStructure;
 import shared.Logger;
@@ -26,6 +28,8 @@ public class Main {
 	public static AccountPath accountpath;
 	public static ChannelPath channelpath;
 	public static RoomPath roomserver;
+	
+	public static Vector<ChannelServer> channelservers;
 	
 	public static PrintStream createGuiSessionStream() {
 		final OutputStream os = new OutputStream() {
@@ -56,8 +60,10 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
+		channelservers = new Vector<ChannelServer>();
 		try {
 			final PropertyStructure mysql = ConfigStore.loadProperties("configs/mysql.cfg");
+			final PropertyStructure channels = ConfigStore.loadProperties("configs/channels.cfg");
 			
 			gui = new ServerGui();
 			gui.setLocationRelativeTo(null);
@@ -66,10 +72,15 @@ public class Main {
 			final PrintStream guisession = createGuiSessionStream();
 			final File session = createSessionLog();
 			logger = new Logger(new PrintStream[] {System.out, new PrintStream(session), guisession});
-
+			
+			// wtf is this ?!?! :o oh init of longbyte in ChannelServer.. doesn't belong here
+			final String nullbyte = new String(ChannelServer.NULLBYTE, "ISO8859-1");
+			for (int i = 0; i < 1372; i++)
+				ChannelServer.longnullbyte += nullbyte;
+			
 			accountpath = new AccountPath(11000, 5000);
-			channelpath = new ChannelPath(11001, 5000);
-			roomserver = new RoomPath(11002, 5000);
+			channelpath = new ChannelPath(11010, 5000);
+			roomserver = new RoomPath(11011, 5000);
 			
 			gui.startUpdateTimer();
 			
@@ -78,6 +89,16 @@ public class Main {
 			accountpath.start();
 			roomserver.start();
 			channelpath.start();
+			
+			for (int i=0; i<Integer.valueOf(channels.getProperty("channels")); i++) {
+				gui.addTab(channels.getProperty("name_"+i));
+				
+				//TODO: Connect logger
+				final ChannelServer channelserver = new ChannelServer(Integer.valueOf(channels.getProperty("port_"+i)), Integer.valueOf(channels.getProperty("timeout_"+i)));
+				channelserver.start();
+				channelservers.add(channelserver);
+				logger.log("Main", "Started new channel server");
+			}
 			
 			logger.log("Main", "Login server started!");
 		} catch (Exception e) {
@@ -88,6 +109,8 @@ public class Main {
 	
 	public static void invokeShutdown() {
 		gui.dispose();
+		for (int i=0; i<channelservers.size(); i++)
+			channelservers.get(i).stopThread();
 		accountpath.stopThread();
 		logger.log("Main", "login closed");
 		roomserver.stopThread();

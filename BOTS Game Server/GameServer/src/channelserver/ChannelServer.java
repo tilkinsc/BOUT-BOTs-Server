@@ -6,6 +6,8 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.Vector;
 
+import accountserver.Main;
+
 public class ChannelServer extends Thread {
 
 	public static final byte[] PACKETS_HEADER = { (byte) 0x01, (byte) 0x00 };

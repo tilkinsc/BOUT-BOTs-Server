@@ -2,6 +2,7 @@ package channelserver;
 
 import java.sql.ResultSet;
 
+import accountserver.Main;
 import shared.Packet;
 import shared.SQLDatabase;
 import shared.Util;
