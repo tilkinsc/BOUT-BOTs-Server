@@ -10,42 +10,34 @@ import java.util.Properties;
 
 public class SQLDatabase {
 
-	protected static Properties sqldata = new Properties();
 	protected static Connection con;
-	protected static Statement st;
 	
 	protected static String ip, port, user, pass, database;
 	
-	private static void loadconfigs() {
+	private static void loadconfig() {
+		final Properties config = new Properties();
 		try {
 			final FileInputStream fin = new FileInputStream("configs/mysql.conf");
-			sqldata.load(fin);
+			config.load(fin);
 			fin.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			System.exit(1);
 		}
-		ip = sqldata.getProperty("MySQL_ip");
-		port = sqldata.getProperty("MySQL_port");
-		user = sqldata.getProperty("MySQL_id");
-		pass = sqldata.getProperty("MySQL_pw");
-		database = sqldata.getProperty("MySQL_db");
+		ip = config.getProperty("MySQL_ip");
+		port = config.getProperty("MySQL_port");
+		user = config.getProperty("MySQL_id");
+		pass = config.getProperty("MySQL_pw");
+		database = config.getProperty("MySQL_db");
 	}
 	
 	public static void start() {
-		loadconfigs();
-		
+		loadconfig();
 		try {
-			// Load the JDBC driver
-			final String driverName = "org.gjt.mm.mysql.Driver";
-			
-			Class.forName(driverName);
-			
-			final String url = "jdbc:mysql://" + ip + "/" + database;
-			
-			con = DriverManager.getConnection(url, user, pass);
+			Class.forName("org.gjt.mm.mysql.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://" + ip + "/" + database, user, pass);
 			if (con.isClosed())
-				throw new Exception("SQLDatabase did not connect!");
+				throw new Exception("SQLDatabase didn't connect!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
