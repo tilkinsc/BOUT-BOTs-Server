@@ -1,4 +1,4 @@
-package server.account.event.server;
+package server.event.account.server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 import server.Main;
-import server.account.event.ServerPath;
+import server.event.ServerPath;
 import shared.SQLDatabase;
 
 public class RoomPath extends ServerPath {

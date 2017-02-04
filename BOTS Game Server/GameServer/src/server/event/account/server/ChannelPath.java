@@ -1,4 +1,4 @@
-package server.account.event.server;
+package server.event.account.server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 
 import server.Main;
 import server.account.Channel;
-import server.account.event.ServerPath;
+import server.event.ServerPath;
 import shared.Util;
 
 public class ChannelPath extends ServerPath {

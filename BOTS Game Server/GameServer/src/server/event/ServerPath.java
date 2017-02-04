@@ -1,4 +1,4 @@
-package server.account.event;
+package server.event;
 
 public abstract class ServerPath extends Thread {
 

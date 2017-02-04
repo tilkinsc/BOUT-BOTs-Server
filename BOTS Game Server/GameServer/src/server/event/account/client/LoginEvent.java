@@ -1,10 +1,10 @@
-package server.account.event.client;
+package server.event.account.client;
 
 import server.Main;
 import server.account.Account;
 import server.account.ServerConnection;
 import server.account.UserPack;
-import server.account.event.ClientEvent;
+import server.event.ClientEvent;
 import shared.Packet;
 import shared.Util;
 
