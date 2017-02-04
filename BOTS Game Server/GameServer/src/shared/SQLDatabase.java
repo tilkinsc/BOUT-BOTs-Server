@@ -1,6 +1,5 @@
 package shared;
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,16 +13,7 @@ public class SQLDatabase {
 	
 	protected static String ip, port, user, pass, database;
 	
-	private static void loadconfig() {
-		final Properties config = new Properties();
-		try {
-			final FileInputStream fin = new FileInputStream("configs/mysql.conf");
-			config.load(fin);
-			fin.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.exit(1);
-		}
+	public static void loadconfig(Properties config) {
 		ip = config.getProperty("MySQL_ip");
 		port = config.getProperty("MySQL_port");
 		user = config.getProperty("MySQL_id");
@@ -32,7 +22,6 @@ public class SQLDatabase {
 	}
 	
 	public static void start() {
-		loadconfig();
 		try {
 			Class.forName("org.gjt.mm.mysql.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://" + ip + "/" + database, user, pass);

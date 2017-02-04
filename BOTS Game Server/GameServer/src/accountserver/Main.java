@@ -11,6 +11,8 @@ import accountserver.event.server.AccountPath;
 import accountserver.event.server.ChannelPath;
 import accountserver.event.server.RoomPath;
 import accountserver.gui.ServerGui;
+import shared.ConfigStore;
+import static shared.ConfigStore.PropertyStructure;
 import shared.Logger;
 import shared.SQLDatabase;
 
@@ -31,7 +33,7 @@ public class Main {
 			public void write(int b) throws IOException {
 			}
 		};
-		return new PrintStream(os){
+		return new PrintStream(os) {
 			@Override
 			public void println(String x) {
 				try {
@@ -55,6 +57,8 @@ public class Main {
 	
 	public static void main(String[] args) {
 		try {
+			final PropertyStructure mysql = ConfigStore.loadProperties("configs/mysql.cfg");
+			
 			gui = new ServerGui();
 			gui.setLocationRelativeTo(null);
 			gui.setVisible(true);
@@ -69,6 +73,7 @@ public class Main {
 			
 			gui.startUpdateTimer();
 			
+			SQLDatabase.loadconfig(mysql);
 			SQLDatabase.start();
 			accountpath.start();
 			roomserver.start();
@@ -98,6 +103,12 @@ public class Main {
 		}
 		SQLDatabase.close();
 		logger.log("Main", "SQL closed");
+		try {
+			ConfigStore.saveProperties();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.log("Main", "Properties saved");
 		logger.flushAll();
 		logger.closeAll();
 	}
