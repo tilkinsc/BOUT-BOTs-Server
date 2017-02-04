@@ -5,15 +5,6 @@ public class Packet {
 	private StringBuilder header = new StringBuilder();
 	private StringBuilder body = new StringBuilder();
 	
-	public int getHeadLen() {
-		return this.header.length();
-	}
-	
-	public int getBodyLen() {
-		return this.body.length();
-	}
-	
-	// TODO: make sure this resolves properly, errors in channelserver expecting body len
 	public int getLen() {
 		return this.header.length() + this.body.length();
 	}
@@ -30,51 +21,37 @@ public class Packet {
 		this.header.append(new String(b));
 	}
 	
+	public int getHeadLen() {
+		return this.header.length();
+	}
+	
+	public void addBodyArray(byte[] bytearr) {
+		try {
+			this.body.append(Util.isoString(bytearr));
+		} catch (Exception e) {
+		}
+	}
+	
+	public void addByte(final byte... b) {
+		addBodyArray(b);
+	}
+	
 	public void addBody(byte... b) {
 		this.body.append(new String(b));
 	}
 	
-	public static String removeHeader(int len, String str) {
-		return str.substring(len);
-	}
-	
-//	public void removeHeader() {
-//		this.body = this.body.substring(4);
-//	}
-	
-	protected String calcHeader(int len) {
-		return this.header.append(Util.getbyteiso(this.body.length(), len)).toString();
-	}
-	
-	// TODO: horrible name
-	public String getHeader(int len) {
-		try {
-			return Util.isoString(calcHeader(len).getBytes("ISO8859-1"));
-		} catch (Exception e) {
-		}
-		return null;
-	}
-	
-	// TODO: horrible name
-	public void addPacketHead(final byte... b) {
+	public void addIsoBody(final byte... b) {
 		try {
 			this.body.append(Util.isoString(b));
 		} catch (Exception e) {
 		}
 	}
 	
-	public void addString(String string) {
+	public void addBodyString(String string) {
 		this.body.append(string);
 	}
 	
-	public String getString(int start, int end, boolean nulled) {
-		final String thestring = this.body.substring(start, end);
-		this.body = new StringBuilder(this.body.substring(end));
-		if (nulled) return thestring;
-		else return Util.removenullbyte(thestring);
-	}
-	
-	public void addInt(int var, int num, boolean reverse) {
+	public void addBodyInt(int var, int num, boolean reverse) {
 		try {
 			if (num == 2) {
 				final int b1 = var & 0xff;
@@ -99,7 +76,7 @@ public class Packet {
 		}
 	}
 	
-	public int getInt(int bytec) {
+	public int getBodyInt(int bytec) {
 		try {
 			final String thestring = this.body.substring(0, bytec);
 			String hex_data_s = "";
@@ -121,24 +98,39 @@ public class Packet {
 		return 0;
 	}
 	
-	public void addByteArray(byte[] bytearr) {
-		try {
-			this.body.append(Util.isoString(bytearr));
-		} catch (Exception e) {
-		}
+	public int getBodyLen() {
+		return this.body.length();
 	}
 	
-	public void addByte(final byte... b) {
-		addByteArray(b);
+	public String getBodyString(int start, int end, boolean nulled) {
+		final String thestring = this.body.substring(start, end);
+		this.body = new StringBuilder(this.body.substring(end));
+		if (nulled) return thestring;
+		else return Util.removenullbyte(thestring);
 	}
 	
-	// TODO: horrible, inaccurate name
-	public String getPacket() {
+	public String getIsoBody() {
 		try {
 			return Util.isoString(this.body.toString().getBytes("ISO8859-1"));
 		} catch (Exception e) {
 		}
 		return null;
+	}
+	
+	public String combinePacket(int len) {
+		try {
+			return Util.isoString(calcHeader(len).getBytes("ISO8859-1"));
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
+	private String calcHeader(int len) {
+		return this.header.append(Util.getbyteiso(this.body.length(), len)).toString();
+	}
+	
+	public static String removeHeader(int len, String str) {
+		return str.substring(len);
 	}
 	
 	public void clean() {

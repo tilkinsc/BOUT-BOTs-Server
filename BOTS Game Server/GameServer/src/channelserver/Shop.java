@@ -61,7 +61,7 @@ public class Shop {
 	protected Packet getErrorPacket(int error, int head) {
 		final Packet packet = new Packet();
 		packet.addHead((byte) head, (byte) 0x2E);
-		packet.addPacketHead((byte) 0x00, (byte) error);
+		packet.addIsoBody((byte) 0x00, (byte) error);
 		for (int i = 0; i < 95; i++)
 			packet.addByte((byte) 0xCC);
 		return packet;

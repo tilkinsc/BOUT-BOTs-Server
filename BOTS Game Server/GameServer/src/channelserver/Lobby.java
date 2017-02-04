@@ -95,13 +95,13 @@ public class Lobby {
 		
 		packet.addHead((byte) 0xF2, (byte) 0x2E);
 		
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-		packet.addInt(this.users, 2, false);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
+		packet.addBodyInt(this.users, 2, false);
 		for (int i = 0; i < this.users; i++) {
 			String user = this.charnames[i];
 			while (user.length() != 15)
 				user += nullbyte;
-			packet.addString(user);
+			packet.addBodyString(user);
 			packet.addByte((byte) (bots[i] & 0xff), (byte) this.status[i]);
 		}
 		return packet;
@@ -114,13 +114,13 @@ public class Lobby {
 			if (isgm) {
 				final byte[] stringbyte = msg.getBytes("ISO8859-1");
 				stringbyte[4] = 0x01;
-				packet.addString(new String(stringbyte));
+				packet.addBodyString(new String(stringbyte));
 			} else
-				packet.addString(msg);
+				packet.addBodyString(msg);
 			final String[] packandhead = new String[2];
 			
-			packandhead[0] = packet.getHeader(2);
-			packandhead[1] = packet.getPacket();
+			packandhead[0] = packet.combinePacket(2);
+			packandhead[1] = packet.getIsoBody();
 			
 			int i = 0;
 			do {
@@ -144,18 +144,18 @@ public class Lobby {
 		final Packet packet = new Packet();
 		
 		packet.addHead((byte) 0x27, (byte) 0x27);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-		packet.addString(chname);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
+		packet.addBodyString(chname);
 		packet.addByte((byte) 0x00);
-		while (packet.getLen() != 17)
+		while (packet.getBodyLen() != 17)
 			packet.addByte((byte) 0xCC);
 		
 		packet.addByte((byte) (bots[num] & 0xff), (byte) this.status[num]);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader(2);
-		packandhead[1] = packet.getPacket();
+		packandhead[0] = packet.combinePacket(2);
+		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
 		return packandhead;
@@ -166,18 +166,18 @@ public class Lobby {
 		final Packet packet = new Packet();
 		
 		packet.addHead((byte) 0x27, (byte) 0x27);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
-		packet.addString(chname);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
+		packet.addBodyString(chname);
 		packet.addByte((byte) 0x00);
-		while (packet.getLen() != 17)
+		while (packet.getBodyLen() != 17)
 			packet.addByte((byte) 0xCC);
 		
 		packet.addByte((byte) (bots[num] & 0xff), (byte) 0xFF);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader(2);
-		packandhead[1] = packet.getPacket();
+		packandhead[0] = packet.combinePacket(2);
+		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
 		return packandhead;
@@ -205,14 +205,14 @@ public class Lobby {
 		packet.addHead((byte) 0x1A, (byte) 0x27);
 		
 		packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
-		packet.addInt(color, 2, false);
-		packet.addString("[Server] " + msg);
+		packet.addBodyInt(color, 2, false);
+		packet.addBodyString("[Server] " + msg);
 		packet.addByte((byte) 0x00);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader(2);
-		packandhead[1] = packet.getPacket();
+		packandhead[0] = packet.combinePacket(2);
+		packandhead[1] = packet.getIsoBody();
 		
 		for (int i = 0; i < this.users; i++)
 			if (usersocks[i] == null)
@@ -238,10 +238,10 @@ public class Lobby {
 			if (usersocks[num] != null) {
 				final Packet pack = new Packet();
 				pack.addHead((byte) 0x0A, (byte) 0x2F);
-				pack.addInt(1, 2, false);
+				pack.addBodyInt(1, 2, false);
 				final String[] packandhead = new String[2];
-				packandhead[0] = pack.getHeader(2);
-				packandhead[1] = pack.getPacket();
+				packandhead[0] = pack.combinePacket(2);
+				packandhead[1] = pack.getIsoBody();
 				usersocks[num].write(packandhead[0]);
 				usersocks[num].flush();
 				usersocks[num].write(packandhead[1]);
@@ -264,9 +264,9 @@ public class Lobby {
 		final Packet pack = new Packet();
 		final String[] packs = new String[2];
 		pack.setBody(Packet.removeHeader(4, packet));
-		final int len = pack.getInt(2);
-		final String recvUser = pack.getString(0, 15, false);
-		final String message = pack.getString(0, pack.getLen(), false);
+		final int len = pack.getBodyInt(2);
+		final String recvUser = pack.getBodyString(0, 15, false);
+		final String message = pack.getBodyString(0, pack.getBodyLen(), false);
 		pack.clean();
 		if (Util.compareChat(message, sender, true, false) == -1)
 			kickPlayer(sender, "Player " + sender + " has been kick for wrong chatname(hacking)");
@@ -275,8 +275,8 @@ public class Lobby {
 			int num = getNum(recvUser);
 			if (num == -1) {
 				pack.addByte((byte) 0x00, (byte) 0x6B, (byte) 0x00, (byte) 0x00);
-				packs[0] = pack.getHeader(2);
-				packs[1] = pack.getPacket();
+				packs[0] = pack.combinePacket(2);
+				packs[1] = pack.getIsoBody();
 				num = getNum(sender);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
@@ -284,11 +284,11 @@ public class Lobby {
 				usersocks[num].flush();
 			} else {
 				pack.addByte((byte) 0x01, (byte) 0x00);
-				pack.addInt(len, 2, false);
-				pack.addString(message);
+				pack.addBodyInt(len, 2, false);
+				pack.addBodyString(message);
 				pack.addByte((byte) 0x00);
-				packs[0] = pack.getHeader(2);
-				packs[1] = pack.getPacket();
+				packs[0] = pack.combinePacket(2);
+				packs[1] = pack.getIsoBody();
 				Main.logger.log("Lobby", "test " + packs[1]);
 				usersocks[num].write(packs[0]);
 				usersocks[num].flush();
@@ -358,7 +358,7 @@ public class Lobby {
 		
 		final Packet packet = new Packet();
 		packet.addHead((byte) 0xEF, (byte) 0x2E);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
 		
 		for (int i = 0; i < 6; i++)
 			if (this.rooms[cmode][i + (6 * page)] != null) {
@@ -374,8 +374,8 @@ public class Lobby {
 				while (cpass.length() != 11)
 					cpass += nullbyte;
 				
-				packet.addString(cname);
-				packet.addString(cpass);
+				packet.addBodyString(cname);
+				packet.addBodyString(cpass);
 				packet.addByte((byte) 0x02);
 				packet.addByte((byte) 0x08);
 				packet.addByte((byte) this.rooms[cmode][i + (6 * page)].getStatus());
@@ -391,12 +391,12 @@ public class Lobby {
 		final Packet packet = new Packet();
 		
 		packet.addHead((byte) 0x27, (byte) 0x27);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader(2);
-		packandhead[1] = packet.getPacket();
+		packandhead[0] = packet.combinePacket(2);
+		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
 		return packandhead;
@@ -406,12 +406,12 @@ public class Lobby {
 		final Packet packet = new Packet();
 		
 		packet.addHead((byte) 0x27, (byte) 0x27);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
 		
 		final String[] packandhead = new String[2];
 		
-		packandhead[0] = packet.getHeader(2);
-		packandhead[1] = packet.getPacket();
+		packandhead[0] = packet.combinePacket(2);
+		packandhead[1] = packet.getIsoBody();
 		
 		packet.clean();
 		return packandhead;

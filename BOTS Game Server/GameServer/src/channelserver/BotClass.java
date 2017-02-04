@@ -443,10 +443,10 @@ public class BotClass {
 	public Packet getInventPacket(int head) {
 		final Packet packet = new Packet();
 		packet.addHead((byte) head, (byte) 0x2E);
-		packet.addPacketHead((byte) 0x01, (byte) 0x00);
+		packet.addIsoBody((byte) 0x01, (byte) 0x00);
 		packet.addByte((byte) 0x01);
 		for (int i = 0; i < 10; i++) {
-			packet.addInt(this.inventitems[i], 4, false);
+			packet.addBodyInt(this.inventitems[i], 4, false);
 			if (this.inventitems[i] == 0)
 				packet.addByte((byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00);
 			else
@@ -454,7 +454,7 @@ public class BotClass {
 
 			packet.addByte((byte) 0x00);
 		}
-		packet.addInt(this.gigas, 4, false);
+		packet.addBodyInt(this.gigas, 4, false);
 		return packet;
 	}
 	
@@ -545,19 +545,19 @@ public class BotClass {
 		try {
 			final int aid = this.getInvent(slot);
 			if (aid == 0) {
-				packet.addPacketHead((byte) 0x00, (byte) 0x60);
+				packet.addIsoBody((byte) 0x00, (byte) 0x60);
 				return packet;
 			}
 			
 			final ResultSet rs = ItemClass.getItemInfo(aid);
 			rs.next();
 			if (rs.getInt("reqlevel") > this.level) {
-				packet.addPacketHead((byte) 0x00, (byte) 0x65);
+				packet.addIsoBody((byte) 0x00, (byte) 0x65);
 				return packet;
 			}
 			final int bott = rs.getInt("bot");
 			if (bott != this.bottype && bott != 0) {
-				packet.addPacketHead((byte) 0x00, (byte) 0x60);
+				packet.addIsoBody((byte) 0x00, (byte) 0x60);
 				return packet;
 			}
 			int part = rs.getInt("part") - 1;
@@ -595,12 +595,12 @@ public class BotClass {
 				packet.setBody(this.getpacketcinfo());
 				return packet;
 			}
-			packet.addPacketHead((byte) 0x00, (byte) 0x60);
+			packet.addIsoBody((byte) 0x00, (byte) 0x60);
 			return packet;
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
-		packet.addPacketHead((byte) 0x00, (byte) 0x60);
+		packet.addIsoBody((byte) 0x00, (byte) 0x60);
 		return packet;
 	}
 	
@@ -630,7 +630,7 @@ public class BotClass {
 		try {
 			final int aid = this.getEquip(epart, slot);
 			if (aid == 0) {
-				packet.addPacketHead((byte) 0x00, (byte) 0x60);
+				packet.addIsoBody((byte) 0x00, (byte) 0x60);
 				return packet;
 			}
 			
@@ -643,12 +643,12 @@ public class BotClass {
 				return packet;
 			}
 			
-			packet.addPacketHead((byte) 0x00, (byte) 0x61);
+			packet.addIsoBody((byte) 0x00, (byte) 0x61);
 			return packet;
 		} catch (Exception e) {
 			Main.logger.log("Exception", e.getMessage());
 		}
-		packet.addPacketHead((byte) 0x00, (byte) 0x60);
+		packet.addIsoBody((byte) 0x00, (byte) 0x60);
 		return packet;
 	}
 	
@@ -663,23 +663,23 @@ public class BotClass {
 		try {
 			final Packet packet = new Packet();
 			packet.addHead((byte) 0x27, (byte) 0x2F);
-			packet.addInt(1, 4, false);
+			packet.addBodyInt(1, 4, false);
 			final ResultSet rs = SQLDatabase.doquery(
 					"SELECT * FROM bout_characters WHERE name='" + Util.removenullbyte(charname) + "' LIMIT 1");
 			rs.next();
 			final int clevel = rs.getInt("level");
 			final int cbot = rs.getInt("bot");
-			packet.addInt(clevel, 2, false);
-			packet.addInt(0, 2, false);
+			packet.addBodyInt(clevel, 2, false);
+			packet.addBodyInt(0, 2, false);
 			for (int i = 0; i < 11; i++)
-				packet.addInt(rs.getInt(i + 24), 4, false);
-			packet.addInt(rs.getInt("equipheadcoin"), 4, false);
-			packet.addInt(rs.getInt("equipminibotcoin"), 4, false);
+				packet.addBodyInt(rs.getInt(i + 24), 4, false);
+			packet.addBodyInt(rs.getInt("equipheadcoin"), 4, false);
+			packet.addBodyInt(rs.getInt("equipminibotcoin"), 4, false);
 			packet.addByte((byte) 0x00);
 			packet.addByte((byte) cbot);
 			packet.addByte((byte) 0x01);
 			packet.addByte((byte) 0x00);
-			packet.addString(charname);
+			packet.addBodyString(charname);
 			return packet;
 		} catch (Exception e) {
 		}
