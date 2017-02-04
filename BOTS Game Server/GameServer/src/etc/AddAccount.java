@@ -11,7 +11,6 @@ public class AddAccount {
 	
 	// Adds a user to the database...
 	public static void main(String[] args) throws UnknownHostException {
-		final int LOGIN_ID = 0;
 		final int COINS = 1000;
 		final String LOGIN_USERNAME = "ydroque";
 		final String LOGIN_PASSWORD = Util.sha512Digest("abc1234", "example");
@@ -25,8 +24,8 @@ public class AddAccount {
 		final java.util.Date date = new java.util.Date();
 		final java.text.SimpleDateFormat dformat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		final String query = "INSERT INTO `bout_users` (id, username, password, coins, banned, online, current_ip, logincount, last_ip, lastlogin, email)"
-				+ "VALUES (" + LOGIN_ID + ",\"" + LOGIN_USERNAME + "\",\"" + LOGIN_PASSWORD + "\"," + COINS + ","
+		final String query = "INSERT INTO `bout_users` (username, password, coins, banned, online, current_ip, logincount, last_ip, lastlogin, email)"
+				+ "VALUES ("+ LOGIN_USERNAME + "\",\"" + LOGIN_PASSWORD + "\"," + COINS + ","
 				+ LOGIN_BANNED + "," + LOGIN_ALLOG + ",\"" + LOGIN_IP + "\"," + LOGIN_COUNT + ",\"" + LOGIN_IP + "\",'"
 				+ dformat.format(date) + "',\"" + LOGIN_EMAIL + "\");";
 		
